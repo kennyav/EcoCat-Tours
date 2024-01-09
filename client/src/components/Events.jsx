@@ -40,7 +40,7 @@ export default function Events({setTitle}) {
     <div className='grid grid-cols-2 grid-flow-row gap-5 px-[30px] py-[46px] place-content-center'>
       {events.map((event) => {
         return (
-          <Event title={event.title} info={event.info} days={event.days} time={event.time} />
+          <Event key={event.title} title={event.title} info={event.info} days={event.days} time={event.time} />
         )
       })}
       <div className='flex items-center justify-center'>
