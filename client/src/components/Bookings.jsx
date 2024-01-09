@@ -8,6 +8,9 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'Ju
 
 export default function Bookings({ setTitle }) {
 
+  // depending on the current week we are in, we will pull data that
+  // represents the events for the booking
+
   const [currentMonth, setCurrentMonth] = useState('');
   const [currentYear, setCurrentYear] = useState('');
   const [daysOfMonth, setDaysOfMonth] = useState([])
