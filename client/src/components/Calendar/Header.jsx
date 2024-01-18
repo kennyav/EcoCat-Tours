@@ -24,7 +24,7 @@ export default function Header(props) {
    }
 
    return (
-      <div className='flex gap-4 w-full h-auto items-center justify-center py-[35px] font-KumbhSans text-[20px] font-extrabold leading-normal text-[#1E1E1E]'>
+      <div className='flex gap-4 w-full h-auto items-center justify-center py-[15px] font-KumbhSans text-[20px] font-extrabold leading-normal text-[#1E1E1E]'>
          <button className='flex items-center gap-6 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-full'>
             <CalendarLeftIcon />
          </button>
@@ -48,9 +48,9 @@ export default function Header(props) {
                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                      {
-                        MONTH_NAMES.map(month => {
+                        MONTH_NAMES.map((month, i) => {
                            return (
-                              <Menu.Item>
+                              <Menu.Item key={i}>
                                  {({ active }) => (
                                     <span
                                        key={month}

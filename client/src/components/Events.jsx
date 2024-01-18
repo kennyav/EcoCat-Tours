@@ -37,7 +37,7 @@ export default function Events({setTitle}) {
   }, [setTitle]);
 
   return (
-    <div className='grid grid-cols-2 grid-flow-row gap-5 px-[30px] py-[46px] place-content-center'>
+    <div className='grid grid-cols-2 grid-flow-row gap-5 px-[41px] py-[46px] place-content-center'>
       {events.map((event) => {
         return (
           <Event key={event.title} title={event.title} info={event.info} days={event.days} time={event.time} />

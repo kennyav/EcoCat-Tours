@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 // calendar components
 import Header from './Calendar/Header';
 import Dates from './Calendar/Dates';
+import SideMenuEventInfo from './Calendar/SideMenuEventInfo'
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -13,7 +14,13 @@ export default function Bookings({ setTitle }) {
 
   const [currentMonth, setCurrentMonth] = useState('');
   const [currentYear, setCurrentYear] = useState('');
-  const [daysOfMonth, setDaysOfMonth] = useState([])
+  const [daysOfMonth, setDaysOfMonth] = useState([]);
+  const [eventClick, setEventClick] = useState(false);
+  const [padding, setPadding] = useState('pr-[41px]')
+
+  useEffect(() => {
+    setPadding('pr-[0px]')
+  }, [eventClick]);
 
   useEffect(() => {
     setTitle("Bookings");
@@ -48,16 +55,23 @@ export default function Bookings({ setTitle }) {
   }, [currentMonth, currentYear]);
 
   return (
-    <div className='flex flex-col w-full h-full rounded-[25px] bg-white'>
-      <Header
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-        currentYear={currentYear}
-        setCurrentYear={setCurrentYear}
-      />
-      <Dates
-        dates={daysOfMonth}
-      />
+    <div className={`flex flex-row ${padding} pl-[41px]`}>
+      <div className='flex flex-col w-full h-full rounded-[25px] bg-white'>
+        <Header
+          currentMonth={currentMonth}
+          setCurrentMonth={setCurrentMonth}
+          currentYear={currentYear}
+          setCurrentYear={setCurrentYear}
+        />
+        <Dates
+          dates={daysOfMonth}
+          eventClick={eventClick}
+          setEventClick={setEventClick}
+        />
+      </div>
+      <div className='pl-[20px]'>
+        {eventClick && <SideMenuEventInfo eventClick={eventClick} />}
+      </div>
     </div>
   )
 }

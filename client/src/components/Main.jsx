@@ -21,7 +21,7 @@ export default function Main() {
          <NavBar />
          <div className='flex flex-col w-full h-screen bg-[#F2F8FC]'>
             <Header title={title}/>
-            <div className='w-full h-full px-[41px] py-[20px] overflow-hidden'>
+            <div className='w-full h-screen  py-[20px] overflow-hidden'>
                <Routes>
                   <Route path="/" element={<Bookings setTitle={(title) => setTitle(title)}/>} />
                   <Route path="/salesman" element={<Salesman setTitle={(title) => setTitle(title)}/>} />

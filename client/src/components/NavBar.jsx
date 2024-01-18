@@ -46,7 +46,7 @@ export default function NavBar() {
         {
           menuOptions.map((option) => {
             return (
-              <Link to={option.url}>
+              <Link key={option.name} to={option.url}>
                 <div
                   key={option.name}
                   className={`flex flex-row rounded-l-full p-[10px] my-[10px] items-center text-[14px] font-medium text-[#F2F8FC] leading-normal 
