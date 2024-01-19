@@ -8,6 +8,7 @@ import Bookings from './Bookings'
 import Salesman from './Salesman'
 import Events from './Events'
 import Transactions from './Transactions'
+import AddSalesMan from './AddSalesMan'
 
 // routing 
 import { Route, Routes } from 'react-router-dom';
@@ -25,6 +26,7 @@ export default function Main() {
                <Routes>
                   <Route path="/" element={<Bookings setTitle={(title) => setTitle(title)}/>} />
                   <Route path="/salesman" element={<Salesman setTitle={(title) => setTitle(title)}/>} />
+                  <Route path="/add-newsalesman" element={<AddSalesMan setTitle={(title) => setTitle(title)}/>} />
                   <Route path="/events" element={<Events setTitle={(title) => setTitle(title)}/>} />
                   <Route path="/transactions" element={<Transactions setTitle={(title) => setTitle(title)}/>} />
                </Routes>

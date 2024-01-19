@@ -70,7 +70,7 @@ export default function Salesman({ setTitle }) {
             <p>Name</p>
             <p>Phone Number</p>
           </div>
-          <button className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full py-[8px] text-white text-[10px] text-center">Add</button>
+          <a href={'add-newsalesman'}className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full py-[8px] text-white text-[10px] text-center">Add</a>
         </div>
         <div className='w-full h-auto overflow-scroll'>
           {
