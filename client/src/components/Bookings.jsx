@@ -56,7 +56,7 @@ export default function Bookings({ setTitle }) {
 
   return (
     <div className={`flex flex-row ${padding} pl-[41px]`}>
-      <div className='flex flex-col w-full h-full rounded-[25px] bg-white'>
+      <div className={`flex flex-col w-full h-full rounded-[25px] bg-white`}>
         <Header
           currentMonth={currentMonth}
           setCurrentMonth={setCurrentMonth}
@@ -68,8 +68,12 @@ export default function Bookings({ setTitle }) {
           setEventClick={setEventClick}
         />
       </div>
-      <div className='pl-[20px]'>
-        {eventClick && <SideMenuEventInfo eventClick={eventClick} />}
+      <div className={`pl-[20px] transition-transform transform translate-x-${eventClick ? '0' : 'full'}`}>
+        {eventClick &&
+          <div className="duration-1000 ease-in-out">
+            <SideMenuEventInfo eventClick={eventClick} />
+          </div>
+        }
       </div>
     </div>
   )
