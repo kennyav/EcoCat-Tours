@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 // events import
 import Event from './Event'
@@ -6,6 +6,11 @@ import Event from './Event'
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export default function Dates(props) {
+   
+   const [signal, setSignal] = useState({
+      globalOpen: false,
+      localOpen: -1,
+   })
 
    function getCurrentWeekDayNumbers() {
       const currentDate = new Date();
@@ -48,6 +53,9 @@ export default function Dates(props) {
                      {/* TODO - add a check to see that the current month and year matches as well */}
                      {currentWeekDayNumbers.includes(dayNumber) &&
                         <Event
+                           signal={signal}
+                           setSignal={setSignal}
+                           index={i}
                            time={'3pm'}
                            title={'Snorkle Cruise'}
                            openings={'90 openings'}
