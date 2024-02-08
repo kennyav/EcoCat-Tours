@@ -65,7 +65,6 @@ export default function Bookings({ setTitle }) {
         />
         <Dates
           dates={daysOfMonth}
-          eventClick={eventClick}
           setEventClick={setEventClick}
         />
       </div>

@@ -30,7 +30,6 @@ export default function Event(props) {
             localOpen: -1,
          })
       }
-      props.setEventClick(!props.open)
    }
 
    return (
@@ -46,7 +45,7 @@ export default function Event(props) {
          </button>
 
          {open &&
-            <div className="w-[174px] h-auto relative bg-[#F2F8FC] rounded-[10px]">
+            <div className="w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
                   <a href='new-booking' className="text-white text-sm font-semibold font-['Kumbh Sans'] cursor-pointer">New Booking</a>

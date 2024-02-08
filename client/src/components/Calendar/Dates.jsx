@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 // events import
 import Event from './Event'
@@ -11,6 +11,10 @@ export default function Dates(props) {
       globalOpen: false,
       localOpen: -1,
    })
+
+   useEffect(() => {
+      props.setEventClick(signal.globalOpen)
+   }, [props, signal])
 
    function getCurrentWeekDayNumbers() {
       const currentDate = new Date();
@@ -59,8 +63,6 @@ export default function Dates(props) {
                            time={'3pm'}
                            title={'Snorkle Cruise'}
                            openings={'90 openings'}
-                           eventClick={props.eventClick}
-                           setEventClick={props.setEventClick}
                         />}
                   </div >
                )
