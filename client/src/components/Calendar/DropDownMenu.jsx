@@ -10,7 +10,7 @@ export default function DropDownMenu(props) {
 
 
    return (
-      <Menu as="div" className="relative inline-block text-left">
+      <Menu as="div" className="relative inline-block text-left z-10">
          <div>
             <Menu.Button className="flex items-center gap-6 bg-transparent hover:bg-[#0E5BB5] hover:text-white py-2.5 px-8 border-2 border-[#0E5BB5] hover:border-transparent rounded-full">
                {props.current}
