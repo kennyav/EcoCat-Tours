@@ -6,6 +6,7 @@ import { EventDetailsIcon } from '../Icons';
 export default function Event(props) {
 
    const [open, setOpen] = useState(false)
+   const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
 
    // need a useEffect for the signal changing
    useEffect(() => {
@@ -37,10 +38,10 @@ export default function Event(props) {
 
          <button 
          onClick={() => handleClick()}
-         className={`w-full h-[50px] p-[11px] ${open ? 'text-black bg-[#00B628]' : 'text-black/90 bg-[#C4D2DC]'} rounded-[10px] justify-start items-start gap-1 hover:shadow-lg`}>
+         className={`w-full h-auto p-[11px] ${open ? 'text-black bg-[#00B628]' : 'text-black/90 bg-[#C4D2DC]'} rounded-[10px] justify-start items-start gap-1 hover:shadow-lg`}>
             <div className="justify-start items-start gap-2">
-               <div className="text-stone-900 md:text-[10px] text-[5px] font-semibold font-['Kumbh Sans']">1pm Snorkel Cruise </div>
-               <div className="text-stone-900 md:text-[10px] text-[5px] font-normal font-['Kumbh Sans']">90 Openings</div>
+               <div className={`${buttonCSS} font-semibold`}>1pm Snorkel Cruise </div>
+               <div className={`${buttonCSS}`}>90 Openings</div>
             </div>
          </button>
 

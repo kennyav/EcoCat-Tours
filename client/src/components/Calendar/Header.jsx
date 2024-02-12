@@ -6,6 +6,9 @@ import { CalendarDownIcon } from '../Icons';
 import { CalendarLeftIcon } from '../Icons';
 import { CalendarRightIcon } from '../Icons';
 
+// components
+import DropDownMenu from './DropDownMenu'
+
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function classNames(...classes) {
@@ -28,7 +31,10 @@ export default function Header(props) {
          <button className='flex items-center gap-6 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-full'>
             <CalendarLeftIcon />
          </button>
-         <Menu as="div" className="relative inline-block text-left">
+         <DropDownMenu list={MONTH_NAMES} onClick={(month) => props.setCurrentMonth(month)}/>
+         <DropDownMenu list={yearsList()} />
+
+         {/* <Menu as="div" className="relative inline-block text-left">
             <div>
                <Menu.Button className="flex items-center gap-6 bg-transparent hover:bg-[#0E5BB5] hover:text-white py-2.5 px-8 border-2 border-[#0E5BB5] hover:border-transparent rounded-full">
                   {props.currentMonth}
@@ -112,7 +118,7 @@ export default function Header(props) {
                   </div>
                </Menu.Items>
             </Transition>
-         </Menu>
+         </Menu> */}
          <button className='flex items-center gap-6 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-full'>
             <CalendarRightIcon />
          </button>

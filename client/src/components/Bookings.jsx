@@ -70,7 +70,7 @@ export default function Bookings({ setTitle }) {
       </div>
       <div className={`pl-[20px] transition-transform transform translate-x-${eventClick ? '0' : 'full'}`}>
         {eventClick &&
-          <div className="duration-1000 ease-in-out">
+          <div className="duration-700 ease-in-out">
             <SideMenuEventInfo eventClick={eventClick} />
           </div>
         }
