@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
+
 // icons
 import { NewBookingIcon } from '../Icons';
 import { EventDetailsIcon } from '../Icons';
+
+// components
+import EventDetail from './EventDetail';
 
 export default function Event(props) {
 
@@ -51,9 +55,9 @@ export default function Event(props) {
                   <NewBookingIcon />
                   <a href='new-booking' className="text-white text-sm font-semibold font-['Kumbh Sans'] cursor-pointer">New Booking</a>
                </div>
-               <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
+               <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />
-                  <a href='edit-event' className="text-stone-900 text-sm font-semibold font-['Kumbh Sans']">Event Details</a>
+                  <EventDetail />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">10</div>
