@@ -6,6 +6,7 @@ import { EventDetailsIcon } from '../Icons';
 
 // components
 import EventDetail from './EventDetail';
+import NewBooking from './NewBooking';
 
 export default function Event(props) {
 
@@ -53,7 +54,7 @@ export default function Event(props) {
             <div className="w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
-                  <a href='new-booking' className="text-white text-sm font-semibold font-['Kumbh Sans'] cursor-pointer">New Booking</a>
+                  <NewBooking />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />
