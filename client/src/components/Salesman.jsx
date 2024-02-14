@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
-// icon
-import { TransactionOptionsIcon } from './Icons'
+// components
+import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
 
 const salesman = [
   {
@@ -81,7 +81,7 @@ export default function Salesman({ setTitle }) {
                     <p>{person.name}</p>
                     <p>{person.number}</p>
                   </div>
-                  <TransactionOptionsIcon />
+                  <SalesmanInfo/>
                 </div>
               )
             })
