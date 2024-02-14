@@ -8,7 +8,7 @@ import Bookings from './Bookings'
 import Salesman from './Salesman'
 import Events from './Events'
 import Transactions from './Transactions'
-import AddSalesMan from './AddSalesMan'
+import AddSalesMan from './SalesmanComponents/AddSalesMan'
 
 // routing 
 import { Route, Routes } from 'react-router-dom';

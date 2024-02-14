@@ -93,8 +93,8 @@ export default function NewBooking(props) {
                                  Contact Information *
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input className='border rounded-[10px] p-2' placeholder='Email Address' />
-                                 <input className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                                 <input type='email' className='border rounded-[10px] p-2' placeholder='Email Address' />
+                                 <input type='tel' className='border rounded-[10px] p-2' placeholder='Phone Number' />
                               </div>
                            </div>
 
@@ -175,7 +175,7 @@ export default function NewBooking(props) {
                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                  onClick={closeModal}
                               >
-                                 CheckIn
+                                 Create
                               </button>
                            </div>
                         </Dialog.Panel>

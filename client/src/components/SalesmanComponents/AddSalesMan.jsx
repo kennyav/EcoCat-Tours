@@ -1,8 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddSalesMan() {
    const inputCSS =
       "rounded-[10px] pl-[14px] py-[9px] border border-slate-300 text-xs text-justify font-medium font-['Kumbh Sans'] resize-none outline-none";
+
+   // Initialize useHistory hook
+   const navigate = useNavigate();
+
+   function handleClick() {
+      // Redirect to /salesman URL
+      navigate('/salesman');
+   }
+
 
    return (
       <div className="px-[41px]">
@@ -19,8 +29,20 @@ export default function AddSalesMan() {
                      <input type="tel" className={inputCSS} placeholder="Phone Number" />
                   </div>
                </div>
+               <div className='gap-1 pt-[10px]'>
+                  <div className="text-black text-sm font-bold font-['Kumbh Sans'] mb-2">Notes</div>
+                  <input type="text" className={`${inputCSS} w-full h-24`} placeholder="Enter" />
+               </div>
             </div>
-            <div className="w-1/2">te</div>
+
+            {/* TODO: have the button disabled until all the required inputs are inputted */}
+            <div className='flex w-1/2 justify-end items-end p-[32px]'>
+               <button
+                  className='flex justify-center items-center px-6 py-1.5 text-sm font-light rounded-[32px] bg-[#C4D2DC] hover:bg-[#0E5BB5] hover:shadow-md text-white'
+                  onClick={() => handleClick()}>
+                  Save
+               </button>
+            </div>
          </div>
       </div>
    );
