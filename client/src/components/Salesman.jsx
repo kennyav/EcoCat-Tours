@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 // components
 import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
@@ -62,6 +63,12 @@ export default function Salesman({ setTitle }) {
     setTitle("Salesman");
   }, [setTitle]);
 
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/add-newsalesman');
+  }
+
   return (
     <div className='px-[41px]'>
       <div className='flex flex-col w-full h-full rounded-[25px] bg-white'>
@@ -70,7 +77,9 @@ export default function Salesman({ setTitle }) {
             <p>Name</p>
             <p>Phone Number</p>
           </div>
-          <a href={'add-newsalesman'}className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full py-[8px] text-white text-[10px] text-center">Add</a>
+          <button 
+            onClick={() => handleClick()}
+            className='w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full py-[8px] text-white text-[10px] text-center'>Add</button>
         </div>
         <div className='w-full h-auto overflow-scroll'>
           {
