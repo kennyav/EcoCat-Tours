@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 // components import
 import NavBar from './NavBar'
 import Header from './Header'
+
 // pages
 import Bookings from './Bookings'
 import Salesman from './Salesman'
@@ -14,7 +15,7 @@ import TransactionDetails from './TransactionComponents/TransactionDetails'
 // routing 
 import { Route, Routes } from 'react-router-dom';
 
-export default function Main() {
+export default function Main(props) {
 
    const [title, setTitle] = useState("Bookings")
 
@@ -22,7 +23,7 @@ export default function Main() {
       <div className='flex flex-row w-full h-screen'>
          <NavBar />
          <div className='flex flex-col w-full h-screen bg-[#F2F8FC]'>
-            <Header title={title}/>
+            <Header title={title} setLogin={props.setLogin}/>
             <div className='w-full h-screen  py-[20px] overflow-scroll'>
                <Routes>
                   <Route path="/" element={<Bookings setTitle={(title) => setTitle(title)}/>} />

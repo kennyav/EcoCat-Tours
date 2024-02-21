@@ -30,7 +30,9 @@ export default function Header(props) {
                   <p className='font-bold'>Body Copy Bold</p>
                   <p>Body Copy</p>
                </div>
-               <EmptyProfileIcon />
+               <div onClick={() => props.setLogin(false)}>
+                  <EmptyProfileIcon />
+               </div>
             </div>
          </div>
       </div>
