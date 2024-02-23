@@ -1,15 +1,51 @@
-# setup
-source /workspaces/EcoCat-Tours/flask-server/venv/bin/activate
+## Project Setup
 
-# install dependencies
-cd flask-server
-pip install -r requirements.txt
+1. **Open the Codespace**: Open the Codespace for this project. All the code for this project is available in this Codespace.
 
-# set environment variable
-export FLASK_APP=/workspaces/EcoCat-Tours/flask-server/run.py
+2. **Activate the virtual environment**: Activate the virtual environment with the following command:
 
-# demo
-flask run
+    For Windows:
 
-# click bottom right
-Open in browser
+    ```bash
+    /workspaces/EcoCat-Tours/flask-server/venv/Scripts/activate    
+    ```
+
+    For Unix or MacOS:
+
+    ```bash
+    source /workspaces/EcoCat-Tours/flask-server/venv/bin/activate    
+    ```
+
+3. **Install the required Python packages**: Run the following command to install the required Python packages:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Start the MongoDB service**: We're using MongoDB for our database. We've set up a Docker container for the MongoDB service. To start the MongoDB service, run the following command:
+
+    ```bash
+    cd /workspaces/EcoCat-Tours
+    docker-compose up -d
+    ```
+
+5. **Run the Hello World demo**: To run a demo that prints "Hello, World!", navigate to the `s/workspaces/EcoCat-Tours/flask-server` directory and run the following command:
+
+    ```bash
+    cd /workspaces/EcoCat-Tours/flask-server
+    python run.py
+    ```
+
+6. **Test the MongoDB connection**: We've added a script to test the connection to the MongoDB database. To run this script, navigate to the `/workspaces/EcoCat-Tours/flask-server` directory and use the following command:
+
+    ```bash
+    python test_connection.py
+    ```
+
+    This script will print the ID of a test document that it inserts into the database and the names of all databases in the MongoDB instance.
+
+## Changes Made
+
+- Set up a MongoDB service in a Docker container.
+- Added a `test_connection.py` script to test the connection to the MongoDB database.
+- Updated the `requirements.txt` file with the required Python packages.

@@ -1,0 +1,6 @@
+{
+    "name": "Python & MongoDB",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [27017],
+    "postCreateCommand": "echo 'MongoDB is installed!'"
+}
