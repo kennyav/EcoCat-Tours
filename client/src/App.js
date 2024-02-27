@@ -20,8 +20,7 @@ const App = () => {
   const initiateLogin = async () => {
     try {
       // Make a GET request to the "/login" route
-      const response = await axios.get('http://localhost:3001/login');
-      console.log(response)
+      const response = await axios.get('http://localhost:3001/login', { withCredentials: true });
       // Redirect the user to the returned URL
       window.location.href = response.data.redirect_url;
     } catch (error) {
@@ -34,7 +33,7 @@ const App = () => {
   const initiateLogout = async () => {
     try {
       // Make a GET request to the "/login" route
-      const response = await axios.get('http://localhost:3001/logout');
+      const response = await axios.get('http://localhost:3001/logout', { withCredentials: true });
       // Redirect the user to the returned URL
       window.location.href = response.data.redirect_url;
     } catch (error) {
@@ -47,7 +46,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/user-data');
+        const response = await axios.get('http://localhost:3001/api/user-data', { withCredentials: true });
         setSession(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error.message);
@@ -59,18 +58,21 @@ const App = () => {
 
 
   return (
-    <div>
+    <div className='flex h-screen w-full justify-center items-center'>
       {session ? (
         <div>
           <button onClick={initiateLogout} id="qsLoginBtn">
             Logout
           </button>
+          {session || "no session"}
         </div>
       ) : (
         <div>
           <h1 id="profileDropDown">Welcome Guest</h1>
           <p>
-            <button onClick={initiateLogin} id="qsLoginBtn">
+            <button 
+              className='bg-black text-white rounded-md p-2'
+              onClick={initiateLogin} id="qsLoginBtn">
               Login
             </button>
           </p>
