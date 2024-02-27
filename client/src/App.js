@@ -1,26 +1,14 @@
-// import main
-//import Main from "./components/Main";
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// function App() {
+function App() {
 
-//   return (
-//     <Main />
-//   );
-// }
+  const [sessionData, setSessionData] = useState();
 
-// export default App;
-
-import React, { useState, useEffect } from 'react';
-
-const App = () => {
-  const [session, setSession] = useState(null);
-
-  // Function to initiate the login
   const initiateLogin = async () => {
     try {
       // Make a GET request to the "/login" route
-      const response = await axios.get('http://localhost:3001/login', { withCredentials: true });
+      const response = await axios.get('http://localhost:3000/login');
       // Redirect the user to the returned URL
       window.location.href = response.data.redirect_url;
     } catch (error) {
@@ -33,7 +21,7 @@ const App = () => {
   const initiateLogout = async () => {
     try {
       // Make a GET request to the "/login" route
-      const response = await axios.get('http://localhost:3001/logout', { withCredentials: true });
+      const response = await axios.get('http://localhost:3000/logout');
       // Redirect the user to the returned URL
       window.location.href = response.data.redirect_url;
     } catch (error) {
@@ -42,35 +30,29 @@ const App = () => {
     }
   };
 
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/api/user-data', { withCredentials: true });
-        setSession(response.data);
-      } catch (error) {
-        console.error('Error fetching user data:', error.message);
-      }
-    };
-
-    fetchData();
+    // Load the initial session data injected into the window object
+    const initialData = window.initialSessionData;
+    setSessionData(initialData);
+    // Clear the initial data to clean up the global namespace
+    window.initialSessionData = null;
   }, []);
-
 
   return (
     <div className='flex h-screen w-full justify-center items-center'>
-      {session ? (
+      {sessionData ? (
         <div>
-          <button onClick={initiateLogout} id="qsLoginBtn">
-            Logout
-          </button>
-          {session || "no session"}
+          <button
+              className='bg-black text-white rounded-md p-2'
+              onClick={initiateLogout} id="qsLoginBtn">
+              Logout
+            </button>
         </div>
       ) : (
         <div>
           <h1 id="profileDropDown">Welcome Guest</h1>
           <p>
-            <button 
+            <button
               className='bg-black text-white rounded-md p-2'
               onClick={initiateLogin} id="qsLoginBtn">
               Login
@@ -83,4 +65,3 @@ const App = () => {
 };
 
 export default App;
-
