@@ -1,15 +1,11 @@
-import json, os, logging
+import json, os
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, render_template, session, url_for, request, send_from_directory
+from flask import Flask, redirect, session, url_for, send_from_directory
 from flask_cors import CORS
-
-
-
-logging.getLogger('flask_cors').level = logging.DEBUG
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -18,8 +14,8 @@ if ENV_FILE:
 app = Flask(__name__, static_url_path='', static_folder=os.path.abspath('../build'))
 app.secret_key = env.get("APP_SECRET_KEY")
 app.config['SESSION_COOKIE_DOMAIN'] = '.localhost'
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-app.config['SESSION_COOKIE_SECURE'] = True  # Use True if your site is served over HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True for HTTPS
 app.config["DEBUG"] = True
 CORS(app, supports_credentials=True) 
 
@@ -37,6 +33,18 @@ oauth.register(
 )
 
 
+# @app.route("/login")
+# def login():
+#     try:
+#         redirect_uri = url_for("callback", _external=True)
+#         auth_response = oauth.auth0.create_authorization_url(redirect_uri=redirect_uri)
+#         session['oauth_state'] = auth_response["state"]
+#         print("Stored state:", session['oauth_state'])  # Debugging: Log stored state
+#         return {"redirect_url": auth_response["url"]}
+#     except Exception as e:
+#         print(e)
+#         return {"error": str(e)}, 500
+
 # setting up the login route
 @app.route("/login")
 def login():
@@ -47,22 +55,23 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    print("Token", token)
     session["user"] = token
     return redirect("/")
 
 @app.route("/logout")
 def logout():
-    try:
-        session.clear()
-        logout_url = "https://" + env.get("AUTH0_DOMAIN") + "/v2/logout?" + urlencode({
-            "returnTo": "http://localhost:3000/",  # Assuming your React app is served here
-            "client_id": env.get("AUTH0_CLIENT_ID"),
-        }, quote_via=quote_plus)
-        return {"redirect_url": logout_url}
-    except Exception as e:
-        print(e)
-        return {"error": str(e)}, 500
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
 
 
 @app.route('/', defaults={'path': ''})
