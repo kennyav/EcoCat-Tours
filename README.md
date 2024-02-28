@@ -39,13 +39,9 @@
 6. **Test the MongoDB connection**: We've added a script to test the connection to the MongoDB database. To run this script, navigate to the `/workspaces/EcoCat-Tours/flask-server` directory and use the following command:
 
     ```bash
-    python test_connection.py
+    cd /workspaces/EcoCat-Tours/flask-server
+    python mongo_table_wip.py
     ```
 
-    This script will print the ID of a test document that it inserts into the database and the names of all databases in the MongoDB instance.
-
 ## Changes Made
-
-- Set up a MongoDB service in a Docker container.
-- Added a `test_connection.py` script to test the connection to the MongoDB database.
-- Updated the `requirements.txt` file with the required Python packages.
+- mongo demo
