@@ -4,7 +4,9 @@ import React from 'react'
 import { SearchIcon } from './Icons'
 import { NotificationIcon } from './Icons'
 import { SettingsIcon } from './Icons'
-import { EmptyProfileIcon } from './Icons'
+
+// components
+import UserMenu from './Header/UserMenu'
 
 export default function Header(props) {
    return (
@@ -26,11 +28,12 @@ export default function Header(props) {
                <SettingsIcon />
             </div>
             <div className='flex flex-row items-center gap-3 pr-[41px]'>
-               <div className='font-KumbhSans text-[10px] leading-normal text-[#1E1E1E] flex flex-col'>
+               {/* <div className='font-KumbhSans text-[10px] leading-normal text-[#1E1E1E] flex flex-col'>
                   <p className='font-bold'>Body Copy Bold</p>
                   <p>Body Copy</p>
-               </div>
-               <EmptyProfileIcon />
+               </div> */}
+
+               <UserMenu />
             </div>
          </div>
       </div>
