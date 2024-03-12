@@ -16,10 +16,10 @@
     docker-compose up -d
     ```
 
-4. **Test MongoDB by inserting and deleting a customers document**
+4. **Test MongoDB with pytest**
     ```
     cd /workspaces/EcoCat-Tours/flask-server/tests
-    python customer_insert_delete_test.py
+    pytest test_customer_crud.py
     ```
 
 5. **Run the Hello World demo**: To run a demo that prints "Hello, World!", navigate to the `s/workspaces/EcoCat-Tours/flask-server` directory and run the following command:

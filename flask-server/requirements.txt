@@ -5,3 +5,4 @@ pymongo
 dnspython
 pydantic
 email-validator
+pytest
