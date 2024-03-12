@@ -29,7 +29,7 @@ def cleanup(db_service, customer_data):
     # After the test, perform cleanup
     db_service.delete_document('customers', {'email': customer_data['email']})
 
-def test_customer_crud(db_service, customer_data):
+def test_customers_crud(db_service, customer_data):
     # Insert a customer document
     customer_id = db_service.insert_document('customers', customer_data)
     assert customer_id is not None, "Failed to insert customer"

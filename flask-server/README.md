@@ -19,7 +19,7 @@
 4. **Test MongoDB with pytest**
     ```
     cd /workspaces/EcoCat-Tours/flask-server/tests
-    pytest test_customer_crud.py
+    pytest test_customers_crud.py
     ```
 
 5. **Run the Hello World demo**: To run a demo that prints "Hello, World!", navigate to the `s/workspaces/EcoCat-Tours/flask-server` directory and run the following command:
