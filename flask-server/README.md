@@ -34,7 +34,7 @@
 - Important Files:
     - [WIP Models](app/models/models.py)
     - [Database Service](app/services/database/database_service.py)
-    - [Index Setup](app/services/database/database_service.py)
+    - [Index Setup](app/services/database/index_setup.py)
     - [MongoDB Client](app/services/database/mongodb_client.py)
     - [Database Config](config/db_config.py)
     - [CRUD Test for Demo](tests/test_customers_crud.py)
