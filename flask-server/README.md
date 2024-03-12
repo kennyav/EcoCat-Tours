@@ -31,3 +31,12 @@
 
 ## Changes Made
 - MongoDB setup, safeguards, maintainable practices
+- Important Files:
+    - [WIP Models](app/models/models.py)
+    - [Database Service](app/services/database/database_service.py)
+    - [Index Setup](app/services/database/database_service.py)
+    - [MongoDB Client](app/services/database/mongodb_client.py)
+    - [Database Config](app/services/database/mongodb_client.py)
+    - [CRUD Test for Demo](app/services/database/mongodb_client.py)
+- TBD/WIP:
+    - Checking models against requirements
