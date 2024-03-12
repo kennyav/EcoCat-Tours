@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 // components
 import Event from './Event'
@@ -32,6 +33,12 @@ const events = [
 
 export default function Events({setTitle}) {
 
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/edit-events');
+  }
+
   useEffect(() => {
     setTitle("Events"); 
   }, [setTitle]);
@@ -43,7 +50,9 @@ export default function Events({setTitle}) {
           <Event key={event.title} title={event.title} info={event.info} days={event.days} time={event.time} />
         )
       })}
-      <div className='flex items-center justify-center'>
+      <div 
+        onClick={() => handleClick()}
+        className='flex items-center justify-center'>
         <EventAddIcon />
       </div>
     </div>

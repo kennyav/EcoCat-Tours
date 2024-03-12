@@ -1,6 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function Event(props) {
+
+   const navigate = useNavigate();
+
+   const handleClick = (title, info) => {
+      navigate('/edit-events',  { state: { title: title, info: info } });
+   }
 
    // props.title, props.info, props.days, props.time
    return (
@@ -11,7 +18,9 @@ export default function Event(props) {
                <h1 className='text-[20px] font-bold'>{props.title}</h1>
                <p className='text-[10px]'>{props.info}</p>
             </div>
-            <button className='bg-transparent hover:bg-[#0E5BB5] hover:text-white py-2.5 px-8 border border-[#0E5BB5] hover:border-transparent rounded-full text-[10px]'>Edit</button>
+            <button 
+               onClick={() => handleClick(props.title, props.info)}
+               className='bg-transparent hover:bg-[#0E5BB5] hover:text-white py-2.5 px-8 border border-[#0E5BB5] hover:border-transparent rounded-full text-[10px]'>Edit</button>
          </div>
 
          <div className='px-[30px] py-[30px]'>
