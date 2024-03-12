@@ -36,7 +36,8 @@
     - [Database Service](app/services/database/database_service.py)
     - [Index Setup](app/services/database/database_service.py)
     - [MongoDB Client](app/services/database/mongodb_client.py)
-    - [Database Config](app/services/database/mongodb_client.py)
-    - [CRUD Test for Demo](app/services/database/mongodb_client.py)
+    - [Database Config](config/db_config.py)
+    - [CRUD Test for Demo](tests/test_customers_crud.py)
 - TBD/WIP:
     - Checking models against requirements
+    - Adjusting for mapping and logging best practices
