@@ -8,6 +8,14 @@ function App() {
 
   const [sessionData, setSessionData] = useState();
 
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+     fetch('/api/time').then(res => res.json()).then(data => {
+        setCurrentTime(data.time);
+     });
+  }, []);
+
 
   useEffect(() => {
     // Load the initial session data injected into the window object
@@ -19,13 +27,14 @@ function App() {
 
   return (
     <div className='flex h-screen w-full justify-center items-center'>
-      {sessionData ? (
+      {/* {sessionData ? (
         <Main />)
         :
         (<div>
           <Login />
         </div>)
-      }
+      } */}
+      <p>The current time is: {currentTime}</p>
     </div >
   );
 };

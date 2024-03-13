@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
-function classNames(...classes) {
-   return classes.filter(Boolean).join(' ')
-}
+// function classNames(...classes) {
+//    return classes.filter(Boolean).join(' ')
+// }
 
 export default function Login(props) {
    const [currentTime, setCurrentTime] = useState(0);
@@ -14,15 +14,15 @@ export default function Login(props) {
    }, []);
 
 
-   function handleClick() {
-      fetch('/login', {
-         redirect: 'follow'
-      }).then((res) => { return res })
-   }
+   // function handleClick() {
+   //    fetch('/login', {
+   //       redirect: 'follow'
+   //    }).then((res) => { return res })
+   // }
 
    return (
       <div className='relative w-screen h-screen bg-[#0E5BB5] flex flex-col justify-center items-center font-[KumbahSans]'>
-         <button
+         {/* <button
             onClick={handleClick}
             className={({ selected }) =>
                classNames(
@@ -33,9 +33,9 @@ export default function Login(props) {
                      : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
                )}>
             Login
-            <br />
-            The Current Time is: {currentTime}
-         </button>
+            <br /> */}
+            <p>The Current Time is: {currentTime}</p>
+         {/* </button> */}
       </div>
    )
 }
