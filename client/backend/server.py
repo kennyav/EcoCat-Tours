@@ -1,7 +1,5 @@
 import json
 import os
-import requests
-import http.client
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 
@@ -85,21 +83,21 @@ def serve_frontend(path):
         return app.response_class(html, content_type='text/html')
 
 
-@app.route('/users')
-def all_users():
-    conn = http.client.HTTPSConnection("dev-yjddoy71jz2xdtaq.us.auth0.com")
+# @app.route('/users')
+# def all_users():
+#     conn = http.client.HTTPSConnection("dev-yjddoy71jz2xdtaq.us.auth0.com")
 
-    payload = "{\"client_id\":\"gsqavogFSsDb9VogZkA1dNsodgw3hm75\",\"client_secret\":\"5sBO9x4NRhQIKf3vP8FY704ySNpW0z8S62r-JkvNXWys5CQOic0UrgFa4bOnVJJP\",\"audience\":\"https://dev-yjddoy71jz2xdtaq.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
+#     payload = "{\"client_id\":\"gsqavogFSsDb9VogZkA1dNsodgw3hm75\",\"client_secret\":\"5sBO9x4NRhQIKf3vP8FY704ySNpW0z8S62r-JkvNXWys5CQOic0UrgFa4bOnVJJP\",\"audience\":\"https://dev-yjddoy71jz2xdtaq.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
 
-    headers = { 'content-type': "application/json" }
+#     headers = { 'content-type': "application/json" }
 
-    conn.request("POST", "/oauth/token", payload, headers)
+#     conn.request("POST", "/oauth/token", payload, headers)
 
-    res = conn.getresponse()
-    data = res.read()
+#     res = conn.getresponse()
+#     data = res.read()
 
-    print(data.decode("utf-8"))
-    return data.decode("utf-8")
+#     print(data.decode("utf-8"))
+#     return data.decode("utf-8")
 
 
 # instantiate the local server

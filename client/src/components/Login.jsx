@@ -6,9 +6,6 @@ function classNames(...classes) {
 }
 
 export default function Login(props) {
-
-   // const [username, setUsername] = useState('');
-   // const [password, setPassword] = useState('');
    const containerCSS = 'rounded-xl bg-white p-3 ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2';
 
    return (
@@ -51,31 +48,11 @@ export default function Login(props) {
                            type='submit'>Login</a>
                   </Tab.Panel>
                   <Tab.Panel className={`${containerCSS}`} >
-                     {/* <form className='flex flex-col gap-3'>
-                        <label className='grid' htmlFor='username'>Username
-                           <input
-                              id='username'
-                              type='username'
-                              autoComplete='username'
-                              className='p-2 bg-gray-100 rounded-md'
-                              value={username}
-                              onChange={(e) => setUsername(e.target.value)} />
-                        </label>
-                        <label className='grid' htmlFor='password'>Password
-                           <input
-                              id='password'
-                              type='password'
-                              autoComplete='current-password'
-                              className='p-2 bg-gray-100 rounded-md'
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)} />
-                        </label> */}
                         <a
                            href='/login'
                            className='w-full text-center rounded-lg py-2.5 text-sm font-medium leading-5 ring-gray/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2 hover:bg-gray-100 hover:text-blue-700 hover:shadow
                               text-black hover:bg-white/[0.12]'
                            type='submit'>Register</a>
-                     {/* </form> */}
                   </Tab.Panel>
                </Tab.Panels>
             </Tab.Group>
