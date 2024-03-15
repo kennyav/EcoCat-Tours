@@ -5,3 +5,4 @@ pydantic
 python.env
 flask-session
 redis
+flask-cors

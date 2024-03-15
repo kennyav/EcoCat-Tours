@@ -11,9 +11,11 @@ import Transactions from './Transactions'
 import AddSalesMan from './SalesmanComponents/AddSalesMan'
 import TransactionDetails from './TransactionComponents/TransactionDetails'
 import EditEvent from './EventsComponents/EditEvent'
+import Login from './Login'
 
 // routing 
 import { Route, Routes } from 'react-router-dom';
+
 
 export default function Main() {
 
@@ -33,6 +35,7 @@ export default function Main() {
                   <Route path="/transactions" element={<Transactions setTitle={(title) => setTitle(title)}/>} />
                   <Route path='/transaction-details' element={<TransactionDetails setTitle={(title) => setTitle(title)}/>} />
                   <Route path='/edit-events' element={<EditEvent setTitle={(title) => setTitle(title)}/>} />
+                  <Route path='/login' element={<Login/>} />
                </Routes>
             </div>
          </div>
