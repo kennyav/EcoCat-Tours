@@ -3,8 +3,16 @@ import { Fragment } from 'react'
 
 // icons
 import { EmptyProfileIcon } from '../Icons'
+import httpClient from '../../httpClient';
 
 export default function UserMenu() {
+
+   const logoutUser = async () => {
+      await httpClient.post("//127.0.0.1:8000/logout");
+      window.location.href = "/";
+    };
+
+
    return (
       <div>
          <Menu as="div" className="relative inline-block text-left">
@@ -114,8 +122,8 @@ export default function UserMenu() {
                   <div className="px-1 py-1">
                      <Menu.Item>
                         {({ active }) => (
-                           <a
-                              href='/logout'
+                           <button
+                              onClick={() => logoutUser()}
                               className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                            >
@@ -131,7 +139,7 @@ export default function UserMenu() {
                                  />
                               )}
                               Logout
-                           </a>
+                           </button>
                         )}
                      </Menu.Item>
                   </div>
