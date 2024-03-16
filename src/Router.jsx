@@ -6,36 +6,33 @@ import { Route, Routes } from 'react-router-dom';
 // app
 import App from './App';
 
+// peripherals
+import Menus from './components/Menus';
+
 // pages
-import NavBar from './components/NavBar';
-import Header from './components/Header';
 import Salesman from './components/Salesman'
 import Events from './components/Events'
 import Transactions from './components/Transactions'
 import AddSalesMan from './components/SalesmanComponents/AddSalesMan'
 import TransactionDetails from './components/TransactionComponents/TransactionDetails'
 import EditEvent from './components/EventsComponents/EditEvent'
-import Login from './components/Login'
+import Register from './components/Login/Register'
+import Login from './components/Login/Login';
 
 
 export default function Router() {
    const [title, setTitle] = useState("Bookings")
    return (
-      <div className='flex flex-row w-full h-screen'>
-         <NavBar />
-         <div className='flex flex-col w-full h-screen bg-[#F2F8FC]'></div>
-         <Header title={title} />
-         <div className='w-full h-screen  py-[20px] overflow-scroll'></div>
-         <Routes>
-            <Route path="/" element={<App setTitle={(title) => setTitle(title)} />} />
-            <Route path="/salesman" element={<Salesman setTitle={(title) => setTitle(title)} />} />
-            <Route path="/add-newsalesman" element={<AddSalesMan setTitle={(title) => setTitle(title)} />} />
-            <Route path="/events" element={<Events setTitle={(title) => setTitle(title)} />} />
-            <Route path="/transactions" element={<Transactions setTitle={(title) => setTitle(title)} />} />
-            <Route path='/transaction-details' element={<TransactionDetails setTitle={(title) => setTitle(title)} />} />
-            <Route path='/edit-events' element={<EditEvent setTitle={(title) => setTitle(title)} />} />
-            <Route path='/login' element={<Login />} />
-         </Routes>
-      </div>
+      <Routes>
+         <Route path="/" element={<App title={title} setTitle={(title) => setTitle(title)} />}/>
+         <Route path="/salesman" element={<Menus title={title}> <Salesman setTitle={(title) => setTitle(title)} /> </Menus>}/>
+         <Route path="/add-newsalesman" element={<Menus title={title}><AddSalesMan setTitle={(title) => setTitle(title)} /> </Menus>} />
+         <Route path="/events" element={<Menus title={title}> <Events setTitle={(title) => setTitle(title)} /> </Menus>} />
+         <Route path="/transactions" element={<Menus title={title}> <Transactions setTitle={(title) => setTitle(title)}/> </Menus>} />
+         <Route path='/transaction-details' element={<Menus title={title}> <TransactionDetails setTitle={(title) => setTitle(title)}/> </Menus>} />
+         <Route path='/edit-events' element={<Menus title={title}> <EditEvent setTitle={(title) => setTitle(title)} /> </Menus>} />
+         <Route path='/register' element={<Register />} />
+         <Route path='/login' element={<Login />} />
+      </Routes>
    )
 }
