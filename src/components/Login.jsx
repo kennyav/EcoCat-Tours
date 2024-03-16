@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Tab } from '@headlessui/react'
-import httpClient from "../httpClient.ts"
+import httpClient from "../httpClient"
 
 function classNames(...classes) {
    return classes.filter(Boolean).join(' ')
@@ -13,13 +13,14 @@ export default function Login() {
 
    const logInUser = async () => {  
       try {
-        const resp = await httpClient.post("//127.0.0.1:5000/login", {
+        const resp = await httpClient.post("//127.0.0.1:8000/login", {
           email,
           password,
         });
         console.log(resp.data)
         window.location.href = "/"
       } catch (error) {
+         console.log("error", error.response.status)
         if (error.response.status === 401) {
           alert("Invalid credentials");
         }

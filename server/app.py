@@ -6,6 +6,7 @@ from config import ApplicationConfig
 from models import db, UserModel
 
 app = Flask(__name__)
+app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
 app.config.from_object(ApplicationConfig)
 
 bcrypt = Bcrypt(app)
@@ -16,7 +17,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-@app.route("/@me")
+@app.route("/@me", methods=["GET"])
 def get_current_user():
     user_id = session.get("user_id")
 
@@ -64,6 +65,7 @@ def login_user():
     if not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Unauthorized"}), 401
     
+    # chrome issue 
     session["user_id"] = user.id
 
     return jsonify({
