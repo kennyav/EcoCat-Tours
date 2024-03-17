@@ -101,6 +101,23 @@ def upload_salesmen():
         "date": new_salesmen.created_at,
     })
 
+@app.route("/@salesmen", methods=["GET"])
+def get_all_salesmen():
+    salesmen = SalesmenModel.query.all()
+    salesmen_list = []
+    
+    for salesman in salesmen:
+        salesmen_list.append({
+            "id": salesman.id,
+            "first_name": salesman.first_name,
+            "last_name": salesman.last_name,
+            "email": salesman.email,
+            "phone": salesman.phone,
+            "notes": salesman.notes,
+            "date": salesman.created_at
+        })
+    print("Salesmen ----------", salesmen_list)
+    return jsonify(salesmen_list)
 
 if __name__ == "__main__":
     app.run(debug=True)
