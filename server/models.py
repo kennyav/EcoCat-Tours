@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import DateTime
 
 db = SQLAlchemy()
 
@@ -20,6 +21,16 @@ class UserModel(db.Model):
     email = db.Column(db.String(345), unique=True)
     password = db.Column(db.Text, nullable=False)
 
+class SalesmenModel(db.Model):
+    __tablename__ = "salesmen"
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(345), unique=True)
+    phone = db.Column(db.String(20), nullable=False)
+    notes = db.Column(db.Text, nullable=False)
+    created_at = db.Column(DateTime, default=datetime.now)
+
 # class CustomersModel(BaseModelWithID):
 #     first_name: str = Field(..., min_length=1, description="The first name of the customer.")
 #     last_name: str = Field(..., min_length=1, description="The last name of the customer.")
@@ -27,13 +38,6 @@ class UserModel(db.Model):
 #     phone: str = Field(..., pattern=r"^\+?[1-9]\d{1,14}$", description="The phone number of the customer, following international format.")
 #     created_at: datetime = Field(default_factory=datetime.now, description="The timestamp when the customer record was created.")
 
-# class SalesmenModel(BaseModelWithID):
-#     first_name: str = Field(..., min_length=1, description="The first name of the salesman.")
-#     last_name: str = Field(..., min_length=1, description="The last name of the salesman.")
-#     email: EmailStr = Field(..., description="The email address of the salesman.")
-#     phone: str = Field(..., pattern=r"^\+?[1-9]\d{1,14}$", description="The phone number of the salesman, following international format.")
-#     notes: Optional[str] = Field(None, description="Optional notes about the salesman.")
-#     created_at: datetime = Field(default_factory=datetime.now, description="The timestamp when the salesman record was created.")
 
 # class EventsModel(BaseModelWithID):
 #     title: str = Field(..., description="The title of the event")

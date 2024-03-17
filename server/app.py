@@ -3,7 +3,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_session import Session
 from config import ApplicationConfig
-from models import db, UserModel
+from models import db, UserModel, SalesmenModel
 
 app = Flask(__name__)
 app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
@@ -77,6 +77,30 @@ def login_user():
 def logout_user():
     session.pop("user_id")
     return "200"
+
+@app.route('/register-salesmen', methods=["POST"])
+def upload_salesmen():
+    # first, last, email, phone, notes
+    first_name = request.json["firstName"]
+    last_name = request.json["lastName"]
+    email = request.json["email"]
+    phone = request.json["phoneNumber"]
+    notes = request.json["notes"]
+
+    new_salesmen = SalesmenModel(first_name=first_name, last_name=last_name, email=email, phone=phone, notes=notes)
+    db.session.add(new_salesmen)
+    db.session.commit()
+    
+    return jsonify({
+        "id": new_salesmen.id,
+        "first_name": new_salesmen.first_name,
+        "last_name": new_salesmen.last_name,
+        "email": new_salesmen.email,
+        "phone": new_salesmen.phone,
+        "notes": new_salesmen.notes,
+        "date": new_salesmen.created_at,
+    })
+
 
 if __name__ == "__main__":
     app.run(debug=True)

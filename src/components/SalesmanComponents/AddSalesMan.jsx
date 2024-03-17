@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import httpClient from '../../httpClient';
+
 export default function AddSalesMan() {
    const inputCSS =
       "rounded-[10px] pl-[14px] py-[9px] border border-slate-300 text-xs text-justify font-medium font-['Kumbh Sans'] resize-none outline-none";
@@ -9,10 +11,23 @@ export default function AddSalesMan() {
    const [lastName, setLastName] = useState('');
    const [phoneNumber, setPhoneNumber] = useState('');
    const [notes, setNotes] = useState('');
+   const [email, setEmail] = useState('');
 
    const navigate = useNavigate();
 
-   function handleClick() {
+   const registerSalesman = async () => {
+      try {
+         const resp = await httpClient.post("//127.0.0.1:8000/register-salesmen", {
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            notes
+         });
+         console.log(resp.data)
+      } catch (error) {
+         alert("error", error.response.status)
+      }
       // Redirect to /salesman URL
       navigate('/salesman');
    }
@@ -60,7 +75,7 @@ export default function AddSalesMan() {
                <button
                   disabled={isSaveButtonDisabled}
                   className={`flex justify-center items-center px-6 py-1.5 text-sm font-light rounded-[32px] ${isSaveButtonDisabled ? 'bg-gray-300' : 'bg-[#0E5BB5] hover:shadow-md text-white'}`}
-                  onClick={() => handleClick()}>
+                  onClick={() => registerSalesman()}>
                   Save
                </button>
             </div>
@@ -68,3 +83,4 @@ export default function AddSalesMan() {
       </div>
    );
 }
+
