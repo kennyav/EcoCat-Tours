@@ -1,62 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 // components
 import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
-
-const salesman = [
-  {
-    id: "1",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "1",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "1",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "1",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "1",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "3",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "4",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "5",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-  {
-    id: "6",
-    name: "John Doe",
-    number: '111-111-1111'
-  },
-]
+import httpClient from '../httpClient';
 
 export default function Salesman({ setTitle }) {
+  const [salesmen, setSalesmen] = useState([])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await httpClient.get("//127.0.0.1:8000/@salesmen");
+        console.log(resp.data)
+        setSalesmen(resp.data)
+      } catch (error) {
+        console.log("Error", error)
+      }
+    })();
+  }, []);
+
 
   useEffect(() => {
     setTitle("Salesman");
@@ -69,19 +31,21 @@ export default function Salesman({ setTitle }) {
           <div className='flex flex-row w-1/2 gap-x-[300px] font-KumbhSans text-[12px] font-bold text-left'>
             <p>Name</p>
             <p>Phone Number</p>
+            <p>Email</p>
           </div>
           <a href={'add-newsalesman'}className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full py-[8px] text-white text-[10px] text-center">Add</a>
         </div>
         <div className='w-full h-auto overflow-scroll'>
           {
-            salesman.map(person => {
+            salesmen.map(person => {
               return (
                 <div key={person.id} className='flex flex-row w-full h-auto border-b-2 items-center justify-between px-[20px] py-[36px]'>
                   <div className='flex flex-row w-1/2 h-auto gap-x-[275px] font-KumbhSans text-[14px] font-bold text-left'>
-                    <p>{person.name}</p>
-                    <p>{person.number}</p>
+                    <p>{person.first_name} {person.last_name}</p>
+                    <p>{person.phone}</p>
+                    <p>{person.email}</p>
                   </div>
-                  <SalesmanInfo/>
+                  <SalesmanInfo person={person}/>
                 </div>
               )
             })

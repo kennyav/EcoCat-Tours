@@ -6,6 +6,7 @@ from config import ApplicationConfig
 from models import db, UserModel, SalesmenModel
 
 app = Flask(__name__)
+app.debug = True
 app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
 app.config.from_object(ApplicationConfig)
 
@@ -116,8 +117,39 @@ def get_all_salesmen():
             "notes": salesman.notes,
             "date": salesman.created_at
         })
-    print("Salesmen ----------", salesmen_list)
     return jsonify(salesmen_list)
+
+@app.route("/edit-salesmen/<salesmen_id>", methods=["PUT"])
+def edit_salesmen(salesmen_id):
+    salesmen = SalesmenModel.query.get(salesmen_id)
+
+    if not salesmen:
+        return jsonify({"error": "Salesmen not found"}), 404
+    
+    # Update the salesmen information based on the request data
+    if 'firstName' in request.json:
+        salesmen.first_name = request.json['firstName']
+    if 'lastName' in request.json:
+        salesmen.last_name = request.json['lastName']
+    if 'email' in request.json:
+        salesmen.email = request.json['email']
+    if 'phone' in request.json:
+        salesmen.phone = request.json['phone']
+    if 'notes' in request.json:
+        salesmen.notes = request.json['notes']
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Salesmen updated successfully",
+        "id": salesmen.id,
+        "first_name": salesmen.first_name,
+        "last_name": salesmen.last_name,
+        "email": salesmen.email,
+        "phone": salesmen.phone,
+        "notes": salesmen.notes,
+        "date": salesmen.created_at
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -22,6 +22,7 @@ import Login from './components/Login/Login';
 
 export default function Router() {
    const [title, setTitle] = useState("Bookings")
+
    return (
       <Routes>
          <Route path="/" element={<App title={title} setTitle={(title) => setTitle(title)} />}/>
@@ -36,3 +37,4 @@ export default function Router() {
       </Routes>
    )
 }
+

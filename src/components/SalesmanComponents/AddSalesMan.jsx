@@ -59,9 +59,11 @@ export default function AddSalesMan() {
                      <input type="text" className={inputCSS} placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                      <input type="text" className={`${inputCSS} lg:ml-2`} placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                   </div>
-                  <div>
+                  <div className='gap-1'>
                      <div className="text-black text-sm font-bold font-['Kumbh Sans'] mb-2">Phone Number *</div>
                      <input type="tel" className={inputCSS} placeholder="Phone Number" value={phoneNumber} onChange={handlePhoneNumberChange} />
+                     <div className="text-black text-sm font-bold font-['Kumbh Sans'] mb-2">Email *</div>
+                     <input type="text" className={`${inputCSS} lg:ml-2`} placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                </div>
                <div className='gap-1 pt-[10px]'>

@@ -1,15 +1,43 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
+import httpClient from '../../httpClient'
+import { useNavigate } from 'react-router-dom';
 
 // components
 import { TransactionOptionsIcon } from '../Icons'
 
 export default function SalesmanInfo(props) {
-   let [isOpen, setIsOpen] = useState(false)
+   const [isOpen, setIsOpen] = useState(false)
+   const [firstName, setFirstName] = useState(props.person.first_name)
+   const [lastName, setLastName] = useState(props.person.last_name)
+   const [email, setEmail] = useState(props.person.email)
+   const [phone, setPhone] = useState(props.person.phone)
+   const [notes, setNotes] = useState(props.person.notes)
+   const [edit, setEdit] = useState(false)
+   
+   const navigate = useNavigate();
+   const salesmenId = props.person.id
+   let editSalesmenURL = "http://127.0.0.1:8000/edit-salesmen/" + salesmenId
 
-   function closeModal() {
-      setIsOpen(false)
+   const closeModal = async () => {
+      try {
+         const resp = await httpClient.put(editSalesmenURL, {
+            'firstName': firstName,
+            'lastName': lastName,
+            'email': email,
+            'phone': phone,
+            'notes': notes
+         });
+         navigate('/salesman');
+         setIsOpen(false)
+         return resp.data
+      } catch (error) {
+         setIsOpen(false)
+         throw new Error('Failed to update salesmen');
+      }
    }
+
+
 
    function openModal() {
       setIsOpen(true)
@@ -57,23 +85,23 @@ export default function SalesmanInfo(props) {
                               as="h3"
                               className="text-lg font-medium leading-6 text-gray-900"
                            >
-                              John Smith
+                              {props.person.first_name} {props.person.last_name}
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 Thursday, Febuary 8 2024 @ 1pm
+                                 {props.person.date}
                               </p>
                            </div>
 
-                           <div class="w-full h-[0px] border border-slate-300"></div>
+                           <div className="w-full h-[0px] border border-slate-300"></div>
 
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Saleman
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input className='border rounded-[10px] p-2' placeholder='First Name' />
-                                 <input className='border rounded-[10px] p-2' placeholder='Last Name' />
+                                 <input disabled={!edit} value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' placeholder='First Name' />
+                                 <input disabled={!edit} value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' placeholder='Last Name' />
                               </div>
                            </div>
 
@@ -83,7 +111,10 @@ export default function SalesmanInfo(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Contact Information *
                               </h3>
-                              <input className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                              <div className='flex flex-col gap-1'>
+                                 <input disabled={!edit} value={phone} onChange={(e) => setPhone(e.target.value)} className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                                 <input disabled={!edit} value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' placeholder='Email' />
+                              </div>
                            </div>
 
 
@@ -92,7 +123,7 @@ export default function SalesmanInfo(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Notes
                               </h3>
-                              <input className='border rounded-[10px] p-2' placeholder='Enter' />
+                              <input disabled={!edit} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' placeholder='Enter' />
                            </div>
 
 
@@ -100,16 +131,16 @@ export default function SalesmanInfo(props) {
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border-2 border-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                 onClick={closeModal}
+                                 onClick={() => setEdit(true)}
                               >
                                  Edit
                               </button>
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                 onClick={closeModal}
+                                 onClick={() => closeModal()}
                               >
-                                 Done
+                                 Save
                               </button>
                            </div>
                         </Dialog.Panel>
