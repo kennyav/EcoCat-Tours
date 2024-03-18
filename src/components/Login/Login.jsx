@@ -7,7 +7,7 @@ export default function Login() {
 
    const logInUser = async () => {
       try {
-         const resp = await httpClient.post("//127.0.0.1:8000/login", {
+         const resp = await httpClient.post("//127.0.0.1:8000/auth/login", {
             email,
             password,
          });

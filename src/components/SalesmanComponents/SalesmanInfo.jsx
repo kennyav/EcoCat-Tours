@@ -14,10 +14,11 @@ export default function SalesmanInfo(props) {
    const [phone, setPhone] = useState(props.person.phone)
    const [notes, setNotes] = useState(props.person.notes)
    const [edit, setEdit] = useState(false)
-   
+
    const navigate = useNavigate();
    const salesmenId = props.person.id
-   let editSalesmenURL = "http://127.0.0.1:8000/edit-salesmen/" + salesmenId
+   let editSalesmenURL = "http://127.0.0.1:8000/salesmen/edit-salesmen/" + salesmenId
+   let deleteSalesmanURL = "http://127.0.0.1:8000/salesmen/delete/" + salesmenId
 
    const closeModal = async () => {
       try {
@@ -28,7 +29,6 @@ export default function SalesmanInfo(props) {
             'phone': phone,
             'notes': notes
          });
-         navigate('/salesman');
          setIsOpen(false)
          return resp.data
       } catch (error) {
@@ -38,6 +38,16 @@ export default function SalesmanInfo(props) {
    }
 
 
+   const deleteSalesman = async () => {
+      try {
+         const resp = await httpClient.delete(deleteSalesmanURL)
+         setIsOpen(false)
+         return resp.data
+      } catch (error) {
+         setIsOpen(false)
+         throw new Error('Failed to delete salesman')
+      }
+   }
 
    function openModal() {
       setIsOpen(true)
@@ -134,6 +144,13 @@ export default function SalesmanInfo(props) {
                                  onClick={() => setEdit(true)}
                               >
                                  Edit
+                              </button>
+                              <button
+                                 type="button"
+                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                 onClick={() => deleteSalesman()}
+                              >
+                                 Delete
                               </button>
                               <button
                                  type="button"

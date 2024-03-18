@@ -14,7 +14,7 @@ function App(props) {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get("http://127.0.0.1:8000/@me");
+        const resp = await httpClient.get("http://127.0.0.1:8000/auth/@me");
         setUser(resp.data);
       } catch (error) {
         console.log("Not authenticated");

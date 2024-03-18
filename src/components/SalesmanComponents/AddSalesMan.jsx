@@ -17,7 +17,7 @@ export default function AddSalesMan() {
 
    const registerSalesman = async () => {
       try {
-         const resp = await httpClient.post("//127.0.0.1:8000/register-salesmen", {
+         const resp = await httpClient.post("//127.0.0.1:8000/salesmen/register-salesmen", {
             firstName,
             lastName,
             email,
