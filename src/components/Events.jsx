@@ -66,7 +66,7 @@ export default function Events({ setTitle }) {
         let days = event.event_run_days.split('').map((bit, index) => bit === '1' ? daysMapping[index] : null).filter(day => day !== null);
         let time = event.start_time + " " + event.end_time
         return (
-          <Event key={event.id} title={event.event_title} info={event.event_description} days={days} time={time} />
+          <Event key={event.id} title={event.event_title} info={event.event_description} days={days} time={time} event={event} />
         )
       })}
       <div

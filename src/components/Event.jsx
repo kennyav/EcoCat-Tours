@@ -6,7 +6,7 @@ export default function Event(props) {
    const navigate = useNavigate();
 
    const handleClick = (title, info) => {
-      navigate('/edit-events',  { state: { title: title, info: info } });
+      navigate('/edit-events',  { state: { title: title, info: info, event: props.event } });
    }
 
    // props.title, props.info, props.days, props.time

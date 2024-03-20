@@ -53,8 +53,11 @@ export default function Calendar(props) {
             setCurrentYear={setCurrentYear}
          />
          <Dates
+            currentMonth={currentMonth}
+            currentYear={currentYear}
             dates={daysOfMonth}
             setEventClick={props.setEventClick}
+            event={props.event}
          />
       </div>
    )

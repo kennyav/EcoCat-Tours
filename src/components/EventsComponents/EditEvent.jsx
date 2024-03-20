@@ -5,10 +5,11 @@ import Calendar from '../Calendar/Calendar'
 
 export default function EditEvent({ setTitle }) {
    const location = useLocation();
-   const { title } = location.state;
+   const { title, event } = location.state;
+
    return (
       <div className={`flex flex-row pl-[41px]`}>
-         <Calendar setEventClick={() => { }} setTitle={setTitle} title={title} />
+         <Calendar setEventClick={() => { }} setTitle={setTitle} title={title} event={event}/>
       </div>
    )
 }
