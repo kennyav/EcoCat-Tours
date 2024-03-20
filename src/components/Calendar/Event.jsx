@@ -45,13 +45,13 @@ export default function Event(props) {
          onClick={() => handleClick()}
          className={`w-full h-auto p-[11px] ${open ? 'text-black bg-[#00B628]' : 'text-black/90 bg-[#C4D2DC]'} rounded-[10px] justify-start items-start gap-1 hover:shadow-lg`}>
             <div className="justify-start items-start gap-2">
-               <div className={`${buttonCSS} font-semibold`}>1pm Snorkel Cruise </div>
-               <div className={`${buttonCSS}`}>90 Openings</div>
+               <div className={`${buttonCSS} font-semibold`}>{props.event.event_start_time} {props.event.event_title} </div>
+               <div className={`${buttonCSS}`}>{props.event.event_capacity} Openings</div>
             </div>
          </button>
 
          {open &&
-            <div className="w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
+            <div className="z-10 w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
                   <NewBooking />
@@ -61,12 +61,16 @@ export default function Event(props) {
                   <EventDetail />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">10</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.adult_passengers}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Adults</div>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">10</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.children_passengers}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Children</div>
+               </div>
+               <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.infant_passengers}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Infant</div>
                </div>
             </div>}
       </div>

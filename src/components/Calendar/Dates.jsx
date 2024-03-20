@@ -4,11 +4,9 @@ import React, { useEffect, useState } from 'react'
 import Event from './Event'
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export default function Dates(props) {
-
-   console.log(props.event.event_start_date)
-
    const [signal, setSignal] = useState({
       globalOpen: false,
       localOpen: -1,
@@ -39,17 +37,16 @@ export default function Dates(props) {
       const startDateStr = props.event.event_start_date
       const endDateStr = props.event.event_end_date
 
-      // Convert the date string to a Date object
-      let startDateObj = new Date(startDateStr);
-      let endDateObj = new Date(endDateStr)
- 
-      // Extract month and year components
-      let startMonth = startDateObj.toLocaleString('default', { month: 'long' }); // Full month name
-      let startYear = startDateObj.getFullYear();
-      let startDay = startDateObj.getDate() + 1;
-      let endDay = endDateObj.getDate() + 1;
-      console.log(startDay, endDay)
+      const [startYear, sMonth, startDay] = startDateStr.split('-').map(Number);
+      const [endYear, eMonth, endDay] = endDateStr.split('-').map(Number);
 
+      const inBetweenMonths = []
+      for (let i = sMonth; i < eMonth - 1; i++) {
+         inBetweenMonths.push(MONTHS[i]);
+      }
+
+      const startMonth = MONTHS[sMonth - 1]
+      const endMonth = MONTHS[eMonth - 1]
       // Month format "March" and year format "2024"
       let expectedMonth = props.currentMonth;
       let expectedYear = props.currentYear;
@@ -57,10 +54,45 @@ export default function Dates(props) {
       // Compare the extracted month and year with the expected values
       if (startMonth === expectedMonth && startYear === expectedYear) {
          console.log("The date, month, and year match the expected values.");
-         let dates = []
-         for (let i = startDay; i <= endDay; i++) {
-            dates.push(i);
-        }
+         let dates = endMonth !== startMonth ? (
+            (() => {
+               let temp = [];
+               for (let i = startDay; i <= props.dates.length; i++) {
+                  temp.push(i);
+               }
+               return temp;
+            })()
+         ) : (
+            (() => {
+               let temp = [];
+               for (let i = startDay; i <= endDay; i++) {
+                  temp.push(i);
+               }
+               return temp;
+            })()
+         );
+
+         return dates
+      } else if (inBetweenMonths.includes(expectedMonth)) {
+         let dates = (() => {
+            let temp = [];
+            for (let i = 1; i <= props.dates.length; i++) {
+               temp.push(i);
+            }
+            return temp;
+         })()
+
+         return dates
+      } else if (endMonth === expectedMonth && endYear === expectedYear) {
+         // if we are in the end month then we are going to go to the end day
+         let dates = (() => {
+            let temp = [];
+            for (let i = 1; i <= endDay; i++) {
+               temp.push(i);
+            }
+            return temp;
+         })()
+
          return dates
       } else {
          console.log("The date, month, or year does not match the expected values.");
@@ -97,9 +129,7 @@ export default function Dates(props) {
                            signal={signal}
                            setSignal={setSignal}
                            index={i}
-                           time={'3pm'}
-                           title={'Snorkle Cruise'}
-                           openings={'90 openings'}
+                           event={props.event}
                         />}
                   </div >
                )

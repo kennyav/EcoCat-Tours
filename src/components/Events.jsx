@@ -40,7 +40,6 @@ export default function Events({ setTitle }) {
     (async () => {
       try {
         const resp = await httpClient.get("//127.0.0.1:8000/events/@events");
-        console.log(resp.data)
         setEvents(resp.data)
       } catch (error) {
         console.log("Error", error)

@@ -143,7 +143,7 @@ export default function AddEvent() {
                      Event Start & End Date *
                   </h3>
                   <div className="flex flex-row gap-2">
-                     <input required type='Date' value={eventStartDate} onChange={(e) => setEventStartDate(e.target.value)} className='border rounded-[10px] p-2' />
+                     <input required type='Date' value={eventStartDate} onChange={(e) => {setEventStartDate(e.target.value)}} className='border rounded-[10px] p-2' />
                      <input required type='Date' value={eventEndDate} onChange={(e) => setEventEndDate(e.target.value)} className='border rounded-[10px] p-2' />
                   </div>
                </div>

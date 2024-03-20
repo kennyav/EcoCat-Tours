@@ -58,6 +58,8 @@ def get_all_events():
     
     for event in all_events:
         event_data = {
+            'id': event.id,
+            'date': event.created_at,
             'event_title': event.event_title,
             'event_description': event.event_description,
             'event_start_date': event.event_start_date.strftime('%Y-%m-%d'),
@@ -77,3 +79,15 @@ def get_all_events():
         event_list.append(event_data)
     
     return jsonify(event_list)
+
+@bp.route("/delete/<event_id>", methods=["DELETE"])
+def delete_salesman(event_id):
+    event = EventsModel.query.get(event_id)
+
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
+    db.session.delete(event)
+    db.session.commit()
+
+    return jsonify({"message": "Event deleted successfully"})
