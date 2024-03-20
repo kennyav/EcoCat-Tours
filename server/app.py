@@ -15,17 +15,12 @@ def create_app():
     bcrypt = Bcrypt(app)
     server_session = Session(app)
 
-    # if test_config is None:
-    #     # load the instance config, if it exists, when not testing
-    #     app.config.from_pyfile('config.py', silent=True)
-    # else:
-    #     # load the test config if passed in
-    #     app.config.from_mapping(test_config)
 
-    import auth, salesman
+    import auth, salesman, events
     auth.init_app(bcrypt)
-    app.register_blueprint(auth.bp, name="auth_blueprint")
+    app.register_blueprint(auth.bp)
     app.register_blueprint(salesman.bp)
+    app.register_blueprint(events.bp)
 
     
    
@@ -37,8 +32,3 @@ def create_app():
     return app
 
 
-
-
-
-# if __name__ == "__main__":
-#     app.run(debug=True)

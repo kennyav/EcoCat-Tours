@@ -5,7 +5,7 @@ from models import db, SalesmenModel
 
 
 # this creates the auth blueprint
-bp = Blueprint('auth', __name__, url_prefix='/salesmen')
+bp = Blueprint('salesmen', __name__, url_prefix='/salesmen')
 
 @bp.route('/register-salesmen', methods=["POST"])
 def upload_salesmen():

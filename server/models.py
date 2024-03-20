@@ -1,6 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime
@@ -9,10 +7,6 @@ db = SQLAlchemy()
 
 def get_uuid():
     return uuid4().hex
-
-# class BaseModelWithID(BaseModel):
-#     id: Optional[str] = Field(None, alias="_id", description="MongoDB's unique identifier")
-#     model_config = ConfigDict(populate_by_name=True)
 
 
 class UserModel(db.Model):
@@ -31,6 +25,27 @@ class SalesmenModel(db.Model):
     notes = db.Column(db.Text, nullable=False)
     created_at = db.Column(DateTime, default=datetime.now)
 
+class EventsModel(db.Model):
+    __tablename__ = "events"
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    event_title = db.Column(db.String(80), nullable=False)
+    event_description = db.Column(db.Text)
+    event_start_date = db.Column(db.DateTime, nullable=False)
+    event_end_date = db.Column(db.DateTime, nullable=False)
+    event_start_time = db.Column(db.Time, nullable=False)
+    event_end_time = db.Column(db.Time, nullable=False)
+    event_run_days = db.Column(db.String(7))  # Assuming we store days as "MTWTFSS" format
+    event_repeated = db.Column(db.Boolean)
+    event_repeated_weekly = db.Column(db.Boolean)
+    event_repeated_biweekly = db.Column(db.Boolean)
+    event_capacity = db.Column(db.Integer, nullable=False)
+    event_age_21_plus = db.Column(db.Boolean)
+    adult_passengers = db.Column(db.Integer)
+    children_passengers = db.Column(db.Integer)
+    infant_passengers = db.Column(db.Integer)
+    created_at = db.Column(DateTime, default=datetime.now)
+
+
 # class CustomersModel(BaseModelWithID):
 #     first_name: str = Field(..., min_length=1, description="The first name of the customer.")
 #     last_name: str = Field(..., min_length=1, description="The last name of the customer.")
@@ -38,18 +53,6 @@ class SalesmenModel(db.Model):
 #     phone: str = Field(..., pattern=r"^\+?[1-9]\d{1,14}$", description="The phone number of the customer, following international format.")
 #     created_at: datetime = Field(default_factory=datetime.now, description="The timestamp when the customer record was created.")
 
-
-# class EventsModel(BaseModelWithID):
-#     title: str = Field(..., description="The title of the event")
-#     description: Optional[str] = Field(None, description="Detailed description of the event")
-#     location: str = Field(..., description="Location of the event")
-#     start_time: datetime = Field(..., description="Start time of the event")
-#     end_time: datetime = Field(..., description="End time of the event")
-#     capacity: int = Field(..., gt=0, description="Maximum number of participants")
-#     price_per_person: float = Field(..., gt=0, description="Price per participant")
-#     status: str = Field(..., description="Status of the event (e.g., available, cancelled, completed)")
-#     salesman_id: Optional[str] = Field(None, description="Identifier of the salesman managing the event")
-#     created_at: datetime = Field(default_factory=datetime.now)
 
 # class ReservationsModel(BaseModelWithID):
 #     event_id: str = Field(..., description="Identifier of the event being reserved")

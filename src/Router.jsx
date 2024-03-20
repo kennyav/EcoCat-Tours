@@ -18,6 +18,7 @@ import TransactionDetails from './components/TransactionComponents/TransactionDe
 import EditEvent from './components/EventsComponents/EditEvent'
 import Register from './components/Login/Register'
 import Login from './components/Login/Login';
+import AddEvent from './components/EventsComponents/AddEvent';
 
 
 export default function Router() {
@@ -32,6 +33,7 @@ export default function Router() {
          <Route path="/transactions" element={<Menus title={title}> <Transactions setTitle={(title) => setTitle(title)}/> </Menus>} />
          <Route path='/transaction-details' element={<Menus title={title}> <TransactionDetails setTitle={(title) => setTitle(title)}/> </Menus>} />
          <Route path='/edit-events' element={<Menus title={title}> <EditEvent setTitle={(title) => setTitle(title)} /> </Menus>} />
+         <Route path='/add-events' element={<Menus title={title}> <AddEvent setTitle={(title) => setTitle(title)} /> </Menus>} />
          <Route path='/register' element={<Register />} />
          <Route path='/login' element={<Login />} />
       </Routes>
