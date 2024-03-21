@@ -32,6 +32,31 @@ export default function Dates(props) {
    //    return dayNumbers;
    // }
 
+   function returnRunDays(start, end) {
+      // the days the event is to be shown. In [Su, M, T, W, Th, F, Sa] where 1 is true and 0 is false
+      const run = [...props.event.event_run_days]
+      let temp = [{}];
+      const realIndex = props.dates.findIndex(item => item !== null) + start
+
+      // for bi weekly % 14
+      let workingIndex = (realIndex % 7) - 1
+
+      for (let i = start; i <= end; i++) {
+         const showDay = run[workingIndex] === "1" ? true : false
+         temp.push({
+            day: i,
+            show: showDay
+         });
+
+         if (workingIndex < 6) {
+            workingIndex ++
+         } else {
+            workingIndex = 0
+         }
+      }
+      return temp;
+   }
+
    function eventWeekDayNumbers() {
       // we have props.currentMonth props.currentYear props.event.event_start_date props.event_end_date
       const startDateStr = props.event.event_start_date
@@ -55,44 +80,17 @@ export default function Dates(props) {
       if (startMonth === expectedMonth && startYear === expectedYear) {
          console.log("The date, month, and year match the expected values.");
          let dates = endMonth !== startMonth ? (
-            (() => {
-               let temp = [];
-               for (let i = startDay; i <= props.dates.length; i++) {
-                  temp.push(i);
-               }
-               return temp;
-            })()
+            (() => { return returnRunDays(startDay, props.dates.length) })()
          ) : (
-            (() => {
-               let temp = [];
-               for (let i = startDay; i <= endDay; i++) {
-                  temp.push(i);
-               }
-               return temp;
-            })()
+            (() => { return returnRunDays(startDay, endDay) })()
          );
-
          return dates
       } else if (inBetweenMonths.includes(expectedMonth)) {
-         let dates = (() => {
-            let temp = [];
-            for (let i = 1; i <= props.dates.length; i++) {
-               temp.push(i);
-            }
-            return temp;
-         })()
-
+         let dates = (() => { return returnRunDays(1, props.dates.length) })()
          return dates
       } else if (endMonth === expectedMonth && endYear === expectedYear) {
          // if we are in the end month then we are going to go to the end day
-         let dates = (() => {
-            let temp = [];
-            for (let i = 1; i <= endDay; i++) {
-               temp.push(i);
-            }
-            return temp;
-         })()
-
+         let dates = (() => { return returnRunDays(1, endDay) })()
          return dates
       } else {
          console.log("The date, month, or year does not match the expected values.");
@@ -122,9 +120,8 @@ export default function Dates(props) {
                      <div key={i} className='text-left text-[14px] p-2'>
                         {dayNumber}
                      </div>
-                     {/* if we are in the current week then we will display events */}
-                     {/* TODO - add a check to see that the current month and year matches as well */}
-                     {currentWeekDayNumbers.includes(dayNumber) &&
+                     {/* if the event is in the shown month, year, and day then show else don't */}
+                     {currentWeekDayNumbers.some(dayObj => dayObj.day === dayNumber && dayObj.show) &&
                         <Event
                            signal={signal}
                            setSignal={setSignal}
