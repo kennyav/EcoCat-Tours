@@ -65,10 +65,40 @@ export default function Dates(props) {
       const [startYear, sMonth, startDay] = startDateStr.split('-').map(Number);
       const [endYear, eMonth, endDay] = endDateStr.split('-').map(Number);
 
-      const inBetweenMonths = []
-      for (let i = sMonth; i < eMonth - 1; i++) {
-         inBetweenMonths.push(MONTHS[i]);
+
+      const inBetweenMonths = [{}]
+
+      // if we are in the same year then we can find the difference and add between them
+      if (startYear === endYear) {
+         for (let i = sMonth; i < eMonth - 1; i++) {
+            inBetweenMonths.push({
+               month: MONTHS[i],
+               year: startYear});
+         }
+      } else {
+         // we are not in the same year and we need to calculate the difference in years
+         const yearsDiff = endYear - startYear
+         console.log("Difference in Year", yearsDiff)
+
+         for (let i = 0; i <= yearsDiff; i++) {
+            let start = 0
+            let end = 12
+            if (i === 0) {
+               // were in the starting year
+               start = sMonth - 1
+
+            } else if (i === yearsDiff) {
+               end = eMonth
+            }
+            for (let j = start; j < end; j++) {
+               inBetweenMonths.push({
+                  month: MONTHS[j],
+                  year: startYear + i});
+            }
+         }
       }
+     
+      console.log(inBetweenMonths)
 
       const startMonth = MONTHS[sMonth - 1]
       const endMonth = MONTHS[eMonth - 1]
@@ -85,7 +115,7 @@ export default function Dates(props) {
             (() => { return returnRunDays(startDay, endDay) })()
          );
          return dates
-      } else if (inBetweenMonths.includes(expectedMonth)) {
+      } else if (inBetweenMonths.some(obj => obj.month === expectedMonth && obj.year === expectedYear)) {
          let dates = (() => { return returnRunDays(1, props.dates.length) })()
          return dates
       } else if (endMonth === expectedMonth && endYear === expectedYear) {
