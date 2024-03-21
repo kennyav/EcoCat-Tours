@@ -13,6 +13,10 @@ export default function Event(props) {
    const [open, setOpen] = useState(false)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
 
+   // useEffect(() => {
+   //    setOpen(false)
+   // }, [props.currentMonth])
+
    // need a useEffect for the signal changing
    useEffect(() => {
       // the case where another event is opened

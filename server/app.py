@@ -4,6 +4,8 @@ from flask_cors import CORS
 from flask_session import Session
 from config import ApplicationConfig
 from models import db
+from redis import Redis
+
 
 def create_app():
     # create and configure the app
@@ -11,6 +13,7 @@ def create_app():
     app.debug = True    
     app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
     app.config.from_object(ApplicationConfig)
+    redis = Redis(host='redis', port=6379)
 
     bcrypt = Bcrypt(app)
     server_session = Session(app)
@@ -28,7 +31,11 @@ def create_app():
     db.init_app(app)
     with app.app_context():
         db.create_all()
-    
+
+    @app.route('/')
+    def index():
+        redis.incr('hits')
+        return 'This page has been visited {} times.'.format(redis.get('hits'))
     return app
 
 

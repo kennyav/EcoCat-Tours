@@ -1,11 +1,18 @@
-FROM python:3.8-slim
+FROM alpine:7.2.4
+FROM python:3.9
+FROM redis
 
-WORKDIR /app
-EXPOSE 5050 
+WORKDIR /backend
+EXPOSE 6969 
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+COPY redis.conf ~/ecocat-reservation/server/config.py
+CMD [ "redis-server", "~/ecocat-reservation/server/config.py" ]
 
-COPY . ./
 
-CMD ["flask", "run", "--host=0.0.0.0"]
+
+# COPY requirements.txt requirements.txt
+# RUN pip install -r requirements.txt
+
+# COPY . ./
+
+# CMD ["flask", "run", "--host=0.0.0.0"]

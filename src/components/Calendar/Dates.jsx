@@ -125,6 +125,7 @@ export default function Dates(props) {
                         <Event
                            signal={signal}
                            setSignal={setSignal}
+                           currentMonth={props.currentMonth}
                            index={i}
                            event={props.event}
                         />}
