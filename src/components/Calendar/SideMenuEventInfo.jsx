@@ -8,12 +8,15 @@ import GuestInfo from './GuestInfo'
 
 export default function EventInfo(props) {
 
+  const event = props.ev.eventInfo
+  const date = props.ev.date
+
   // takes in the event information and displays it in the column
   return (
-    <div div className="flex flex-col w-[272px] h-[852px] font-['Kumbh Sans'] rounded-tl-[25px] bg-white" >
+    <div className="flex flex-col w-[272px] h-[852px] font-['Kumbh Sans'] rounded-tl-[25px] bg-white" >
       <div className='flex flex-col pl-[26px] pt-[30px]'>
-        <div className="text-stone-900 text-xl font-bold">Snorkel Cruise </div>
-        <div className="text-stone-900 text-[10px] font-normal pb-[14px]">Thursday, November 30th, 2023 @ 1pm</div>
+        <div className="text-stone-900 text-xl font-bold">{event.event_title}</div>
+        <div className="text-stone-900 text-[10px] font-normal pb-[14px]">{date.month} {date.day}, {date.year} @ {event.event_start_time}</div>
         <div className='flex bg-sky-50 rounded-[25px]'>
           <SearchIcon />
           <textarea

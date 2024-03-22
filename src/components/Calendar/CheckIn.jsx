@@ -70,7 +70,7 @@ export default function NewBooking(props) {
                               </p>
                            </div>
 
-                           <div class="w-full h-[0px] border border-slate-300"></div>
+                           <div className="w-full h-[0px] border border-slate-300"></div>
 
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>

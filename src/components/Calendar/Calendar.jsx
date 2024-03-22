@@ -25,6 +25,7 @@ export default function Calendar(props) {
       setCurrentMonth(`${monthName}`);
    }, []);
 
+
    useEffect(() => {
       const year = currentYear;
       const month = MONTH_NAMES.indexOf(currentMonth);

@@ -1,4 +1,4 @@
-import React, { } from 'react'
+import React, { useState } from 'react'
 
 // events import
 import Event from './Event'
@@ -7,6 +7,9 @@ import Event from './Event'
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export default function Dates(props) {
+
+   const [currentWeekDayNumbers, setCurrentWeekDayNumbers] = useState(eventWeekDayNumbers())
+
 
    function returnRunDays(start, end) {
       // the days the event is to be shown. In [Su, M, T, W, Th, F, Sa] where 1 is true and 0 is false
@@ -84,7 +87,6 @@ export default function Dates(props) {
 
       // Compare the extracted month and year with the expected values
       if (startMonth === expectedMonth && startYear === expectedYear) {
-         console.log("The date, month, and year match the expected values.");
          let dates = endMonth !== startMonth ? (
             (() => { return returnRunDays(startDay, props.dates.length) })()
          ) : (
@@ -99,13 +101,11 @@ export default function Dates(props) {
          let dates = (() => { return returnRunDays(1, endDay) })()
          return dates
       } else {
-         console.log("The date, month, or year does not match the expected values.");
          return []
       }
 
    }
 
-   const currentWeekDayNumbers = eventWeekDayNumbers();
 
    return (
       <div>
@@ -116,6 +116,9 @@ export default function Dates(props) {
                setSignal={props.setSignal}
                index={props.i}
                event={props.event}
+               month={props.currentMonth}
+               year={props.currentYear}
+               day={props.dayNumber}
             />}
       </div >
    )

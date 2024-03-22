@@ -29,11 +29,19 @@ export default function Event(props) {
          props.setSignal({
             globalOpen: true,
             localOpen: props.index,
+            info: props.event,
+            eDate: {
+               month: props.month,
+               day: props.day,
+               year: props.year
+            }
          })
       } else if (props.signal.localOpen === props.index) {
          props.setSignal({
             globalOpen: false,
             localOpen: -1,
+            info: {},
+            eDate: {}
          })
       }
    }

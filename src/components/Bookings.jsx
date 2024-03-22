@@ -9,7 +9,11 @@ export default function Bookings({ setTitle }) {
 
   // depending on the current week we are in, we will pull data that
   // represents the events for the booking
-  const [eventClick, setEventClick] = useState(false);
+  const [eventClick, setEventClick] = useState({
+    eventInfo: {},
+    date: {},
+    clicked: false
+  });
   const [padding, setPadding] = useState('pr-[41px]')
   const [events, setEvents] = useState([])
 
@@ -32,10 +36,10 @@ export default function Bookings({ setTitle }) {
   return (
     <div className={`flex flex-row ${padding} pl-[41px]`}>
       <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'} events={events}/>
-      <div className={`pl-[20px] transition-transform transform translate-x-${eventClick ? '0' : 'full'}`}>
-        {eventClick &&
+      <div className={`pl-[20px] transition-transform transform translate-x-${eventClick.clicked ? '0' : 'full'}`}>
+        {eventClick.clicked &&
           <div className="duration-700 ease-in-out">
-            <SideMenuEventInfo eventClick={eventClick}/>
+            <SideMenuEventInfo ev={eventClick}/>
           </div>
         }
       </div>
