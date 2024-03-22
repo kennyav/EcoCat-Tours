@@ -37,3 +37,9 @@ Download redis for your computer
 3. Test server by running in a the ide terminal (seperate from the terminal above) redis-cli and then typing in Ping. If you get Pong back it works
 4. Run flask in the server folder
 5. You have the backend up and running
+
+# Changes Made:
+- Added .venv
+    ```bash
+    source server/.venv/bin/activate
+    ```
