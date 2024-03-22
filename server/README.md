@@ -1,4 +1,4 @@
-## The Server was created with insipration from this source https://www.youtube.com/watch?v=sBw0O5YTT4Q&t=224s
+## The Server was created with inspiration from this source https://www.youtube.com/watch?v=sBw0O5YTT4Q&t=224s
 
 
 #STEPS
