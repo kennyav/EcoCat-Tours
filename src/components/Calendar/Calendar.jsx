@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 // components
 import Header from './Header';
-import Dates from './Dates';
+import DatesGrid from './DatesGrid';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -52,12 +52,12 @@ export default function Calendar(props) {
             currentYear={currentYear}
             setCurrentYear={setCurrentYear}
          />
-         <Dates
+         <DatesGrid
+            dates={daysOfMonth}
             currentMonth={currentMonth}
             currentYear={currentYear}
-            dates={daysOfMonth}
             setEventClick={props.setEventClick}
-            event={props.event}
+            events={props.events}
          />
       </div>
    )

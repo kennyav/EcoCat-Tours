@@ -9,7 +9,7 @@ export default function EditEvent({ setTitle }) {
 
    return (
       <div className={`flex flex-row pl-[41px]`}>
-         <Calendar setEventClick={() => { }} setTitle={setTitle} title={title} event={event}/>
+         <Calendar setEventClick={() => { }} setTitle={setTitle} title={title} events={[event]}/>
       </div>
    )
 }

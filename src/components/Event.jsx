@@ -52,7 +52,7 @@ export default function Event(props) {
             <div className="">
                <h1 className='text-[14px] font-bold'>Availability</h1>
                <p className='text-[10px]'>Days: {props.days}</p>
-               <p className='text-[10px]'>Times: {props.times}</p>
+               <p className='text-[10px]'>Times: {props.event.event_start_time} to {props.event.event_end_time}</p>
             </div>
             <button
                onClick={openModal}

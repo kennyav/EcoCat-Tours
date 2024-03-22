@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import httpClient from '../httpClient';
 
 // calendar components
 import SideMenuEventInfo from './Calendar/SideMenuEventInfo'
@@ -10,6 +11,19 @@ export default function Bookings({ setTitle }) {
   // represents the events for the booking
   const [eventClick, setEventClick] = useState(false);
   const [padding, setPadding] = useState('pr-[41px]')
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await httpClient.get("//127.0.0.1:8000/events/@events");
+        setEvents(resp.data)
+      } catch (error) {
+        console.log("Error", error)
+      }
+    })();
+  }, []);
+
 
   useEffect(() => {
     setPadding('pr-[0px]')
@@ -17,7 +31,7 @@ export default function Bookings({ setTitle }) {
 
   return (
     <div className={`flex flex-row ${padding} pl-[41px]`}>
-      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'}/>
+      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'} events={events}/>
       <div className={`pl-[20px] transition-transform transform translate-x-${eventClick ? '0' : 'full'}`}>
         {eventClick &&
           <div className="duration-700 ease-in-out">
