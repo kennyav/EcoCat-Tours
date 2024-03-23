@@ -78,6 +78,10 @@ class PassengersModel(db.Model):
         return {
             'id': self.id,
             'event_id': self.event_id,
+            'year': self.year,
+            'month': self.month,
+            'day': self.day,
+            'start_time': self.start_time,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
@@ -94,7 +98,7 @@ class PassengersModel(db.Model):
             'payment_type': self.payment_type,
             'payment_status': self.payment_status,
             'commission_received': self.commission_received,
-            'bookerId': self.bookerId,
+            'booker_id': self.booker_id,
             'notes': self.notes,
             'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }

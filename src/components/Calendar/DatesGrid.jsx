@@ -10,12 +10,14 @@ export default function DatesGrid(props) {
       globalOpen: false,
       localOpen: -1,
       info: {},
+      passengerInfo: [{}],
       eDate: {}
    })
 
    useEffect(() => {
       props.setEventClick({
          eventInfo: signal.info,
+         passengerInfo: signal.passengerInfo,
          clicked: signal.globalOpen,
          date: signal.eDate})
    }, [signal])

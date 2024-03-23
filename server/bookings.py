@@ -69,34 +69,13 @@ def create_booking():
 
 
 
-# @bp.route('/@events', methods=["GET"])
-# def get_all_events():
-#     all_events = EventsModel.query.all()
-#     event_list = []
-    
-#     for event in all_events:
-#         event_data = {
-#             'id': event.id,
-#             'date': event.created_at,
-#             'event_title': event.event_title,
-#             'event_description': event.event_description,
-#             'event_start_date': event.event_start_date.strftime('%Y-%m-%d'),
-#             'event_end_date': event.event_end_date.strftime('%Y-%m-%d'),
-#             'event_start_time': event.event_start_time.strftime('%H:%M'),
-#             'event_end_time': event.event_end_time.strftime('%H:%M'),
-#             'event_run_days': event.event_run_days,
-#             'event_repeated': event.event_repeated,
-#             'event_repeated_weekly': event.event_repeated_weekly,
-#             'event_repeated_biweekly': event.event_repeated_biweekly,
-#             'event_capacity': event.event_capacity,
-#             'event_age_21_plus': event.event_age_21_plus,
-#             'adult_passengers': event.adult_passengers,
-#             'children_passengers': event.children_passengers,
-#             'infant_passengers': event.infant_passengers
-#         }
-#         event_list.append(event_data)
-    
-#     return jsonify(event_list)
+@bp.route('/<event_id>/<year>/<month>/<day>/<start_time>', methods=["GET"])
+def get_all_events(event_id, year, month, day, start_time):
+    selected_passengers = PassengersModel.query.filter(event_id=event_id, year=year, month=month, day=day, start_time=start_time)
+    if selected_passengers:
+        return jsonify([passenger.serialize() for passenger in selected_passengers]), 200
+    else:
+        return jsonify({"message": "No passengers found for the specified event and time"}), 404
 
 # @bp.route("/delete/<event_id>", methods=["DELETE"])
 # def delete_salesman(event_id):

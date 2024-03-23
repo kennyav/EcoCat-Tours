@@ -11,6 +11,7 @@ export default function Bookings({ setTitle }) {
   // represents the events for the booking
   const [eventClick, setEventClick] = useState({
     eventInfo: {},
+    passengerInfo: [{}],
     date: {},
     clicked: false
   });
