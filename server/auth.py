@@ -14,7 +14,6 @@ def init_app(bcrypt):
     @bp.route("/<user_id>", methods=["GET"])
     def get_booker(user_id):        
         user = UserModel.query.filter_by(id=user_id).first()
-        print("User ==============", user)
         if user:
             return jsonify({
                 "id": user.id,
