@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { RadioGroup } from '@headlessui/react'
 
 export default function RadioGroupComponent(props) {
    const [selected, setSelected] = useState(props.plans[0])
+   const setFunctionTest = props.setCurrent
+   
+   useEffect(() => {
+      setFunctionTest(selected.value)
+   }, [setFunctionTest, selected])
 
    return (
       <div className="w-full px-4 py-16">

@@ -4,6 +4,8 @@ from flask_cors import CORS
 from flask_session import Session
 from config import ApplicationConfig
 from models import db
+from sqlalchemy import MetaData, Table, create_engine
+import redis
 
 def create_app():
     # create and configure the app
@@ -16,17 +18,17 @@ def create_app():
     server_session = Session(app)
 
 
-    import auth, salesman, events
+    import auth, salesman, events, bookings
     auth.init_app(bcrypt)
     app.register_blueprint(auth.bp)
     app.register_blueprint(salesman.bp)
     app.register_blueprint(events.bp)
-
+    app.register_blueprint(bookings.bp)
     
-   
     CORS(app, supports_credentials=True)
     db.init_app(app)
     with app.app_context():
+        db.drop_all()
         db.create_all()
     
     return app
