@@ -49,12 +49,12 @@ class EventsModel(db.Model):
 class PassengersModel(db.Model):
     __tablename__ = "passengers"
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    event_id = db.Column(db.String(32), unique=True)
-    booker_id = db.Column(db.String(32), unique=True)
+    event_id = db.Column(db.String(32))
+    booker_id = db.Column(db.String(32))
     year = db.Column(db.Integer)
-    month = db.Column(db.Integer)
+    month = db.Column(db.String(20))
     day = db.Column(db.Integer)
-    start_time = db.Column(db.Integer)
+    start_time = db.Column(db.String(20))
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(345), unique=True)

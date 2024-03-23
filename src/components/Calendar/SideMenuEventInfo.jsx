@@ -10,6 +10,9 @@ export default function EventInfo(props) {
 
   const event = props.ev.eventInfo
   const date = props.ev.date
+  const passengers = props.ev.passengerInfo
+
+  console.log("Passenger Information", passengers)
 
   // takes in the event information and displays it in the column
   return (
@@ -26,8 +29,9 @@ export default function EventInfo(props) {
             placeholder='Search Here ...' />
         </div>
       </div>
-      <GuestInfo />
-      <GuestInfo />
+      {passengers && passengers.map((passenger) => {
+        return <GuestInfo passenger={passenger}/>
+      })}
     </div >
   )
 }

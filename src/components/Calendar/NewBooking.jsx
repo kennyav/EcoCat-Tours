@@ -30,9 +30,9 @@ export default function NewBooking(props) {
    const [commissionReceived, setCommissionReceived] = useState(false)
    const [bookerId, setBookerId] = useState('')
    const eventId = props.eventId
-   const year = props.date.year
-   const month = props.date.month
-   const day = props.date.day
+   const year = props.year
+   const month = props.month
+   const day = props.day
    const startTime = props.startTime
 
 
@@ -139,7 +139,7 @@ export default function NewBooking(props) {
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 {props.date.month} {props.date.day}, {props.date.year} @ {props.startTime}
+                                 {props.month} {props.day}, {props.year} @ {props.startTime}
                               </p>
                            </div>
 

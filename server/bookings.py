@@ -71,7 +71,15 @@ def create_booking():
 
 @bp.route('/<event_id>/<year>/<month>/<day>/<start_time>', methods=["GET"])
 def get_all_events(event_id, year, month, day, start_time):
-    selected_passengers = PassengersModel.query.filter(event_id=event_id, year=year, month=month, day=day, start_time=start_time)
+    selected_passengers = PassengersModel.query.filter_by(
+        event_id = event_id,
+        year = year,
+        month = month,
+        day = day,
+        start_time = start_time
+        ).all()
+    
+    print(selected_passengers)
     if selected_passengers:
         return jsonify([passenger.serialize() for passenger in selected_passengers]), 200
     else:

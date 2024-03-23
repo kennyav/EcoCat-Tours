@@ -13,11 +13,12 @@ export default function Event(props) {
 
    const [open, setOpen] = useState(false)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
-   const getPassengerURL = "//127.0.0.1:8000/bookings/" + props.event.event_id + props.currentYear + props.currentMonth + props.dayNumber + props.event.event_start_time
+   const getPassengerURL = `//127.0.0.1:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.event.event_start_time}`
 
 
    // /<event_id>/<year>/<month>/<day>/<start_time>
    const getPassengers = async () => {
+      console.log(getPassengerURL)
       try {
          const resp = await httpClient.get(getPassengerURL);
          console.log(resp.data)
@@ -33,6 +34,17 @@ export default function Event(props) {
             }
          });
       } catch (error) {
+         props.setSignal({
+            globalOpen: true,
+            localOpen: props.index,
+            info: props.event,
+            passengerInfo: null, // if it doesn't work then it will be blank
+            eDate: {
+               month: props.month,
+               day: props.day,
+               year: props.year
+            }
+         });
          console.log("Error", error)
       }
    }
@@ -58,7 +70,7 @@ export default function Event(props) {
          props.setSignal({
             globalOpen: false,
             localOpen: -1,
-            passengerInfo: {},
+            passengerInfo: null,
             info: {},
             eDate: {}
          })
@@ -81,7 +93,7 @@ export default function Event(props) {
             <div className="z-10 w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
-                  <NewBooking date={props.signal.eDate} startTime={props.event.event_start_time} eventId={props.event.id} />
+                  <NewBooking year={props.year} month={props.month} day={props.day} startTime={props.event.event_start_time} eventId={props.event.id} />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />

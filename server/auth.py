@@ -10,6 +10,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 def init_app(bcrypt):
+
+    @bp.route("/<user_id>", methods=["GET"])
+    def get_booker(user_id):        
+        user = UserModel.query.filter_by(id=user_id).first()
+        print("User ==============", user)
+        if user:
+            return jsonify({
+                "id": user.id,
+                "email": user.email
+            }) 
+        else: 
+            return jsonify({"message": "No user found"}), 404
+    
     @bp.route("/@me", methods=["GET"])
     def get_current_user():
         user_id = session.get("user_id")
