@@ -62,7 +62,6 @@ def init_app(bcrypt):
         email = request.json["email"]
         password = request.json["password"]
 
-
         # TODO: compare the hashed password with the requested passwords
         user = UserModel.query.filter_by(email=email).first()
 
@@ -70,7 +69,7 @@ def init_app(bcrypt):
             return jsonify({"error": "Unauthorized"}), 401
 
         if not bcrypt.check_password_hash(user.password, password):
-            return jsonify({"error": "Unauthorized"}), 401
+            return jsonify({"error": "Unauthorized, wrong password"}), 401
         
         # chrome issue 
         session["user_id"] = user.id

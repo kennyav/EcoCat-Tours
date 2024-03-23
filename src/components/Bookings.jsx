@@ -15,7 +15,6 @@ export default function Bookings({ setTitle }) {
     date: {},
     clicked: false
   });
-  const [padding, setPadding] = useState('pr-[41px]')
   const [events, setEvents] = useState([])
 
   useEffect(() => {
@@ -30,19 +29,11 @@ export default function Bookings({ setTitle }) {
   }, []);
 
 
-  useEffect(() => {
-    setPadding('pr-[0px]')
-  }, [eventClick]);
-
   return (
-    <div className={`flex flex-row ${padding} pl-[41px]`}>
-      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'} events={events}/>
-      <div className={`pl-[20px] transition-transform transform translate-x-${eventClick.clicked ? '0' : 'full'}`}>
-        {eventClick.clicked &&
-          <div className="duration-700 ease-in-out">
-            <SideMenuEventInfo ev={eventClick}/>
-          </div>
-        }
+    <div className={`flex flex-row relative overflow-x-hidden pl-[41px] transition-all duration-500 ${eventClick.clicked ? 'pr-[300px]' : 'pr-[41px]'}`}>
+      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'} events={events} />
+      <div className={`pl-[20px] absolute right-0 transition-all duration-500 ${eventClick.clicked ? 'translate-x-0' : 'translate-x-full'}`}>
+        <SideMenuEventInfo ev={eventClick} />
       </div>
     </div>
   )
