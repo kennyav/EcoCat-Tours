@@ -9,7 +9,7 @@ export default function UserMenu() {
 
    const logoutUser = async () => {
       await httpClient.post("//127.0.0.1:8000/auth/logout");
-      window.location.href = "/";
+      window.location.href = "/login";
     };
 
 
