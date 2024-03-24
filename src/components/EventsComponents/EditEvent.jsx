@@ -8,7 +8,7 @@ export default function EditEvent({ setTitle }) {
    const { title, event } = location.state;
 
    return (
-      <div className={`flex flex-row pl-[41px]`}>
+      <div className={`flex px-[41px]`}>
          <Calendar setEventClick={() => { }} setTitle={setTitle} title={title} events={[event]}/>
       </div>
    )

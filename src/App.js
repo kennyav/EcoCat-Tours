@@ -30,7 +30,7 @@ function App(props) {
           <NavBar />
           <div className='flex flex-col w-full h-screen bg-[#F2F8FC]'>
             <Header title={props.title} />
-            <div className='w-full h-screen  py-[20px] overflow-scroll'>
+            <div className='w-full h-screen py-[20px] overflow-scroll overflow-x-hidden'>
               <Bookings setTitle={(title) => props.setTitle(title)} />
             </div>
           </div>

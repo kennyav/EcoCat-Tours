@@ -30,9 +30,10 @@ export default function Bookings({ setTitle }) {
 
 
   return (
-    <div className={`flex flex-row relative overflow-x-hidden pl-[41px] transition-all duration-500 ${eventClick.clicked ? 'pr-[300px]' : 'pr-[41px]'}`}>
-      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'} events={events} />
-      <div className={`pl-[20px] absolute right-0 transition-all duration-500 ${eventClick.clicked ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`flex flex-row overflow-x-hidden pl-[41px]`}>
+      <Calendar setEventClick={setEventClick} eventClick={eventClick.clicked} setTitle={setTitle} title={'Bookings'} events={events} />
+      
+      <div className={`pl-[20px] right-0 transition-all duration-500 ${eventClick.clicked ? 'translate-x-0' : 'translate-x-full'}`}>
         <SideMenuEventInfo ev={eventClick} />
       </div>
     </div>

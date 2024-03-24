@@ -46,7 +46,7 @@ export default function Calendar(props) {
    }, [currentMonth, currentYear]);
 
    return (
-      <div className={`flex flex-col w-full h-full rounded-[25px] bg-white`}>
+      <div className={`flex flex-col w-full h-full transition-all duration-500 ${props.eventClick ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
          <Header
             currentMonth={currentMonth}
             setCurrentMonth={setCurrentMonth}
