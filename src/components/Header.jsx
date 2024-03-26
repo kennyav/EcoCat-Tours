@@ -27,7 +27,7 @@ export default function Header(props) {
             <div className='bg-white p-2 rounded-full'>
                <SettingsIcon />
             </div>
-            <div className='flex flex-row items-center gap-3 pr-[41px]'>
+            <div className='flex flex-row items-center gap-3 pr-[41px] z-10'>
                {/* <div className='font-KumbhSans text-[10px] leading-normal text-[#1E1E1E] flex flex-col'>
                   <p className='font-bold'>Body Copy Bold</p>
                   <p>Body Copy</p>

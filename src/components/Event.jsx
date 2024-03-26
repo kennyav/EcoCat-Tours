@@ -3,14 +3,24 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient'
 
-export default function Event(props) {
+export default function Event({ event, days, schedule }) {
    const [isOpen, setIsOpen] = useState(false)
    const navigate = useNavigate();
-   const eventID = props.event.id
-   let deleteEventURL = "http://127.0.0.1:8000/events/delete/" + eventID
+   const eventId = event.id
+   let deleteEventURL = "http://127.0.0.1:8000/events/delete/" + eventId
+   // Function to format the time
+   const formatTime = (timeStr) => {
+      const date = new Date(timeStr);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+   };
 
-   const handleClick = (title, info) => {
-      navigate('/edit-events', { state: { title: title, info: info, event: props.event } });
+   // Format start and end times
+   const startTime = formatTime(schedule.start_time);
+   const endTime = formatTime(schedule.end_time);
+
+   const handleClick = (event) => {
+      console.log(event)
+      navigate('/edit-events', { state: { event: event } });
    }
 
    function closeModal() {
@@ -32,17 +42,18 @@ export default function Event(props) {
       }
    }
 
+
    // props.title, props.info, props.days, props.time
    return (
       <div className='flex flex-col w-full h-auto rounded-lg bg-white font-KumbhSans'>
 
          <div className='flex flex-row items-center justify-between px-[30px] pt-[30px]'>
             <div>
-               <h1 className='text-[20px] font-bold'>{props.title}</h1>
-               <p className='text-[10px]'>{props.info}</p>
+               <h1 className='text-[20px] font-bold'>{event.title}</h1>
+               <p className='text-[10px]'>{event.info}</p>
             </div>
             <button
-               onClick={() => handleClick(props.title, props.info)}
+               onClick={() => handleClick(event)}
                className='bg-transparent hover:bg-[#0E5BB5] hover:text-white py-2.5 px-8 border border-[#0E5BB5] hover:border-transparent rounded-full text-[10px]'>
                Edit
             </button>
@@ -51,8 +62,8 @@ export default function Event(props) {
          <div className='flex flex-row items-center justify-between px-[30px] py-[30px]'>
             <div className="">
                <h1 className='text-[14px] font-bold'>Availability</h1>
-               <p className='text-[10px]'>Days: {props.days}</p>
-               <p className='text-[10px]'>Times: {props.event.event_start_time} to {props.event.event_end_time}</p>
+               <p className='text-[10px]'>Days: {days}</p>
+               <p className='text-[10px]'>Times: {startTime} to {endTime}</p>
             </div>
             <button
                onClick={openModal}

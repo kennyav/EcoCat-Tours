@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient';
 
 // components
-import Event from './Event'
+import EventLoader from './EventsComponents/EventLoader';
 
 // icons
 import { EventAddIcon } from './Icons'
@@ -25,6 +25,7 @@ export default function Events({ setTitle }) {
   }, []);
 
 
+
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -37,17 +38,12 @@ export default function Events({ setTitle }) {
 
   return (
     <div className='grid grid-cols-2 grid-flow-row gap-5 px-[41px] py-[46px] place-content-center'>
-      {events.map((event) => {
-        let daysMapping = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        let days = event.event_run_days.split('').map((bit, index) => bit === '1' ? daysMapping[index] : null).filter(day => day !== null).join(', ');
-        return (
-          <Event key={event.id} title={event.event_title} info={event.event_description} days={days} event={event} />
-        )
-      })}
+      {events && events.map((event) => (
+        <EventLoader key={event.id} event={event} eventId={event.id} />
+      ))}
       <div
-        onClick={() => handleClick()}
         className='flex items-center justify-center'>
-        <EventAddIcon />
+        <EventAddIcon onClick={() => handleClick()} />
       </div>
     </div>
   )

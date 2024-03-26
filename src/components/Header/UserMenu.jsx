@@ -31,8 +31,8 @@ export default function UserMenu() {
                leaveTo="transform opacity-0 scale-95"
             >
                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                  <div className="px-1 py-1 ">
-                     <Menu.Item>
+                  {/*<div className="px-1 py-1 ">
+                      <Menu.Item>
                         {({ active }) => (
                            <button
                               className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
@@ -118,23 +118,23 @@ export default function UserMenu() {
                            </button>
                         )}
                      </Menu.Item>
-                  </div>
+                  </div> */}
                   <div className="px-1 py-1">
                      <Menu.Item>
                         {({ active }) => (
                            <button
                               onClick={() => logoutUser()}
-                              className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                              className={`${active ? 'bg-blue-500 text-white' : 'text-gray-900'
                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                            >
                               {active ? (
                                  <DeleteActiveIcon
-                                    className="mr-2 h-5 w-5 text-violet-400"
+                                    className="mr-2 h-5 w-5 text-blue-400"
                                     aria-hidden="true"
                                  />
                               ) : (
                                  <DeleteInactiveIcon
-                                    className="mr-2 h-5 w-5 text-violet-400"
+                                    className="mr-2 h-5 w-5 text-blue-400"
                                     aria-hidden="true"
                                  />
                               )}
@@ -340,11 +340,11 @@ function DeleteInactiveIcon(props) {
             width="10"
             height="10"
             fill="#EDE9FE"
-            stroke="#A78BFA"
+            stroke="#0E5BB5"
             strokeWidth="2"
          />
-         <path d="M3 6H17" stroke="#A78BFA" strokeWidth="2" />
-         <path d="M8 6V4H12V6" stroke="#A78BFA" strokeWidth="2" />
+         <path d="M3 6H17" stroke="#0E5BB5" strokeWidth="2" />
+         <path d="M8 6V4H12V6" stroke="#0E5BB5" strokeWidth="2" />
       </svg>
    )
 }
@@ -362,8 +362,8 @@ function DeleteActiveIcon(props) {
             y="6"
             width="10"
             height="10"
-            fill="#8B5CF6"
-            stroke="#C4B5FD"
+            fill="#0E5BB5"
+            stroke="#2766ae"
             strokeWidth="2"
          />
          <path d="M3 6H17" stroke="#C4B5FD" strokeWidth="2" />

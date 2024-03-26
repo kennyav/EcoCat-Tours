@@ -70,13 +70,14 @@ def create_booking():
 
 
 @bp.route('/<event_id>/<year>/<month>/<day>/<start_time>', methods=["GET"])
-def get_all_events(event_id, year, month, day, start_time):
+def get_passengers(event_id, year, month, day, start_time):
+    truncated_date = start_time.rsplit(" ", 4)[0]
     selected_passengers = PassengersModel.query.filter_by(
         event_id = event_id,
         year = year,
         month = month,
         day = day,
-        start_time = start_time
+        start_time = truncated_date
         ).all()
     
     print(selected_passengers)

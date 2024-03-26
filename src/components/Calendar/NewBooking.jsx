@@ -130,7 +130,7 @@ export default function NewBooking(props) {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                      >
-                        <Dialog.Panel className="w-full max-w-screen-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Panel className="w-full max-w-screen-md transform rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                            <Dialog.Title
                               as="h3"
                               className="text-lg font-medium leading-6 text-gray-900"
@@ -168,9 +168,14 @@ export default function NewBooking(props) {
 
                            {/* Number of Passenger section*/}
                            <div className='py-[10px] flex flex-col'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Passengers *
-                              </h3>
+                              <div className="flex w-full justify-between">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Passengers *
+                                 </h3>
+                                 <h3 className='py-[10px] pr-28 text-lg font-medium leading-6 text-gray-900'>
+                                    Pricing *
+                                 </h3>
+                              </div>
                               <div className='flex flex-col gap-2'>
                                  <div className='inline-flex justify-between gap-1 items-center'>
                                     <DropDownMenu list={passengerNumbers} setCurrent={setAdultNumber} current={adultNumber} />
@@ -231,18 +236,25 @@ export default function NewBooking(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Reservation Notes
                               </h3>
-                              <input value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2 h-32' />
+                              <textarea rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' />
                            </div>
 
 
 
-                           <div className="mt-4">
+                           <div className="flex w-full justify-between  mt-4">
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                  onClick={() => creatingNewBooking()}
                               >
                                  Create
+                              </button>
+                              <button
+                                 type="button"
+                                 className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                 onClick={() => closeModal(true)}
+                              >
+                                 Cancel
                               </button>
                            </div>
                         </Dialog.Panel>
