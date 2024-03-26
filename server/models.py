@@ -103,6 +103,29 @@ class PassengersModel(db.Model):
             'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
 
+class TransactionsModel(db.Model):
+    __tablename__ = "transactions"
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    customer_name = db.Column(db.String(80), nullable=False)
+    transaction_time = db.Column(DateTime, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    event_type = db.Column(db.String(80), nullable=False)
+    event_details = db.Column(db.String(255), nullable=False)
+    recipient = db.Column(db.String(80), nullable=False)
+    created_at = db.Column(DateTime, default=datetime.now)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "customer_name": self.customer_name,
+            "transaction_time": self.transaction_time,
+            "amount": self.amount,
+            "event_type": self.event_type,
+            "event_details": self.event_details,
+            "recipient": self.recipient,
+            "created_at": self.created_at,
+        }
+
 # class ReservationsModel(BaseModelWithID):
 #     event_id: str = Field(..., description="Identifier of the event being reserved")
 #     customer_id: str = Field(..., description="Identifier of the customer making the reservation")

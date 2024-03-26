@@ -6,3 +6,5 @@ python.env
 flask-session
 redis
 flask-cors
+# new
+python-dotenv
