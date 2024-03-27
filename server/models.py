@@ -112,7 +112,7 @@ class PassengersModel(db.Model):
     start_time = db.Column(db.String(20))
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(345), unique=True)
+    email = db.Column(db.String(345))
     phone = db.Column(db.String(20), nullable=False)
     adult_passengers = db.Column(db.Integer)
     children_passengers = db.Column(db.Integer)
@@ -158,11 +158,18 @@ class PassengersModel(db.Model):
             'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
 
-
-# class TransactionsModel(BaseModelWithID):
-#     customer_id: str = Field(..., description="Identifier of the customer making the payment")
-#     reservation_id: str = Field(..., description="Identifier of the reservation")
-#     amount: float = Field(..., gt=0, description="Amount paid")
-#     payment_method: str = Field(..., description="Method of payment (e.g., credit card, PayPal, etc.)")
-#     status: str = Field(..., description="Status of the transaction (e.g., pending, completed, refunded)")
-#     created_at: datetime = Field(default_factory=datetime.now)
+class TransactionsModel(db.Model):
+    __tablename__ = "transactions"
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    passenger_ids = db.Column(db.String(32)) # make this a list of passenger ids
+    recipient = db.Column(db.String(80), nullable=False)
+    created_at = db.Column(DateTime, default=datetime.now)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "customer_name": self.customer_name,
+            "passenger_ids": self.passenger_ids,
+            "recipient": self.recipient,
+            "created_at": self.created_at,
+        }
