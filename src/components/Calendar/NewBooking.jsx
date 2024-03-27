@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from 'react'
 import httpClient from '../../httpClient'
 
 // components
-import DropDownMenu from './DropDownMenu'
+import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
@@ -40,7 +40,6 @@ export default function NewBooking(props) {
       (async () => {
          try {
             const resp = await httpClient.get("http://127.0.0.1:8000/auth/@me");
-            console.log("User id", typeof resp.data.id)
             setBookerId(resp.data.id);
          } catch (error) {
             console.log("Not authenticated");

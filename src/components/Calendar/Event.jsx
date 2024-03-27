@@ -14,6 +14,11 @@ export default function Event(props) {
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
    const getPassengerURL = `//127.0.0.1:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.scheduledEvent.start_time}`
+   // Parse the string into a Date object
+   const dateObject = new Date(props.scheduledEvent.start_time);
+
+   // Extract the time component
+   const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
    console.log("Passenger Url", getPassengerURL)
    // /<event_id>/<year>/<month>/<day>/<start_time>
@@ -81,7 +86,7 @@ export default function Event(props) {
             onClick={() => handleClick()}
             className={`w-full h-auto p-[11px] ${open ? 'text-black bg-[#00B628]' : 'text-black/90 bg-[#C4D2DC]'} rounded-[10px] justify-start items-start gap-1 hover:shadow-lg`}>
             <div className="justify-start items-start gap-2">
-               <div className={`${buttonCSS} font-semibold`}>{props.scheduledEvent.start_time} {props.event.title} </div>
+               <div className={`${buttonCSS} font-semibold`}>{timeString} {props.event.title} </div>
                <div className={`${buttonCSS}`}>{props.event.capacity} Openings</div>
             </div>
          </button>

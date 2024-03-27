@@ -85,7 +85,9 @@ export default function AddEvent() {
    }
 
    const registerEvent = async () => {
-      setCapacity(adultNumber + childrenNumber + infantNumber)
+      const total = adultNumber + childrenNumber + infantNumber
+      setCapacity(total)
+      console.log("Capacity", capacity)
       const days = runDays.join('')
 
       try {

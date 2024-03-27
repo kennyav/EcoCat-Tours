@@ -46,7 +46,6 @@ def schedule_event():
     repeated = data.get('repeated')
     repeated_weekly = data.get('repeatedWeekly')
     run_days = data.get('days')
-
     start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     # Combine the end time and end day into a single datetime object
@@ -114,6 +113,14 @@ def schedule_event():
                 # so we add 6 to get to monday
                 index = 0
                 current_date = current_date + timedelta(days=7)
+    else:
+        new_schedule = EventsScheduleModel(
+            event_id=event_id,
+            start_time=start_date,
+            end_time=end_date,
+            days=run_days)
+        db.session.add(new_schedule)
+        db.session.commit()
 
     return jsonify({"message": "Event scheduled successfully"})
 
