@@ -8,7 +8,9 @@ from models import db
 def create_app():
     # create and configure the app
     app = Flask(__name__)
-    app.debug = True    
+    #app.debug = True   
+    app.config['DEBUG'] = True 
+    app.run(port=8000)
     #app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
     app.config.from_object(ApplicationConfig)
 

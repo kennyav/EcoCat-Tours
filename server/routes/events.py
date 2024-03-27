@@ -3,10 +3,38 @@ from flask import (
 )
 from datetime import datetime, timedelta
 from models import db, EventsModel, EventsScheduleModel
-from sqlalchemy import extract
+from sqlalchemy import extract, and_, or_
 
 # this creates the auth blueprint
 bp = Blueprint('events', __name__, url_prefix='/events')
+
+def check_for_overlapping_events(event_id, start_date, end_date):
+    overlapping_event = EventsScheduleModel.query.filter(
+        and_(
+            EventsScheduleModel.event_id == event_id,
+            or_(
+                and_(
+                    EventsScheduleModel.start_time <= start_date,
+                    EventsScheduleModel.end_time >= start_date
+                ),
+                and_(
+                    EventsScheduleModel.start_time <= end_date,
+                    EventsScheduleModel.end_time >= end_date
+                ),
+                and_(
+                    EventsScheduleModel.start_time >= start_date,
+                    EventsScheduleModel.end_time <= end_date
+                )
+            )
+        )
+    ).first()
+
+    print("Overlapping events? value ==========================", overlapping_event)
+
+    return overlapping_event
+
+
+
 
 @bp.route('/schedule-event', methods=["POST"]) 
 def schedule_event():
@@ -27,10 +55,16 @@ def schedule_event():
     end_date = datetime(end_date_day.year, end_date_day.month, end_date_day.day, end_time.hour, end_time.minute, end_time.second)
 
 
+    # Check if there are any overlapping events
+    # overlapping_event = check_for_overlapping_events(event_id, start_date, end_date)
 
+    # if overlapping_event:
+    #     return jsonify({"message": "Overlapping event exists"}), 400
+    
     # run days format "MTWThFSaSu"
     if repeated:
         index = start_date.weekday()
+        print("[DEBUG] Weekday", start_date, index)
         current_date = datetime(start_date.year, start_date.month, start_date.day,
                              start_date.hour, start_date.minute, start_date.second)
         
@@ -39,6 +73,7 @@ def schedule_event():
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
+                    print("[DEBUG]", day)
                     if day == "1":
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
@@ -60,6 +95,7 @@ def schedule_event():
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
+                    print("[DEBUG]", day)
                     if day == "1":
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
@@ -77,7 +113,7 @@ def schedule_event():
                 # after we check Sun
                 # so we add 6 to get to monday
                 index = 0
-                current_date = current_date + timedelta(days=5)
+                current_date = current_date + timedelta(days=7)
 
     return jsonify({"message": "Event scheduled successfully"})
 
@@ -145,10 +181,10 @@ def get_scheduled_events(event_ids, date_str):
     # Initialize an empty list to store the events
     events = []
 
-    # Iterate through each event ID
+
+    
     for event_id in event_id_list:
-        if event_id is None:
-            continue  # Skip to the next iteration if event_id is None
+        # Iterate through each event ID
         
         event_schedule = EventsScheduleModel.query.filter(
             EventsScheduleModel.event_id == event_id,

@@ -22,7 +22,7 @@ const EventLoader = ({ eventId, event }) => {
     return null; // Render nothing until the schedule is loaded
   }
 
-  const daysMapping = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const daysMapping = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const days = schedule.days.split('').map((bit, index) => bit === '1' ? daysMapping[index] : null).filter(day => day !== null).join(', ');
 
   return <Event event={event} days={days} schedule={schedule} />;

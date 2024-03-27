@@ -25,13 +25,13 @@ export default function Header(props) {
       if (newMonthIndex < 0) {
          props.setCurrentMonth({
             name:  MONTH_NAMES[11],
-            index: props.currentMonth.index
+            index: props.currentMonth.index - 1
          }); // December of the previous year
          props.setCurrentYear(props.currentYear - 1);
       } else {
          props.setCurrentMonth({
             name: MONTH_NAMES[newMonthIndex],
-            index: props.currentMonth.index
+            index: props.currentMonth.index - 1
          });
       }
    };
@@ -41,13 +41,13 @@ export default function Header(props) {
       if (newMonthIndex > 11) {
          props.setCurrentMonth({
             name:  MONTH_NAMES[0],
-            index: props.currentMonth.index
+            index: props.currentMonth.index + 1
          })
          props.setCurrentYear(props.currentYear + 1);
       } else {
          props.setCurrentMonth({
             name: MONTH_NAMES[newMonthIndex],
-            index: props.currentMonth.index
+            index: props.currentMonth.index + 1
          });
       }
    };

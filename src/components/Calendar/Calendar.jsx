@@ -38,8 +38,7 @@ export default function Calendar({ events, setEventClick, eventClick, setTitle, 
       const month = MONTH_NAMES.indexOf(currentMonth.name);
 
       const firstDayOfMonth = new Date(year, month, 1);
-      const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
-
+      const startingDayOfWeek = firstDayOfMonth.getDay() - 1; // 0 for Monday, 6 for Sunday, etc.
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const daysArray = Array.from({ length: daysInMonth + startingDayOfWeek }, (_, i) => {
          if (i < startingDayOfWeek) {

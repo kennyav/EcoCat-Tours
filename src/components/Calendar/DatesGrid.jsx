@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Event from './Event';
 import httpClient from '../../httpClient';
 
-const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export default function DatesGrid({ dates, currentMonth, currentYear, setEventClick, events }) {
    const [signal, setSignal] = useState({
@@ -31,6 +31,7 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
             const promises = dates.map(async (dayNumber) => {
                if (dayNumber) {
                   const date = new Date(currentYear, currentMonth.index, dayNumber)
+                  console.log("Date", date)
                   const fetchedEvents = await getEvents(date, eventIds);
                   return fetchedEvents;
                } else {
@@ -38,21 +39,22 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
                }
             });
             const resolvedEvents = await Promise.all(promises);
+            console.log("Events", resolvedEvents)
             setScheduledEvents(resolvedEvents);
          } catch (error) {
-            console.error('Error fetching events:', error);
+            // console.error('Error fetching events:', error);
          } 
       };
 
       fetchEvents();
-   }, [dates, currentMonth, currentYear, events]);
+   }, [dates, currentMonth.index, currentYear, events]);
 
    const getEvents = async (date, ids) => {
       try {
          const resp = await httpClient.get(`http://127.0.0.1:8000/events/${ids}/${date}`);
          return resp.data;
       } catch (error) {
-         console.error('Error fetching events:', error);
+         // console.error('Error fetching events:', error);
          return [];
       }
    };
