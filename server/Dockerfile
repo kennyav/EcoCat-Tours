@@ -29,7 +29,7 @@ COPY requirements.txt .
 
 # Install dependencies
 RUN pip install -r requirements.txt
-RUN export FLASK_RUN_PORT=8000
+#RUN export FLASK_RUN_PORT=8000
 
 # Copy the content of the local src directory to the working directory
 COPY . .
