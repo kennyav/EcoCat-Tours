@@ -1,7 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
-import { useNavigate } from 'react-router-dom';
 
 // components
 import { TransactionOptionsIcon } from '../Icons'
@@ -15,7 +14,6 @@ export default function SalesmanInfo(props) {
    const [notes, setNotes] = useState(props.person.notes)
    const [edit, setEdit] = useState(false)
 
-   const navigate = useNavigate();
    const salesmenId = props.person.id
    let editSalesmenURL = "http://127.0.0.1:8000/salesmen/edit-salesmen/" + salesmenId
    let deleteSalesmanURL = "http://127.0.0.1:8000/salesmen/delete/" + salesmenId

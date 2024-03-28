@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 
 import Calendar from '../Calendar/Calendar'
 import SideMenuEventInfo from '../Calendar/SideMenuEventInfo'
-import { paste } from '@testing-library/user-event/dist/paste';
 
 export default function EditEvent({ setTitle }) {
    const location = useLocation();

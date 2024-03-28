@@ -16,12 +16,25 @@ services:
     ports:
       - '6379:6379'
     volumes:
-      - /server/instance/db.sqlite
+       - type: volume
+         source: redis_data
+         target: server/instance/db.sqlite
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment: 
+      - REDIS_HOSTS=local:redis:6379
+    ports: 
+      - "8081:8081"
+    depends_on: 
+      - redis
   backend:
     tty: true 
     # restart: always
-    command: ["pip", "install",  "python-dotenv"]
+    # command: ["pip", "install",  "python-dotenv"]
     
     build: ./server
     ports:
      - "8000:8000"
+
+volumes:
+  redis_data:
