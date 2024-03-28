@@ -22,12 +22,13 @@ def check_for_overlapping_events(start_date, end_date):
             print("[DEBUG]", event.start_time.time(), event.end_time.time())
             print("[DEBUG]", start_date.time(), end_date.time())
             # Check if event overlaps with the provided date range
-            if (start_date.time() > event.start_time.time() and start_date.time() < event.end_time.time()):
+            if (start_date.time() >= event.start_time.time() and start_date.time() <= event.end_time.time()):
                 return True
-            elif (end_date.time() > event.start_time.time() and end_date.time() < event.end_time.time()):
+            elif (end_date.time() >= event.start_time.time() and end_date.time() <= event.end_time.time()):
                 return True
-            elif (start_date.time() < event.start_time.time() and end_date.time() > event.end_time.time()):
+            elif (start_date.time() <= event.start_time.time() and end_date.time() >= event.end_time.time()):
                 return True
+           
 
     return False
 

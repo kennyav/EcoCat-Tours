@@ -32,13 +32,17 @@ export default function AddEvent() {
       const formattedDate = moment(test).format('yyyy-DD-MM HH:mm:ss');
       setFormattedDate(formattedDate)
 
-      let test2 = new Date(endDate)
-      const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
-      setFormattedEndDate(formattedDate2)
-
       let test3 = new Date(endTime)
       const formattedDate3 = moment(test3).format('yyyy-DD-MM HH:mm:ss');
       setFormattedEndTime(formattedDate3)
+
+      if (endDate) {
+         let test2 = new Date(endDate)
+         const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
+         setFormattedEndDate(formattedDate2)
+      } else {
+         setFormattedEndDate(formattedDate3)
+      }
 
    }, [endDate, endTime, startDate])
 
@@ -137,7 +141,10 @@ export default function AddEvent() {
          console.log(schedule.data)
 
       } catch (error) {
-         console.log("error", error.response)
+         console.log("OVERLAP ERROR HERE", error.response)
+         if (error.response.status === 400) {
+            alert("Event overlaps, would you like to continue?")
+         }
       }
       // Redirect to /events URL
       navigate('/events');

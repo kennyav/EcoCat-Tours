@@ -1,11 +1,48 @@
-FROM python:3.8-slim
+FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 
-WORKDIR /app
-EXPOSE 5050 
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
 
-COPY . ./
+WORKDIR /poop
+COPY requirements.txt /poop/
 
-CMD ["flask", "run", "--host=0.0.0.0"]
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
+
+COPY . /poop/
+
+
+ENTRYPOINT ["flask"]
+RUN ["pip","install",""]
+CMD ["run", "-p", "8000", "--host", "0.0.0.0"]
+
+FROM builder as dev-envs
+
+RUN <<EOF
+apk update
+apk add git bash
+EOF
+
+RUN <<EOF
+addgroup -S docker
+adduser -S --shell /bin/bash --ingroup docker vscode
+EOF
+# install Docker tools (cli, buildx, compose)
+COPY --from=gloursdocker/docker / /
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
