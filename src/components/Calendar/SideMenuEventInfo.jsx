@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 // icon
 import { SearchIcon } from '../Icons'
@@ -7,13 +7,27 @@ import { SearchIcon } from '../Icons'
 import GuestInfo from './GuestInfo'
 
 export default function EventInfo(props) {
+  const event = props.ev.eventInfo
+  const date = props.ev.date
+  const passengers = props.ev.passengerInfo
+  const eventTimeInfo = date.month ? `${date.month} ${date.day}, ${date.year} @ ${event.start_time}` : 'No Event Selected'
+
+  // have to use states for this
+  const [title, setTitle] = useState()
+
+
+  useEffect(() => {
+    setTitle(event.title)
+  }, [event])
+
+  console.log("Passenger Information", passengers)
 
   // takes in the event information and displays it in the column
   return (
-    <div div className="flex flex-col w-[272px] h-[852px] font-['Kumbh Sans'] rounded-tl-[25px] bg-white" >
-      <div className='flex flex-col pl-[26px] pt-[30px]'>
-        <div className="text-stone-900 text-xl font-bold">Snorkel Cruise </div>
-        <div className="text-stone-900 text-[10px] font-normal pb-[14px]">Thursday, November 30th, 2023 @ 1pm</div>
+    <div className={`flex flex-col w-[272px] min-h-full h-auto font-['Kumbh Sans'] rounded-l-[25px] bg-white`} >
+      <div className='flex flex-col pl-[26px] py-[30px]'>
+        <div className="text-stone-900 text-xl font-bold">{title}</div>
+        <div className="text-stone-900 text-[10px] font-normal pb-[14px]">{eventTimeInfo}</div>
         <div className='flex bg-sky-50 rounded-[25px]'>
           <SearchIcon />
           <textarea
@@ -23,8 +37,9 @@ export default function EventInfo(props) {
             placeholder='Search Here ...' />
         </div>
       </div>
-      <GuestInfo />
-      <GuestInfo />
+      {passengers && passengers.map((passenger) => {
+        return <GuestInfo passenger={passenger}/>
+      })}
     </div >
   )
 }

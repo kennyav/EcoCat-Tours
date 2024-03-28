@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import httpClient from '../httpClient';
 
 // calendar components
 import SideMenuEventInfo from './Calendar/SideMenuEventInfo'
@@ -8,22 +9,40 @@ export default function Bookings({ setTitle }) {
 
   // depending on the current week we are in, we will pull data that
   // represents the events for the booking
-  const [eventClick, setEventClick] = useState(false);
-  const [padding, setPadding] = useState('pr-[41px]')
+  const [eventClick, setEventClick] = useState({
+    eventInfo: {},
+    passengerInfo: [],
+    date: {},
+    clicked: false
+  });
+  const [events, setEvents] = useState([])
+
+  console.log("bookings click", eventClick.clicked)
 
   useEffect(() => {
-    setPadding('pr-[0px]')
-  }, [eventClick]);
+    (async () => {
+      try {
+        const resp = await httpClient.get("//127.0.0.1:8000/events/@events");
+        setEvents(resp.data)
+      } catch (error) {
+        console.log("Error", error)
+      }
+    })();
+
+  }, []);
+
 
   return (
-    <div className={`flex flex-row ${padding} pl-[41px]`}>
-      <Calendar setEventClick={setEventClick} setTitle={setTitle} title={'Bookings'}/>
-      <div className={`pl-[20px] transition-transform transform translate-x-${eventClick ? '0' : 'full'}`}>
-        {eventClick &&
-          <div className="duration-700 ease-in-out">
-            <SideMenuEventInfo eventClick={eventClick}/>
-          </div>
-        }
+    <div className={`flex flex-row overflow-x-hidden pl-[41px]`}>
+      <Calendar 
+        setEventClick={setEventClick} 
+        eventClick={eventClick.clicked} 
+        setTitle={setTitle} 
+        title={'Bookings'} 
+        events={events} />
+      
+      <div className={`pl-[20px] right-0 transition-all duration-500 ${eventClick.clicked ? 'translate-x-0' : 'translate-x-full'}`}>
+        <SideMenuEventInfo ev={eventClick} />
       </div>
     </div>
   )

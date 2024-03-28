@@ -2,36 +2,43 @@ import React, { useState, useEffect } from 'react'
 
 // components
 import Header from './Header';
-import Dates from './Dates';
+import DatesGrid from './DatesGrid';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export default function Calendar(props) {
+export default function Calendar({ events, setEventClick, eventClick, setTitle, title }) {
 
-   const [currentMonth, setCurrentMonth] = useState('');
+   const [currentMonth, setCurrentMonth] = useState({
+      name: "",
+      index: -1
+   });
    const [currentYear, setCurrentYear] = useState(2024);
    const [daysOfMonth, setDaysOfMonth] = useState([]);
 
    useEffect(() => {
-      props.setTitle(props.title);
-   }, [props]);
+      setTitle(title);
+   }, []);
 
    useEffect(() => {
       const today = new Date();
       const yearIndex = today.getFullYear()
+      const monthIndex = today.getMonth()
       const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(today);
 
       setCurrentYear(yearIndex)
-      setCurrentMonth(`${monthName}`);
+      setCurrentMonth({
+         name: `${monthName}`,
+         index: monthIndex
+      });
    }, []);
+
 
    useEffect(() => {
       const year = currentYear;
-      const month = MONTH_NAMES.indexOf(currentMonth);
+      const month = MONTH_NAMES.indexOf(currentMonth.name);
 
       const firstDayOfMonth = new Date(year, month, 1);
-      const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
-
+      const startingDayOfWeek = firstDayOfMonth.getDay() - 1; // 0 for Monday, 6 for Sunday, etc.
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const daysArray = Array.from({ length: daysInMonth + startingDayOfWeek }, (_, i) => {
          if (i < startingDayOfWeek) {
@@ -45,16 +52,19 @@ export default function Calendar(props) {
    }, [currentMonth, currentYear]);
 
    return (
-      <div className={`flex flex-col w-full h-full rounded-[25px] bg-white`}>
+      <div className={`flex flex-col w-full h-full transition-all duration-500 ${eventClick ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
          <Header
             currentMonth={currentMonth}
             setCurrentMonth={setCurrentMonth}
             currentYear={currentYear}
             setCurrentYear={setCurrentYear}
          />
-         <Dates
+         <DatesGrid
             dates={daysOfMonth}
-            setEventClick={props.setEventClick}
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            setEventClick={setEventClick}
+            events={events}
          />
       </div>
    )

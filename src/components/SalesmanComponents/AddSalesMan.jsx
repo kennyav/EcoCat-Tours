@@ -51,7 +51,7 @@ export default function AddSalesMan() {
 
    return (
       <div className="px-[41px]">
-         <div className="flex w-full h-[286px] bg-white rounded-[25px]">
+         <div className="flex w-full h-auto p-6 bg-white rounded-[25px]">
             <div className="w-1/2 pl-[32px] pt-[37px]">
                <div className="inline-flex w-full justify-between">
                   <div className='gap-1'>

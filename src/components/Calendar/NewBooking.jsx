@@ -1,21 +1,87 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
+import httpClient from '../../httpClient'
 
 // components
-import DropDownMenu from './DropDownMenu'
+import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
 
-const SOURCE = [{ name: 'Cash', }, { name: 'Credit Card', }, { name: 'Voucher', }]
-const STATUS = [{ name: 'In Full', }, { name: 'Partial Payment', }, { name: 'No Payment', }]
-const RECEIVED = [{ name: 'No' }, { name: 'Yes' }]
+const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
+const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
+const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 export default function NewBooking(props) {
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+   const [firstName, setFirstName] = useState('');
+   const [lastName, setLastName] = useState('');
+   const [phoneNumber, setPhoneNumber] = useState('');
+   const [notes, setNotes] = useState('');
+   const [email, setEmail] = useState('');
    const [adultNumber, setAdultNumber] = useState(0)
    const [childrenNumber, setChildrenNumber] = useState(0)
    const [infantNumber, setInfantNumber] = useState(0)
+   const [adultPrice, setAdultPrice] = useState(0)
+   const [childrenPrice, setChildrenPrice] = useState(0)
+   const [infantPrice, setInfantPrice] = useState(0)
    const [shirts, setShirts] = useState(0)
    const [foodOptions, setFoodOption] = useState(0)
+   const [paymentSource, setPaymentSource] = useState('')
+   const [paymentStatus, setPaymentStatus] = useState('')
+   const [commissionReceived, setCommissionReceived] = useState(false)
+   const [bookerId, setBookerId] = useState('')
+   const eventId = props.eventId
+   const year = props.year
+   const month = props.month
+   const day = props.day
+   const startTime = props.startTime
+
+
+   useEffect(() => {
+      (async () => {
+         try {
+            const resp = await httpClient.get("http://127.0.0.1:8000/auth/@me");
+            setBookerId(resp.data.id);
+         } catch (error) {
+            console.log("Not authenticated");
+         }
+      })();
+   }, []);
+
+   const creatingNewBooking = async () => {
+      const totalPrice = (adultNumber * adultPrice) + (childrenNumber * childrenPrice) + (infantNumber * infantPrice)
+      try {
+         const resp = await httpClient.post("//127.0.0.1:8000/bookings/create-booking", {
+            year,
+            month,
+            day,
+            startTime,
+            eventId,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            notes,
+            paymentSource,
+            paymentStatus,
+            commissionReceived,
+            bookerId,
+            adultNumber,
+            childrenNumber,
+            infantNumber,
+            adultPrice,
+            childrenPrice,
+            infantPrice,
+            foodOptions,
+            shirts,
+            totalPrice
+         });
+         setIsOpen(false)
+         return resp
+      } catch (error) {
+         setIsOpen(false)
+         alert("error", error)
+      }
+   }
 
    let [isOpen, setIsOpen] = useState(false)
 
@@ -63,28 +129,28 @@ export default function NewBooking(props) {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                      >
-                        <Dialog.Panel className="w-full max-w-screen-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Panel className="w-full max-w-screen-md transform rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                            <Dialog.Title
                               as="h3"
                               className="text-lg font-medium leading-6 text-gray-900"
                            >
-                              John Smith
+                              New Booking
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 Thursday, Febuary 8 2024 @ 1pm
+                                 {props.month} {props.day}, {props.year} @ {props.startTime}
                               </p>
                            </div>
 
-                           <div class="w-full h-[0px] border border-slate-300"></div>
+                           <div className="w-full h-[0px] border border-slate-300"></div>
 
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Customer Name *
+                                 Customer/Party Name *
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input className='border rounded-[10px] p-2' placeholder='First Name' />
-                                 <input className='border rounded-[10px] p-2' placeholder='Last Name' />
+                                 <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' placeholder='First Name' />
+                                 <input value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' placeholder='Last Name' />
                               </div>
                            </div>
 
@@ -93,17 +159,22 @@ export default function NewBooking(props) {
                                  Contact Information *
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input type='email' className='border rounded-[10px] p-2' placeholder='Email Address' />
-                                 <input type='tel' className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                                 <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' placeholder='Email Address' />
+                                 <input type='tel' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className='border rounded-[10px] p-2' placeholder='Phone Number' />
                               </div>
                            </div>
 
 
                            {/* Number of Passenger section*/}
                            <div className='py-[10px] flex flex-col'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Passengers *
-                              </h3>
+                              <div className="flex w-full justify-between">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Passengers *
+                                 </h3>
+                                 <h3 className='py-[10px] pr-28 text-lg font-medium leading-6 text-gray-900'>
+                                    Pricing *
+                                 </h3>
+                              </div>
                               <div className='flex flex-col gap-2'>
                                  <div className='inline-flex justify-between gap-1 items-center'>
                                     <DropDownMenu list={passengerNumbers} setCurrent={setAdultNumber} current={adultNumber} />
@@ -111,7 +182,7 @@ export default function NewBooking(props) {
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 12+</h1>
                                     </div>
-                                    <input className='border rounded-[10px] p-2' placeholder='Price' />
+                                    <input value={adultPrice} onChange={(e) => setAdultPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
                                  </div>
                                  <div className='inline-flex justify-between gap-1 items-center'>
                                     <DropDownMenu list={passengerNumbers} setCurrent={setChildrenNumber} current={childrenNumber} />
@@ -119,7 +190,7 @@ export default function NewBooking(props) {
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
                                     </div>
-                                    <input className='border rounded-[10px] p-2' placeholder='Price' />
+                                    <input value={childrenPrice} onChange={(e) => setChildrenPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
                                  </div>
                                  <div className='inline-flex justify-between gap-1 items-center'>
                                     <DropDownMenu list={passengerNumbers} setCurrent={setInfantNumber} current={infantNumber} />
@@ -127,7 +198,7 @@ export default function NewBooking(props) {
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
                                     </div>
-                                    <input className='border rounded-[10px] p-2' placeholder='Price' />
+                                    <input value={infantPrice} onChange={(e) => setInfantPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
                                  </div>
                               </div>
                            </div>
@@ -153,9 +224,9 @@ export default function NewBooking(props) {
                               </div>
                            </div>
                            <div className='inline-flex w-full justify-between'>
-                              <RadioGroup label={"Payment Source*"} plans={SOURCE} />
-                              <RadioGroup label={"Payment Status*"} plans={STATUS} />
-                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} />
+                              <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} />
+                              <RadioGroup label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} />
+                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} />
                            </div>
 
 
@@ -164,18 +235,25 @@ export default function NewBooking(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Reservation Notes
                               </h3>
-                              <input className='border rounded-[10px] p-2 h-32'/>
+                              <textarea rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' />
                            </div>
 
 
 
-                           <div className="mt-4">
+                           <div className="flex w-full justify-between  mt-4">
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                 onClick={closeModal}
+                                 onClick={() => creatingNewBooking()}
                               >
                                  Create
+                              </button>
+                              <button
+                                 type="button"
+                                 className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                 onClick={() => closeModal(true)}
+                              >
+                                 Cancel
                               </button>
                            </div>
                         </Dialog.Panel>

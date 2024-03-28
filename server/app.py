@@ -8,37 +8,29 @@ from models import db
 def create_app():
     # create and configure the app
     app = Flask(__name__)
-    app.debug = True    
-    app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
+    #app.debug = True   
+    app.config['DEBUG'] = True 
+    app.run(port=8000)
+    #app.config['SESSION_COOKIE_NAME'] = '__stripe_mid'
     app.config.from_object(ApplicationConfig)
 
     bcrypt = Bcrypt(app)
     server_session = Session(app)
 
-    # if test_config is None:
-    #     # load the instance config, if it exists, when not testing
-    #     app.config.from_pyfile('config.py', silent=True)
-    # else:
-    #     # load the test config if passed in
-    #     app.config.from_mapping(test_config)
 
-    import auth, salesman
+    import routes.auth as auth, routes.salesman as salesman, routes.events as events, routes.bookings as bookings
     auth.init_app(bcrypt)
-    app.register_blueprint(auth.bp, name="auth_blueprint")
+    app.register_blueprint(auth.bp)
     app.register_blueprint(salesman.bp)
-
+    app.register_blueprint(events.bp)
+    app.register_blueprint(bookings.bp)
     
-   
     CORS(app, supports_credentials=True)
     db.init_app(app)
     with app.app_context():
+        #db.drop_all()
         db.create_all()
     
     return app
 
 
-
-
-
-# if __name__ == "__main__":
-#     app.run(debug=True)

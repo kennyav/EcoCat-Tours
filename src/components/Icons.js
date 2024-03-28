@@ -119,15 +119,17 @@ export function TransactionOptionsIcon() {
    )
 }
 
-export function EventAddIcon() {
+export function EventAddIcon({onClick}) {
    return (
-      <svg className='hover:shadow-lg hover:cursor-pointer' xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 90 90" fill="none">
-         <circle cx="45" cy="45" r="45" fill="#0E5BB5" />
-         <rect x="42" y="25" width="6" height="40" rx="3" fill="white" />
-         <rect x="65" y="42" width="6" height="40" rx="3" transform="rotate(90 65 42)" fill="white" />
+      <svg onClick={() => onClick()} className="w-[100px] h-[100px] text-[#0E5BB5] hover:text-[#0e88b5] hover:cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+         <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
       </svg>
+
    )
 }
+
+
+
 
 export function CalendarDownIcon() {
    return (

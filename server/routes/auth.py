@@ -7,10 +7,21 @@ from models import db, UserModel
 
 # this creates the auth blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-# bcrypt = Bcrypt(create_app())
-# server_session = Session(create_app())
+
 
 def init_app(bcrypt):
+
+    @bp.route("/<user_id>", methods=["GET"])
+    def get_booker(user_id):        
+        user = UserModel.query.filter_by(id=user_id).first()
+        if user:
+            return jsonify({
+                "id": user.id,
+                "email": user.email
+            }) 
+        else: 
+            return jsonify({"message": "No user found"}), 404
+    
     @bp.route("/@me", methods=["GET"])
     def get_current_user():
         user_id = session.get("user_id")
@@ -51,13 +62,14 @@ def init_app(bcrypt):
         email = request.json["email"]
         password = request.json["password"]
 
+        # TODO: compare the hashed password with the requested passwords
         user = UserModel.query.filter_by(email=email).first()
 
         if user is None:
             return jsonify({"error": "Unauthorized"}), 401
 
         if not bcrypt.check_password_hash(user.password, password):
-            return jsonify({"error": "Unauthorized"}), 401
+            return jsonify({"error": "Unauthorized, wrong password"}), 401
         
         # chrome issue 
         session["user_id"] = user.id
