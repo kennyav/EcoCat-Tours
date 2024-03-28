@@ -2,26 +2,24 @@ version: '3'
 
 services:
   frontend:
-    tty: true 
-    #restart: always
+    tty: true
     build: .
     ports:
        - '3000:3000'
-    #volumes:
-     # - /node_modules
-      # make sure i add persistent later
-    #environment
-  redis: 
+
+  redis:
     image: redis
     ports:
-      - '6379:6379'
-    volumes:
-      - /server/instance/db.sqlite
+      - "6379:6379"
+
   backend:
-    tty: true 
-    # restart: always
-    command: ["pip", "install",  "python-dotenv"]
-    
-    build: ./server
+    build:
+      context: ./server  # Adjust the context to point to your backend directory
+      dockerfile: Dockerfile
     ports:
-     - "8000:8000"
+      - "8000:8000"
+    depends_on:
+      - redis
+    volumes:
+      - ./server/instance:/instance  # Mount SQLite database volume
+

@@ -1,48 +1,38 @@
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+# FROM python:3.8.5
+# ENV VIRTUAL_ENV=/.venv/
+# RUN python3 -m venv $VIRTUAL_ENV
+# ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# EXPOSE 8000
+
+# WORKDIR /backend
+# COPY requirements.txt /backend/
+# RUN pip install -r /backend/requirements.txt
+# RUN export FLASK_RUN_PORT=8000
+# RUN pip install python-dotenv
 
 
+# COPY . ./
+# CMD ["flask", "run"]
+# Use the official Python image as base
+FROM python:3.8.5
 
-WORKDIR /poop
-COPY requirements.txt /poop/
+# Set environment variables
+ENV VIRTUAL_ENV=/.venv/
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r requirements.txt
+# Set the working directory in the container
+WORKDIR /backend
 
-COPY . /poop/
+# Copy the dependencies file to the working directory
+COPY requirements.txt .
 
+# Install dependencies
+RUN pip install -r requirements.txt
+#RUN export FLASK_RUN_PORT=8000
 
-ENTRYPOINT ["flask"]
-RUN ["pip","install",""]
-CMD ["run", "-p", "8000", "--host", "0.0.0.0"]
+# Copy the content of the local src directory to the working directory
+COPY . .
 
-FROM builder as dev-envs
-
-RUN <<EOF
-apk update
-apk add git bash
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Command to run the Flask application
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
