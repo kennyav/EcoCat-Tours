@@ -14,10 +14,10 @@ export default function Login() {
          console.log(resp.data)
          window.location.href = "/"
       } catch (error) {
-         console.log("error", error.response.status)
-         if (error.response.status === 401) {
-            alert("Invalid credentials");
-         }
+         console.log("error", error.response)
+         // if (error.response.status === 401) {
+         //    alert("Invalid credentials");
+         // }
       }
    };
 
