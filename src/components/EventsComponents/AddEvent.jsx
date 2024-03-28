@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Switch } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
 import { DatePicker, TimePicker } from 'antd';
+import moment from 'moment';
 
 import httpClient from '../../httpClient';
 
@@ -22,6 +23,24 @@ export default function AddEvent() {
    const [infantNumber, setInfantNumber] = useState(0)
    const [createdBy, setCreatedBy] = useState()
    const navigate = useNavigate();
+   const [formattedStartDate, setFormattedDate] = useState();
+   const [formattedEndDate, setFormattedEndDate] = useState();
+   const [formattedEndTime, setFormattedEndTime] = useState();
+
+   useEffect(() => {
+      let test = new Date(startDate)
+      const formattedDate = moment(test).format('yyyy-DD-MM HH:mm:ss');
+      setFormattedDate(formattedDate)
+
+      let test2 = new Date(endDate)
+      const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
+      setFormattedEndDate(formattedDate2)
+
+      let test3 = new Date(endTime)
+      const formattedDate3 = moment(test3).format('yyyy-DD-MM HH:mm:ss');
+      setFormattedEndTime(formattedDate3)
+
+   }, [endDate, endTime, startDate])
 
    const [days, setDays] = useState([
       {
@@ -86,8 +105,8 @@ export default function AddEvent() {
 
    const registerEvent = async () => {
       const total = adultNumber + childrenNumber + infantNumber
-      setCapacity(total)
-      console.log("Capacity", capacity)
+      setCapacity(parseInt(total))
+      console.log("Capacity", capacity, typeof (adultNumber), adultNumber, childrenNumber, infantNumber)
       const days = runDays.join('')
 
       try {
@@ -104,22 +123,21 @@ export default function AddEvent() {
 
 
          const eventId = resp.data.id
-
          const schedule = await httpClient.post("//127.0.0.1:8000/events/schedule-event", {
             eventId,
-            startDate,
+            formattedStartDate,
+            formattedEndDate,
+            formattedEndTime,
             repeated,
             repeatedWeekly,
             repeatedBiWeekly,
             days,
-            endTime,
-            endDate
          });
 
          console.log(schedule.data)
 
       } catch (error) {
-         alert("error", error.response.status)
+         console.log("error", error.response)
       }
       // Redirect to /events URL
       navigate('/events');
@@ -283,7 +301,7 @@ export default function AddEvent() {
                   </h3>
                   <div className='flex flex-col gap-2'>
                      <div className='inline-flex gap-5 items-center'>
-                        <input value={adultNumber} onChange={(e) => setAdultNumber(e.target.value)} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
+                        <input value={adultNumber} onChange={(e) => setAdultNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
                         <div>
                            <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
                            <h1 className='text-xs text-left font-light text-gray-900'>{aboveDrinkingAge ? "Ages 21+" : "Ages 12+"}</h1>
@@ -293,7 +311,7 @@ export default function AddEvent() {
                         <div className="flex flex-col gap-2">
                            <div className='inline-flex gap-5 items-center'>
 
-                              <input value={childrenNumber} onChange={(e) => setChildrenNumber(e.target.value)} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
+                              <input value={childrenNumber} onChange={(e) => setChildrenNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
                               <div>
                                  <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
                                  <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
@@ -301,7 +319,7 @@ export default function AddEvent() {
                            </div>
                            <div className='inline-flex gap-5 items-center'>
 
-                              <input value={infantNumber} onChange={(e) => setInfantNumber(e.target.value)} className='w-20 h-12 rounded-full border py-2 px-8  hover:border-blue-500  cursor-pointer' />
+                              <input value={infantNumber} onChange={(e) => setInfantNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8  hover:border-blue-500  cursor-pointer' />
                               <div>
                                  <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
                                  <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>

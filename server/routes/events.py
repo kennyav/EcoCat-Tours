@@ -3,67 +3,67 @@ from flask import (
 )
 from datetime import datetime, timedelta
 from models import db, EventsModel, EventsScheduleModel
-from sqlalchemy import extract, and_, or_
+from sqlalchemy import extract 
 
 # this creates the auth blueprint
 bp = Blueprint('events', __name__, url_prefix='/events')
 
-def check_for_overlapping_events(event_id, start_date, end_date):
-    overlapping_event = EventsScheduleModel.query.filter(
-        and_(
-            EventsScheduleModel.event_id == event_id,
-            or_(
-                and_(
-                    EventsScheduleModel.start_time <= start_date,
-                    EventsScheduleModel.end_time >= start_date
-                ),
-                and_(
-                    EventsScheduleModel.start_time <= end_date,
-                    EventsScheduleModel.end_time >= end_date
-                ),
-                and_(
-                    EventsScheduleModel.start_time >= start_date,
-                    EventsScheduleModel.end_time <= end_date
-                )
-            )
-        )
-    ).first()
+def check_for_overlapping_events(start_date, end_date):
+    # Retrieve all events on the same day as start_date
+    events_on_same_day = EventsScheduleModel.query.filter(
+        extract('year', EventsScheduleModel.start_time) == start_date.year,
+        extract('month', EventsScheduleModel.start_time) == start_date.month,
+        extract('day', EventsScheduleModel.start_time) == start_date.day
+    ).all()
 
-    print("Overlapping events? value ==========================", overlapping_event)
+    if events_on_same_day:
+        # Check for overlapping events
+        for event in events_on_same_day:
+            print("[DEBUG]", event.start_time.time(), event.end_time.time())
+            print("[DEBUG]", start_date.time(), end_date.time())
+            # Check if event overlaps with the provided date range
+            if (start_date.time() > event.start_time.time() and start_date.time() < event.end_time.time()):
+                return True
+            elif (end_date.time() > event.start_time.time() and end_date.time() < event.end_time.time()):
+                return True
+            elif (start_date.time() < event.start_time.time() and end_date.time() > event.end_time.time()):
+                return True
 
-    return overlapping_event
+    return False
 
 
 
 
 @bp.route('/schedule-event', methods=["POST"]) 
 def schedule_event():
+    print("[DEBUG] DO We Get Here?")
     data = request.json
     event_id = data.get('eventId')
-    start = data.get('startDate')
-    end = data.get('endTime')
-    end_day = data.get('endDate')
+    start = data.get('formattedStartDate')
+    end = data.get('formattedEndDate')
+    end_t = data.get('formattedEndTime')
     repeated = data.get('repeated')
     repeated_weekly = data.get('repeatedWeekly')
     run_days = data.get('days')
-    start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ')
+    start_date = datetime.strptime(start, '%Y-%d-%m %H:%M:%S')
+    end_date = datetime.strptime(end, '%Y-%d-%m %H:%M:%S')
+    end_time = datetime.strptime(end_t, '%Y-%d-%m %H:%M:%S')
 
-    # Combine the end time and end day into a single datetime object
-    end_date_day = datetime.strptime(end_day, '%Y-%m-%dT%H:%M:%S.%fZ')
-    end_time = datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ').time()
-    end_date = datetime(end_date_day.year, end_date_day.month, end_date_day.day, end_time.hour, end_time.minute, end_time.second)
-
+    print("[DEBUG] start time", start, type(start))
+    print("[DEBUG] end time", end_time, type(end))
 
     # Check if there are any overlapping events
-    # overlapping_event = check_for_overlapping_events(event_id, start_date, end_date)
+    overlapping_event = check_for_overlapping_events(start_date, end_time)
 
-    # if overlapping_event:
-    #     return jsonify({"message": "Overlapping event exists"}), 400
+    if overlapping_event:
+        event = EventsModel.query.get(event_id)
+        db.session.delete(event)
+        db.session.commit()
+        return jsonify({"message": "Overlapping event exists"}), 400
     
     # run days format "MTWThFSaSu"
     if repeated:
         index = start_date.weekday()
-        print("[DEBUG] Weekday", start_date, index)
         current_date = datetime(start_date.year, start_date.month, start_date.day,
                              start_date.hour, start_date.minute, start_date.second)
         
@@ -72,7 +72,6 @@ def schedule_event():
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
-                    print("[DEBUG]", day)
                     if day == "1":
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
@@ -94,12 +93,11 @@ def schedule_event():
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
-                    print("[DEBUG]", day)
                     if day == "1":
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
                             start_time=current_date,
-                            end_time=end_date,
+                            end_time=end_time,
                             days=run_days
                             )
                         db.session.add(new_schedule)
@@ -117,7 +115,7 @@ def schedule_event():
         new_schedule = EventsScheduleModel(
             event_id=event_id,
             start_time=start_date,
-            end_time=end_date,
+            end_time=end_time,
             days=run_days)
         db.session.add(new_schedule)
         db.session.commit()
@@ -126,6 +124,7 @@ def schedule_event():
 
 @bp.route('/register-event', methods=["POST"])
 def register_event():
+   print("[DEBUG] Do we get to register event?")
    data = request.json
    title = data.get('title')
    description = data.get('description')
@@ -135,6 +134,7 @@ def register_event():
    children_number = data.get('childrenNumber')
    infant_number = data.get('infantNumber')
    created_by = data.get('createdBy')
+   print("[DEBUG] Do we set variables right?")
 
    # Create a new event in the database
    new_event = EventsModel(
@@ -148,12 +148,16 @@ def register_event():
      created_by=created_by
     )
 
+   print("[DEBUG] Do we create a new event model")
    db.session.add(new_event)
    db.session.commit()
+   print("[DEBUG] Do we add and commit event?")
 
    if new_event:
+        print("[DEBUG] Do we get return 200?")
         return jsonify(new_event.serialize()), 200
    else:
+       print("[DEBUG] Do we return 404?")
        return jsonify({"message": "No passengers found for the specified event and time"}), 404
 
 
@@ -212,10 +216,14 @@ def get_scheduled_events(event_ids, date_str):
 @bp.route("/delete/<event_id>", methods=["DELETE"])
 def delete_salesman(event_id):
     event = EventsModel.query.get(event_id)
+    eventSchedule = EventsScheduleModel.query.filter_by(event_id=event_id).all()
 
     if not event:
         return jsonify({"error": "Event not found"}), 404
-
+    for schedule in eventSchedule:
+        db.session.delete(schedule)
+        db.session.commit()
+    
     db.session.delete(event)
     db.session.commit()
 
