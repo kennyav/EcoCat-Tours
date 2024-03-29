@@ -1,7 +1,9 @@
+from datetime import datetime
 from flask import (
    Blueprint, jsonify, request
 )
-from models import db, TransactionsModel
+from sqlalchemy import func
+from models import db, TransactionsModel, PassengersModel
 import json
 
 bp = Blueprint('transactions', __name__, url_prefix='/transactions')
@@ -18,17 +20,31 @@ def create_transaction():
 
     return jsonify(new_transaction.serialize()), 200
 
-@bp.route('/@transactions', methods=["GET"])
-def get_transactions():
-    transactions = TransactionsModel.query.all()
-    return jsonify([transaction.serialize() for transaction in transactions]), 200
 
-@bp.route('/<id>', methods=["GET"])
-def get_transaction(id):
-    transaction = TransactionsModel.query.get(id)
-    if transaction is None:
-        return jsonify({"error": "Transaction not found"}), 404
-    return jsonify(transaction.serialize()), 200
+@bp.route('/get-transactions/<int:month>/<int:day>/<int:year>', methods=["GET"])
+def get_transactions(month, day, year):
+    try:
+        date_string = f"{year}-{month}-{day}"  # Construct the date string
+        search_date = datetime.strptime(date_string, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Please provide the date in 'MM-DD-YYYY' format."}), 400
+
+    # Filter transactions based on the date part of the created_at column
+    transactions = TransactionsModel.query.filter(func.date(TransactionsModel.created_at) == search_date).all()
+
+    # Check if any transactions are found for the provided date
+    if not transactions:
+        return jsonify({"error": "No transactions found for the provided date"}), 404
+   
+    passengers = []
+    for transaction in transactions:
+        passenger = PassengersModel.query.filter_by(id=transaction.passenger_id).first()  # Retrieve the passenger object
+        if passenger:
+            passengers.append(passenger)
+
+    # Serialize the passengers and return them
+    serialized_passengers = [passenger.serialize() for passenger in passengers]
+    return jsonify(serialized_passengers), 200
 
 @bp.route('/<id>', methods=["PUT"])
 def update_transaction(id):
