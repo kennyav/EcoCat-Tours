@@ -24,7 +24,6 @@ import NotFound from './components/NotFound';
 
 
 export default function Router() {
-   const [title, setTitle] = useState("Bookings");
    const [userAuthenticated, setUserAuthenticated] = useState(false);
 
    useEffect(() => {
@@ -43,17 +42,17 @@ export default function Router() {
       <Routes>
          <Route path='/register' element={<Register />} />
          <Route path='/login' element={<Login />} />
-         <Route path='*' element={<NotFound />} />
+         <Route path='*' element={<NotFound authenticated={userAuthenticated}/>} />
          {userAuthenticated &&
             <>
-               <Route path="/" element={<App title={title} setTitle={(title) => setTitle(title)} />} />
-               <Route path="/salesman" element={<Menus title={title}> <Salesman setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path="/add-newsalesman" element={<Menus title={title}><AddSalesMan setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path="/events" element={<Menus title={title}> <Events setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path="/transactions" element={<Menus title={title}> <Transactions setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path='/transaction-details' element={<Menus title={title}> <TransactionDetails setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path='/edit-events' element={<Menus title={title}> <EditEvent setTitle={(title) => setTitle(title)} /> </Menus>} />
-               <Route path='/add-events' element={<Menus title={title}> <AddEvent setTitle={(title) => setTitle(title)} /> </Menus>} />
+               <Route path="/" element={<Menus><App /></Menus>}/>
+               <Route path="/salesman" element={<Menus> <Salesman /> </Menus>} />
+               <Route path="/add-newsalesman" element={<Menus><AddSalesMan /> </Menus>} />
+               <Route path="/events" element={<Menus> <Events /> </Menus>} />
+               <Route path="/transactions" element={<Menus> <Transactions /> </Menus>} />
+               <Route path='/transaction-details' element={<Menus> <TransactionDetails /> </Menus>} />
+               <Route path='/edit-events' element={<Menus> <EditEvent /> </Menus>} />
+               <Route path='/add-events' element={<Menus> <AddEvent /> </Menus>} />
             </>
          }
       </Routes>

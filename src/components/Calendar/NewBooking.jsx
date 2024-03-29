@@ -29,11 +29,14 @@ export default function NewBooking(props) {
    const [paymentStatus, setPaymentStatus] = useState('')
    const [commissionReceived, setCommissionReceived] = useState(false)
    const [bookerId, setBookerId] = useState('')
+   // const [passengerId, setPassengerId] = useState('')
+   const [isOpen, setIsOpen] = useState(false)
    const eventId = props.eventId
    const year = props.year
    const month = props.month
    const day = props.day
    const startTime = props.startTime
+
 
 
    useEffect(() => {
@@ -48,6 +51,7 @@ export default function NewBooking(props) {
    }, []);
 
    const creatingNewBooking = async () => {
+      let passengerId = ''
       const totalPrice = (adultNumber * adultPrice) + (childrenNumber * childrenPrice) + (infantNumber * infantPrice)
       try {
          const resp = await httpClient.post("//127.0.0.1:8000/bookings/create-booking", {
@@ -75,15 +79,35 @@ export default function NewBooking(props) {
             shirts,
             totalPrice
          });
-         setIsOpen(false)
-         return resp
+         passengerId = resp.data.id
+
       } catch (error) {
          setIsOpen(false)
          alert("error", error)
+      } finally {
+
+         try {
+            const capacity = adultNumber + childrenNumber + infantNumber
+            const changeCapacity = await httpClient.put(`//127.0.0.1:8000/events/edit-capacity/${eventId}`, {
+               capacity
+            });
+            console.log(changeCapacity.data)
+         } catch (error) {
+
+         }
+
+         try {
+            const transaction = await httpClient.post("//127.0.0.1:8000/transactions/create-transaction", {
+               passengerId
+            })
+            console.log(transaction.data)
+         } catch (error) {
+            console.log("Error", error)
+         }
+
+         setIsOpen(false)
       }
    }
-
-   let [isOpen, setIsOpen] = useState(false)
 
    function closeModal() {
       setIsOpen(false)

@@ -3,10 +3,13 @@ import { Switch } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
 import { DatePicker, TimePicker } from 'antd';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { update } from '../../reducers/loginSlice';
 
 import httpClient from '../../httpClient';
 
 export default function AddEvent() {
+   const dispatch = useDispatch()
    const [title, setTitle] = useState("")
    const [description, setDescription] = useState("")
    const [startDate, setStartDate] = useState()
@@ -16,7 +19,6 @@ export default function AddEvent() {
    const [repeated, setRepeated] = useState(false)
    const [repeatedWeekly, setRepeatedWeekly] = useState(false)
    const [repeatedBiWeekly, setReaptedBiWeekly] = useState(false)
-   const [capacity, setCapacity] = useState(0)
    const [aboveDrinkingAge, setAboveDrinkingAge] = useState(false)
    const [adultNumber, setAdultNumber] = useState(0)
    const [childrenNumber, setChildrenNumber] = useState(0)
@@ -26,6 +28,10 @@ export default function AddEvent() {
    const [formattedStartDate, setFormattedDate] = useState();
    const [formattedEndDate, setFormattedEndDate] = useState();
    const [formattedEndTime, setFormattedEndTime] = useState();
+
+   useEffect(() => {
+      dispatch(update("Add Event"))
+   }, [dispatch])
 
    useEffect(() => {
       let test = new Date(startDate)
@@ -108,9 +114,7 @@ export default function AddEvent() {
    }
 
    const registerEvent = async () => {
-      const total = adultNumber + childrenNumber + infantNumber
-      setCapacity(parseInt(total))
-      console.log("Capacity", capacity, typeof (adultNumber), adultNumber, childrenNumber, infantNumber)
+      const capacity = adultNumber + childrenNumber + infantNumber
       const days = runDays.join('')
 
       try {
@@ -308,7 +312,7 @@ export default function AddEvent() {
                   </h3>
                   <div className='flex flex-col gap-2'>
                      <div className='inline-flex gap-5 items-center'>
-                        <input value={adultNumber} onChange={(e) => setAdultNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
+                        <input value={adultNumber || 0} onChange={(e) => setAdultNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 text-center hover:border-blue-500 cursor-pointer' />
                         <div>
                            <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
                            <h1 className='text-xs text-left font-light text-gray-900'>{aboveDrinkingAge ? "Ages 21+" : "Ages 12+"}</h1>
@@ -318,7 +322,7 @@ export default function AddEvent() {
                         <div className="flex flex-col gap-2">
                            <div className='inline-flex gap-5 items-center'>
 
-                              <input value={childrenNumber} onChange={(e) => setChildrenNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8 hover:border-blue-500 cursor-pointer' />
+                              <input value={childrenNumber || 0} onChange={(e) => setChildrenNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 text-center hover:border-blue-500 cursor-pointer' />
                               <div>
                                  <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
                                  <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
@@ -326,7 +330,7 @@ export default function AddEvent() {
                            </div>
                            <div className='inline-flex gap-5 items-center'>
 
-                              <input value={infantNumber} onChange={(e) => setInfantNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 px-8  hover:border-blue-500  cursor-pointer' />
+                              <input value={infantNumber || 0} onChange={(e) => setInfantNumber(parseInt(e.target.value))} className='w-20 h-12 rounded-full border py-2 text-center  hover:border-blue-500  cursor-pointer' />
                               <div>
                                  <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
                                  <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>

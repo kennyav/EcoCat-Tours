@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux';
+import { update } from '../reducers/loginSlice';
 
 // components
 import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
 import httpClient from '../httpClient';
 
-export default function Salesman({ setTitle }) {
+export default function Salesman() {
   const [salesmen, setSalesmen] = useState([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
     (async () => {
@@ -21,8 +24,8 @@ export default function Salesman({ setTitle }) {
 
 
   useEffect(() => {
-    setTitle("Salesman");
-  }, [setTitle]);
+    dispatch(update("Salesmen"))
+  }, [dispatch]);
 
   return (
     <div className='px-[41px]'>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux';
+import { update } from '../../reducers/loginSlice';
 
 // components
 import Header from './Header';
@@ -6,8 +8,9 @@ import DatesGrid from './DatesGrid';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export default function Calendar({ events, setEventClick, eventClick, setTitle, title }) {
+export default function Calendar({ events, setEventClick, eventClick, title }) {
 
+   const dispatch = useDispatch()
    const [currentMonth, setCurrentMonth] = useState({
       name: "",
       index: -1
@@ -16,8 +19,8 @@ export default function Calendar({ events, setEventClick, eventClick, setTitle, 
    const [daysOfMonth, setDaysOfMonth] = useState([]);
 
    useEffect(() => {
-      setTitle(title);
-   }, []);
+      dispatch(update(title));
+   }, [dispatch, title]);
 
    useEffect(() => {
       const today = new Date();

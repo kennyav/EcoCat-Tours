@@ -23,10 +23,13 @@ def check_for_overlapping_events(start_date, end_date):
             print("[DEBUG]", start_date.time(), end_date.time())
             # Check if event overlaps with the provided date range
             if (start_date.time() >= event.start_time.time() and start_date.time() <= event.end_time.time()):
+                print("1 ====================================================")
                 return True
             elif (end_date.time() >= event.start_time.time() and end_date.time() <= event.end_time.time()):
+                print("2 ====================================================")
                 return True
             elif (start_date.time() <= event.start_time.time() and end_date.time() >= event.end_time.time()):
+                print("3 ====================================================")
                 return True
            
 
@@ -181,32 +184,54 @@ def get_event_schedule(event_id):
     else:
         return jsonify({"message": "No events found"}), 404
     
-@bp.route('/<event_ids>/<date_str>', methods=["GET"])
-def get_scheduled_events(event_ids, date_str):
-    # Parse the date string
-    truncated_date = date_str.rsplit(" ", 4)[0]
-    date = datetime.strptime(truncated_date, "%a %b %d %Y %H:%M:%S")
+@bp.route('/get-event/<event_id>', methods=["GET"])
+def get_event(event_id):
+    event_schedule = EventsModel.query.filter_by(id=event_id).first()
+    
+    if event_schedule:
+        return jsonify(event_schedule.serialize()), 200
+    else:
+        return jsonify({"message": "No events found"}), 404
+    
 
+@bp.route('/dates', methods=["GET"])
+def get_scheduled_events():
     # Split the event IDs and convert them to a list
-    event_id_list = event_ids.split(',')
+    ids = request.args.get('eventIds')
+    year = request.args.get('currentYear')
+    month = request.args.get('currentMonth')
+    dates = request.args.get('dates')
+
+    ids_list = ids.split(',')
+    dates_list = dates.split(',')
 
     # Initialize an empty list to store the events
     events = []
 
+    # loop through all the days and see if there are events
+    # return {day_number, [List of Events]} if true
+    # return nothing if false
+    for day in dates_list:
+        print("Day", day,type(day), type(month), type(year))
+        if day:
+            date = datetime(int(year), int(month), int(day))
+            day_events = []
+            for event_id in ids_list:
+                # Iterate through each event ID, because for edit events we need
+                # to just return the event we are editing
+                # with home page we just have to struggle a little with
+                # having to go through the loop to accomodate edits
+                event_schedule = EventsScheduleModel.query.filter(
+                    EventsScheduleModel.event_id == event_id,
+                    extract('year', EventsScheduleModel.start_time) == date.year,
+                    extract('month', EventsScheduleModel.start_time) == date.month,
+                    extract('day', EventsScheduleModel.start_time) == int(day)
+                ).first()
+                if event_schedule:
+                    day_events.append(event_schedule.serialize())
 
-    
-    for event_id in event_id_list:
-        # Iterate through each event ID
-        
-        event_schedule = EventsScheduleModel.query.filter(
-            EventsScheduleModel.event_id == event_id,
-            extract('year', EventsScheduleModel.start_time) == date.year,
-            extract('month', EventsScheduleModel.start_time) == date.month,
-            extract('day', EventsScheduleModel.start_time) == date.day
-        ).first()
-
-        if event_schedule:
-            events.append(event_schedule.serialize())
+            if day_events:
+                events.append({'day': day, 'list_of_events': day_events})
 
     if events:
         return jsonify(events), 200
@@ -215,7 +240,7 @@ def get_scheduled_events(event_ids, date_str):
 
 
 @bp.route("/delete/<event_id>", methods=["DELETE"])
-def delete_salesman(event_id):
+def delete_event(event_id):
     event = EventsModel.query.get(event_id)
     eventSchedule = EventsScheduleModel.query.filter_by(event_id=event_id).all()
 
@@ -229,3 +254,21 @@ def delete_salesman(event_id):
     db.session.commit()
 
     return jsonify({"message": "Event deleted successfully"})
+
+@bp.route("/edit-capacity/<event_id>", methods=["PUT"])
+def edit_capacity(event_id):
+    event = EventsModel.query.get(event_id)
+
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    
+    # Update the salesmen information based on the request data
+    if 'capacity' in request.json:
+        event.capacity = event.capacity - request.json['capacity']
+    
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Capacity updated successfully",
+    })

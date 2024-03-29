@@ -14,16 +14,14 @@ export default function Event(props) {
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
    const getPassengerURL = `//127.0.0.1:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.scheduledEvent.start_time}`
+   
    // Parse the string into a Date object
    const dateObject = new Date(props.scheduledEvent.start_time);
-
    // Extract the time component
-   const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+   const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' });
 
-   console.log("Passenger Url", getPassengerURL)
    // /<event_id>/<year>/<month>/<day>/<start_time>
    const getPassengers = async () => {
-      console.log(getPassengerURL)
       try {
          const resp = await httpClient.get(getPassengerURL);
          console.log(resp.data)

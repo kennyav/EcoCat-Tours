@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import httpClient from '../../httpClient'
 
 // components
 import SingleTransaction from './SingleTransaction';
 
 
 export default function TransactionDetails() {
-   const navigate = useNavigate();
+   const navigate = useNavigate([]);
+   const [history, setHistory] = useState()
 
    function handleClick() {
       // Redirect to /transactions URL
@@ -15,7 +17,20 @@ export default function TransactionDetails() {
    }
 
    const location = useLocation();
-   const { date, history } = location.state;
+   const { date } = location.state;
+
+   useEffect(() => {
+
+      (async () => {
+         try {
+            const resp = await httpClient.get(`http://127.0.0.1:8000/transactions/get-transactions/${date}`)
+            setHistory(resp.data)
+            console.log(resp.data)
+         } catch (error) {
+            console.log("Error", error)
+         }
+      })();
+   }, [])
 
    return (
       <div className='px-[41px]'>
@@ -25,7 +40,7 @@ export default function TransactionDetails() {
                <button className='w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full text-white px-[15px] py-[10px] text-[10px] text-center' onClick={handleClick}>Exit</button>
             </div>
             <div className='w-full h-auto overflow-scroll'>
-               {
+               {history &&
                   history.map(data => {
                      return (
                         <SingleTransaction history={data} />

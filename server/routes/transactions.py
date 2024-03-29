@@ -1,45 +1,50 @@
+from datetime import datetime
 from flask import (
    Blueprint, jsonify, request
 )
-from models import db, TransactionsModel
+from sqlalchemy import func
+from models import db, TransactionsModel, PassengersModel
+import json
 
 bp = Blueprint('transactions', __name__, url_prefix='/transactions')
 
 @bp.route('/create-transaction', methods=["POST"])
 def create_transaction():
-    customer_name = request.json["customerName"]
-    transaction_time = request.json["transactionTime"]
-    amount = request.json["amount"]
-    event_type = request.json["eventType"]
-    event_details = request.json["eventDetails"]
-    recipient = request.json["recipient"]
+    data = request.get_json()
+    passenger_id = data.get("passengerId")
+    
 
-    new_transaction = TransactionsModel(customer_name=customer_name, transaction_time=transaction_time, amount=amount, event_type=event_type, event_details=event_details, recipient=recipient)
+    new_transaction = TransactionsModel(passenger_id=passenger_id)
     db.session.add(new_transaction)
     db.session.commit()
 
-    return jsonify({
-        "id": new_transaction.id,
-        "customer_name": new_transaction.customer_name,
-        "transaction_time": new_transaction.transaction_time,
-        "amount": new_transaction.amount,
-        "event_type": new_transaction.event_type,
-        "event_details": new_transaction.event_details,
-        "recipient": new_transaction.recipient,
-        "created_at": new_transaction.created_at,
-    }), 201
+    return jsonify(new_transaction.serialize()), 200
 
-@bp.route('/@transactions', methods=["GET"])
-def get_transactions():
-    transactions = TransactionsModel.query.all()
-    return jsonify([transaction.serialize() for transaction in transactions]), 200
 
-@bp.route('/<id>', methods=["GET"])
-def get_transaction(id):
-    transaction = TransactionsModel.query.get(id)
-    if transaction is None:
-        return jsonify({"error": "Transaction not found"}), 404
-    return jsonify(transaction.serialize()), 200
+@bp.route('/get-transactions/<int:month>/<int:day>/<int:year>', methods=["GET"])
+def get_transactions(month, day, year):
+    try:
+        date_string = f"{year}-{month}-{day}"  # Construct the date string
+        search_date = datetime.strptime(date_string, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Please provide the date in 'MM-DD-YYYY' format."}), 400
+
+    # Filter transactions based on the date part of the created_at column
+    transactions = TransactionsModel.query.filter(func.date(TransactionsModel.created_at) == search_date).all()
+
+    # Check if any transactions are found for the provided date
+    if not transactions:
+        return jsonify({"error": "No transactions found for the provided date"}), 404
+   
+    passengers = []
+    for transaction in transactions:
+        passenger = PassengersModel.query.filter_by(id=transaction.passenger_id).first()  # Retrieve the passenger object
+        if passenger:
+            passengers.append(passenger)
+
+    # Serialize the passengers and return them
+    serialized_passengers = [passenger.serialize() for passenger in passengers]
+    return jsonify(serialized_passengers), 200
 
 @bp.route('/<id>', methods=["PUT"])
 def update_transaction(id):
@@ -48,12 +53,7 @@ def update_transaction(id):
         return jsonify({"error": "Transaction not found"}), 404
 
     data = request.get_json()
-    transaction.customer_name = data.get('customer_name', transaction.customer_name)
-    transaction.transaction_time = data.get('transaction_time', transaction.transaction_time)
-    transaction.amount = data.get('amount', transaction.amount)
-    transaction.event_type = data.get('event_type', transaction.event_type)
-    transaction.event_details = data.get('event_details', transaction.event_details)
-    transaction.recipient = data.get('recipient', transaction.recipient)
+    transaction.customer_name = data.get('passenger_ids', transaction.customer_name)
 
     db.session.commit()
     return jsonify(transaction.serialize()), 200

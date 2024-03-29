@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import httpClient from '../../httpClient'
+import moment from 'moment'
 
 //icons
 import { CheckedInIcon } from '../Icons'
@@ -18,7 +19,6 @@ export default function GuestInfo(props) {
     (async () => {
       try {
         const resp = await httpClient.get(`//127.0.0.1:8000/auth/${p.booker_id}`);
-        console.log(resp.data)
         setBooker(resp.data)
       } catch (error) {
         console.log("Error", error)
@@ -26,8 +26,9 @@ export default function GuestInfo(props) {
     })();
   }, [])
 
+  // 2024-03-28 20:47:39
+
   return (
-    // <div className="w-full h-[149px] pl-[26px] pt-[30px] justify-center items-center inline-flex">
     <div className="flex-col  pl-[26px] pt-[30px] justify-start items-start gap-[9px] inline-flex">
       <div className="justify-start items-start gap-1 inline-flex">
         <div className="w-[179px] flex-col justify-start items-start gap-1 inline-flex">
@@ -44,11 +45,11 @@ export default function GuestInfo(props) {
         </div>
       </div>
       <div className="flex-col justify-start items-start gap-1 flex">
-        <div className="justify-start items-end inline-flex">
-          <div className="w-[100px] h-3 text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">Booking via {booker.email}</div>
-          <div className="w-[131px] h-2.5 text-right text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">{p.commission_received ? "Commission received" : ""}</div>
+        <div className="flex justify-start items-end">
+          <div className="text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">Booking In Person</div>
+          <div className="text-right text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">{p.commission_received ? "Commission received" : ""}</div>
         </div>
-        <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-normal font-['Kumbh Sans']">15 minutes ago by Jane White</div>
+        <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-normal font-['Kumbh Sans']">{moment(p.created_at, "yyyy-MM-DD HH:mm:ss").fromNow()} by {booker.email}</div>
       </div>
       <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">Checked-in 3 minutes ago</div>
       <div className="flex-col justify-start items-start gap-[18px] flex">
@@ -61,6 +62,5 @@ export default function GuestInfo(props) {
         <div className="w-[215px] h-[0px] border border-slate-300"></div>
       </div>
     </div>
-    // </div>
   )
 }
