@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient';
+import { useDispatch } from 'react-redux';
+import { update } from '../reducers/loginSlice';
 
 // components
 import EventLoader from './EventsComponents/EventLoader';
@@ -9,8 +11,9 @@ import EventLoader from './EventsComponents/EventLoader';
 import { EventAddIcon } from './Icons'
 
 
-export default function Events({ setTitle }) {
+export default function Events() {
 
+  const dispatch = useDispatch()
   const [events, setEvents] = useState([])
 
   useEffect(() => {
@@ -33,8 +36,8 @@ export default function Events({ setTitle }) {
   }
 
   useEffect(() => {
-    setTitle("Events");
-  }, [setTitle]);
+    dispatch(update("Events"))
+  }, [dispatch]);
 
   return (
     <div className='grid grid-cols-2 grid-flow-row gap-5 px-[41px] py-[46px] place-content-center'>

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom';
-
 import Calendar from '../Calendar/Calendar'
 import SideMenuEventInfo from '../Calendar/SideMenuEventInfo'
 
-export default function EditEvent({ setTitle }) {
+export default function EditEvent() {
    const location = useLocation();
    const { event } = location.state;
    const [eventClick, setEventClick] = useState({
@@ -20,7 +19,6 @@ export default function EditEvent({ setTitle }) {
          <Calendar
             setEventClick={setEventClick}
             eventClick={eventClick.clicked}
-            setTitle={setTitle}
             title={event.title}
             events={[event]} />
 

@@ -5,7 +5,7 @@ import httpClient from '../httpClient';
 import SideMenuEventInfo from './Calendar/SideMenuEventInfo'
 import Calendar from './Calendar/Calendar';
 
-export default function Bookings({ setTitle }) {
+export default function Bookings() {
 
   // depending on the current week we are in, we will pull data that
   // represents the events for the booking
@@ -17,7 +17,6 @@ export default function Bookings({ setTitle }) {
   });
   const [events, setEvents] = useState([])
 
-  console.log("bookings click", eventClick.clicked)
 
   useEffect(() => {
     (async () => {
@@ -37,8 +36,7 @@ export default function Bookings({ setTitle }) {
       <Calendar
         setEventClick={setEventClick}
         eventClick={eventClick.clicked}
-        setTitle={setTitle}
-        title={'Bookings'}
+        title={"Bookings"}
         events={events} />
       <div className={`pl-[20px] right-0 transition-all duration-500 ${eventClick.clicked ? 'translate-x-0' : 'translate-x-full'}`}>
         <SideMenuEventInfo ev={eventClick} />

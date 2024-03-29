@@ -3,10 +3,13 @@ import { Switch } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
 import { DatePicker, TimePicker } from 'antd';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { update } from '../../reducers/loginSlice';
 
 import httpClient from '../../httpClient';
 
 export default function AddEvent() {
+   const dispatch = useDispatch()
    const [title, setTitle] = useState("")
    const [description, setDescription] = useState("")
    const [startDate, setStartDate] = useState()
@@ -25,6 +28,10 @@ export default function AddEvent() {
    const [formattedStartDate, setFormattedDate] = useState();
    const [formattedEndDate, setFormattedEndDate] = useState();
    const [formattedEndTime, setFormattedEndTime] = useState();
+
+   useEffect(() => {
+      dispatch(update("Add Event"))
+   }, [dispatch])
 
    useEffect(() => {
       let test = new Date(startDate)

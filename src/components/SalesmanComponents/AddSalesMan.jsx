@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { update } from '../../reducers/loginSlice';
 
 import httpClient from '../../httpClient';
 
@@ -7,13 +9,18 @@ export default function AddSalesMan() {
    const inputCSS =
       "rounded-[10px] pl-[14px] py-[9px] border border-slate-300 text-xs text-justify font-medium font-['Kumbh Sans'] resize-none outline-none";
 
+   const dispatch = useDispatch()
    const [firstName, setFirstName] = useState('');
    const [lastName, setLastName] = useState('');
    const [phoneNumber, setPhoneNumber] = useState('');
    const [notes, setNotes] = useState('');
    const [email, setEmail] = useState('');
 
+
    const navigate = useNavigate();
+   useEffect(() => {
+      dispatch(update("Add Salesman"))
+   }, [dispatch])
 
    const registerSalesman = async () => {
       try {

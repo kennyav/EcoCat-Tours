@@ -1,6 +1,16 @@
-import React from 'react'
 
-export default function NotFound() {
+import React, {useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
+
+export default function NotFound({authenticated}) {
+
+   // const navigate = useNavigate()
+   // useEffect(() => {
+   //    if(window.location.href === 'http://localhost:3000/' && !authenticated) {
+   //       navigate('/login')
+   //    }
+   // }, [])
+
    return (
       <section className="bg-white dark:bg-gray-900">
          <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">

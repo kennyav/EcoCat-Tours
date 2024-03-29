@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
+import { update } from '../reducers/loginSlice';
 
 // icon
 import { TransactionOptionsIcon } from './Icons'
@@ -175,8 +177,9 @@ const transactions = [
   }
 ]
 
-export default function Transactions({ setTitle }) {
+export default function Transactions() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const handleClick = (date, history) => {
     // sending transaction data through useLocation hook
@@ -185,8 +188,8 @@ export default function Transactions({ setTitle }) {
   }
 
   useEffect(() => {
-    setTitle("Transactions");
-  }, [setTitle]);
+    dispatch(update("Transactions"))
+  }, []);
 
   return (
     <div className='px-[41px]'>
