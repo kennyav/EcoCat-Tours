@@ -64,8 +64,7 @@ def create_booking():
     db.session.add(new_passenger_booking)
     db.session.commit()
 
-    return jsonify({"message": "Booking created successfully"})
-
+    return jsonify(new_passenger_booking.serialize()), 200
 
 
 

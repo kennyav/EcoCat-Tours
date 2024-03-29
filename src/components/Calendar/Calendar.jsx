@@ -20,7 +20,7 @@ export default function Calendar({ events, setEventClick, eventClick, title }) {
 
    useEffect(() => {
       dispatch(update(title));
-   }, [dispatch]);
+   }, [dispatch, title]);
 
    useEffect(() => {
       const today = new Date();

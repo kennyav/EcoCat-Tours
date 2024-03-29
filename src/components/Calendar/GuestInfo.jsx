@@ -10,7 +10,6 @@ import CheckIn from './CheckIn'
 
 export default function GuestInfo(props) {
   const p = props.passenger
-  console.log(p)
   const [booker, setBooker] = useState({
     id: "",
     email: ""

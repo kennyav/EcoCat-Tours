@@ -27,7 +27,6 @@ export default function Bookings() {
         console.log("Error", error)
       }
     })();
-
   }, []);
 
 

@@ -161,15 +161,12 @@ class PassengersModel(db.Model):
 class TransactionsModel(db.Model):
     __tablename__ = "transactions"
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    passenger_ids = db.Column(db.String(32)) # make this a list of passenger ids
-    recipient = db.Column(db.String(80), nullable=False)
+    passenger_id = db.Column(db.String(32)) # make this a list of passenger ids
     created_at = db.Column(DateTime, default=datetime.now)
     
     def serialize(self):
         return {
             "id": self.id,
-            "customer_name": self.customer_name,
-            "passenger_ids": self.passenger_ids,
-            "recipient": self.recipient,
+            "passenger_id": self.passenger_id,
             "created_at": self.created_at,
         }
