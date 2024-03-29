@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+flask-bcrypt
+pydantic
+python.env
+python-dotenv
+flask-session
+redis
+flask-cors
