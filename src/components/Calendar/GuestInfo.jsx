@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
 //icons
 import { CheckedInIcon } from '../Icons'
 
 // modal
 import CheckIn from './CheckIn'
+import ManagePassengers from './ManagePassengers'
 
 export default function GuestInfo(props) {
+  const url = useSelector((state) => state.development.value)
   const p = props.passenger
+
   const [booker, setBooker] = useState({
     id: "",
     email: ""
@@ -18,7 +22,7 @@ export default function GuestInfo(props) {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get(`//127.0.0.1:8000/auth/${p.booker_id}`);
+        const resp = await httpClient.get(`${url}:8000/auth/${p.booker_id}`);
         setBooker(resp.data)
       } catch (error) {
         console.log("Error", error)
@@ -33,7 +37,7 @@ export default function GuestInfo(props) {
       <div className="justify-start items-start gap-1 inline-flex">
         <div className="w-[179px] flex-col justify-start items-start gap-1 inline-flex">
           <div className="justify-start items-end gap-2 inline-flex">
-            <CheckedInIcon />
+           {p.checked_in && <CheckedInIcon/>}
             <div className="text-stone-900 text-sm font-bold font-['Kumbh Sans']">{p.first_name} {p.last_name}</div>
           </div>
           {p.adult_passengers ? <div className="text-sky-700 text-xs font-medium font-['Kumbh Sans']">{p.adult_passengers} Adult{p.adult_passengers > 1 ? 's' : ''}</div> : <div></div>}
@@ -51,12 +55,12 @@ export default function GuestInfo(props) {
         </div>
         <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-normal font-['Kumbh Sans']">{moment(p.created_at, "yyyy-MM-DD HH:mm:ss").fromNow()} by {booker.email}</div>
       </div>
-      <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">Checked-in 3 minutes ago</div>
+      <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']"> {p.checked_in && "Checked In"}</div>
       <div className="flex-col justify-start items-start gap-[18px] flex">
         <div className="justify-start items-start gap-[7px] inline-flex">
-          <CheckIn />
+          <CheckIn passenger={p}/>
           <div className="w-[104px] h-8 px-[15px] py-2.5 rounded-[30px] border border-sky-700 justify-center items-center gap-2.5 flex">
-            <div className="w-[86px] text-center text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">Manage</div>
+            <ManagePassengers passenger={p} />
           </div>
         </div>
         <div className="w-[215px] h-[0px] border border-slate-300"></div>

@@ -2,16 +2,18 @@ import React, { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient'
+import { useSelector } from 'react-redux';
 
 export default function Event({ event, days, schedule }) {
+   const url = useSelector((state) => state.development.value)
    const [isOpen, setIsOpen] = useState(false)
    const navigate = useNavigate();
    const eventId = event.id
-   let deleteEventURL = "http://127.0.0.1:8000/events/delete/" + eventId
+   let deleteEventURL = `${url}:8000/events/delete/` + eventId
    // Function to format the time
    const formatTime = (timeStr) => {
       const date = new Date(timeStr);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' })
    };
 
    // Format start and end times

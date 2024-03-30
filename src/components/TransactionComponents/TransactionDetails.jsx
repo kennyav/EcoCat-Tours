@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import httpClient from '../../httpClient'
-
+import { useSelector } from 'react-redux';
 // components
 import SingleTransaction from './SingleTransaction';
 
 
 export default function TransactionDetails() {
+   const url = useSelector((state) => state.development.value)
    const navigate = useNavigate([]);
    const [history, setHistory] = useState()
 
@@ -23,7 +24,7 @@ export default function TransactionDetails() {
 
       (async () => {
          try {
-            const resp = await httpClient.get(`http://127.0.0.1:8000/transactions/get-transactions/${date}`)
+            const resp = await httpClient.get(`${url}:8000/transactions/get-transactions/${date}`)
             setHistory(resp.data)
             console.log(resp.data)
          } catch (error) {

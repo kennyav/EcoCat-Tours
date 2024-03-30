@@ -5,12 +5,14 @@ import httpClient from '../../httpClient'
 // components
 import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
+import { useSelector } from 'react-redux'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
 const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
 const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 export default function NewBooking(props) {
+   const url = useSelector((state) => state.development.value)
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    const [firstName, setFirstName] = useState('');
    const [lastName, setLastName] = useState('');
@@ -29,7 +31,6 @@ export default function NewBooking(props) {
    const [paymentStatus, setPaymentStatus] = useState('')
    const [commissionReceived, setCommissionReceived] = useState(false)
    const [bookerId, setBookerId] = useState('')
-   // const [passengerId, setPassengerId] = useState('')
    const [isOpen, setIsOpen] = useState(false)
    const eventId = props.eventId
    const year = props.year
@@ -42,7 +43,7 @@ export default function NewBooking(props) {
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get("http://127.0.0.1:8000/auth/@me");
+            const resp = await httpClient.get(`${url}:8000/auth/@me`);
             setBookerId(resp.data.id);
          } catch (error) {
             console.log("Not authenticated");
@@ -54,7 +55,7 @@ export default function NewBooking(props) {
       let passengerId = ''
       const totalPrice = (adultNumber * adultPrice) + (childrenNumber * childrenPrice) + (infantNumber * infantPrice)
       try {
-         const resp = await httpClient.post("//127.0.0.1:8000/bookings/create-booking", {
+         const resp = await httpClient.post(`${url}:8000/bookings/create-booking`, {
             year,
             month,
             day,
@@ -88,7 +89,7 @@ export default function NewBooking(props) {
 
          try {
             const capacity = adultNumber + childrenNumber + infantNumber
-            const changeCapacity = await httpClient.put(`//127.0.0.1:8000/events/edit-capacity/${eventId}`, {
+            const changeCapacity = await httpClient.put(`${url}:8000/events/edit-capacity/${eventId}`, {
                capacity
             });
             console.log(changeCapacity.data)
@@ -97,7 +98,7 @@ export default function NewBooking(props) {
          }
 
          try {
-            const transaction = await httpClient.post("//127.0.0.1:8000/transactions/create-transaction", {
+            const transaction = await httpClient.post(`${url}:8000/transactions/create-transaction`, {
                passengerId
             })
             console.log(transaction.data)

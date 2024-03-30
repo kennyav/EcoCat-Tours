@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import httpClient from '../httpClient';
+import { useSelector } from 'react-redux';
 
 // calendar components
 import SideMenuEventInfo from './Calendar/SideMenuEventInfo'
 import Calendar from './Calendar/Calendar';
 
 export default function Bookings() {
-
+  const url = useSelector((state) => state.development.value)
   // depending on the current week we are in, we will pull data that
   // represents the events for the booking
   const [eventClick, setEventClick] = useState({
@@ -21,7 +22,7 @@ export default function Bookings() {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get("//127.0.0.1:8000/events/@events");
+        const resp = await httpClient.get(`${url}:8000/events/@events`);
         setEvents(resp.data)
       } catch (error) {
         console.log("Error", error)

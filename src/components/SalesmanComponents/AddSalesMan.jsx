@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { update } from '../../reducers/loginSlice';
+import { useSelector } from 'react-redux';
 
 import httpClient from '../../httpClient';
 
 export default function AddSalesMan() {
+   const url = useSelector((state) => state.development.value)
    const inputCSS =
       "rounded-[10px] pl-[14px] py-[9px] border border-slate-300 text-xs text-justify font-medium font-['Kumbh Sans'] resize-none outline-none";
 
@@ -24,7 +26,7 @@ export default function AddSalesMan() {
 
    const registerSalesman = async () => {
       try {
-         const resp = await httpClient.post("//127.0.0.1:8000/salesmen/register-salesmen", {
+         const resp = await httpClient.post(`${url}:8000/salesmen/register-salesmen`, {
             firstName,
             lastName,
             email,

@@ -1,70 +1,69 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
-import moment from 'moment'
 import httpClient from '../../httpClient'
+import moment from 'moment'
+import { printBoardingPass } from '../../helper/boardingPass'
 import { useSelector } from 'react-redux'
 
-export default function EventDetail({ event, scheduledEvent }) {
+// components
+export default function ManagePassengers(props) {
    const url = useSelector((state) => state.development.value)
+   const p = props.passenger
    let [isOpen, setIsOpen] = useState(false)
    const [openDelete, setOpenDelete] = useState(false)
-   const [startTime, setStartTime] = useState(scheduledEvent.start_time)
-   const [endTime, setEndTime] = useState(scheduledEvent.end_time)
-   const [adults, setAdults] = useState(scheduledEvent.adult_passengers)
-   const [children, setChildren] = useState(scheduledEvent.children_passengers)
-   const [infants, setInfants] = useState(scheduledEvent.infant_passengers)
    const [edit, setEdit] = useState(false)
-   // Parse the original datetime string
-   const parsedStartDatetime = moment(scheduledEvent.start_time);
-   const parsedEndDatetime = moment(scheduledEvent.end_time)
+   const [firstName, setFirstName] = useState(p.first_name);
+   const [lastName, setLastName] = useState(p.last_name);
+   const [phoneNumber, setPhoneNumber] = useState(p.phone);
+   const [email, setEmail] = useState(p.email);
+   const [adultNumber, setAdultNumber] = useState(p.adult_passengers)
+   const [childrenNumber, setChildrenNumber] = useState(p.children_passengers)
+   const [infantNumber, setInfantNumber] = useState(p.infant_passengers)
+   const [adultPrice, setAdultPrice] = useState(p.adult_price)
+   const [childrenPrice, setChildrenPrice] = useState(p.children_price)
+   const [infantPrice, setInfantPrice] = useState(p.infant_price)
+   const [notes, setNotes] = useState(p.notes)
+   const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
-   const handleTimeChange = (e, setTime, parsedDatetime) => {
-      // Extract hour and minute from the input value
-      const [hour, minute] = e.target.value.split(":");
-      // Extract the date part and create a new datetime with the updated time
-      const updatedDatetime = parsedDatetime.clone().set({ hour: hour, minute: minute, second: 0 });
-      // Format the updated datetime
-      const updatedDatetimeString = updatedDatetime.format("ddd, DD MMM yyyy HH:mm:ss");
-
-      setTime(updatedDatetimeString);
-   };
-
-   const editSingleEvent = async () => {
-      const start = moment(startTime).format('yyyy-DD-MM HH:mm:ss')
-      const end = moment(endTime).format('yyyy-DD-MM HH:mm:ss')
+   const deletePassenger = async () => {
       try {
-         const resp = await httpClient.put(`${url}:8000/events/edit-event/${scheduledEvent.id}`,
-            {
-               start,
-               end,
-               adults,
-               children,
-               infants
-            });
+         const resp = await httpClient.delete(`${url}:8000/bookings/delete/${p.id}`)
          console.log(resp.data)
       } catch (error) {
-         console.log("Error", error);
+         console.log("Error", error)
       }
+
       closeModal()
    }
 
-   const deleteEvent = async () => {
+   const editPassenger = async () => {
       try {
-         const resp = await httpClient.delete(`${url}:8000/events/delete-single-event/${scheduledEvent.id}`);
+         const resp = await httpClient.put(`${url}:8000/bookings/edit-passenger/${p.id}`,{
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+            adultNumber,
+            adultPrice,
+            childrenNumber,
+            childrenPrice,
+            infantNumber,
+            infantPrice,
+            notes
+         })
          console.log(resp.data)
       } catch (error) {
-         console.log("Error", error);
+         console.log("Error", error)
       }
-      setOpenDelete(false)
+
       closeModal()
    }
-
 
    function closeModal() {
+      setOpenDelete(false)
       setEdit(false)
       setIsOpen(false)
    }
-
    function openModal() {
       setIsOpen(true)
    }
@@ -75,8 +74,9 @@ export default function EventDetail({ event, scheduledEvent }) {
             <button
                type="button"
                onClick={openModal}
+               className="w-[104px] h-8 px-[15px] py-2.5 border-bg-sky-700 rounded-[30px] justify-center items-center gap-2.5 flex hover:shadow-md"
             >
-               <p className="text-stone-900 text-sm font-semibold font-['Kumbh Sans']">Event Details</p>
+               <p className="w-[86px] text-center text-sky-700 text-[10px] font-semibold font-['Kumbh Sans']">Manage</p>
             </button>
          </div>
 
@@ -106,69 +106,81 @@ export default function EventDetail({ event, scheduledEvent }) {
                         leaveTo="opacity-0 scale-95"
                      >
                         <Dialog.Panel className="w-full max-w-screen-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-
-                           {/* Date and time section */}
-                           <div className='w-full h-auto rounded-[15px] bg-[#0E5BB5] p-4'>
-                              <Dialog.Title
-                                 as="h3"
-                                 className="flex flex-col text-lg font-medium leading-6 text-white"
-                              >
-                                 {event.title}
-                                 <div className="text-sm">
-                                    {moment.utc(scheduledEvent.start_time).format('dddd, MMMM Do YYYY')}
-                                 </div>
-                              </Dialog.Title>
+                           <Dialog.Title
+                              as="h3"
+                              className="text-lg font-medium leading-6 text-gray-900"
+                           >
+                              {props.passenger.first_name} {props.passenger.last_name}
+                           </Dialog.Title>
+                           <div>
+                              <p className="text-xs text-gray-500 pb-[10px]">
+                                 {moment().format('dddd, MMMM Do YYYY')}
+                              </p>
                            </div>
 
-                           <div className='py-[10px] flex flex-col gap-3'>
+                           <div className="w-full h-[0px] border border-slate-300"></div>
+
+                           <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 When
+                                 Customer Name
                               </h3>
-                              <div className='inline-flex gap-4 items-center'>
-                                 <input disabled={!edit} type="time" value={moment.utc(startTime).format("HH:mm")} onChange={(e) => handleTimeChange(e, setStartTime, parsedStartDatetime)} />
-                                 <h1>to</h1>
-                                 <input disabled={!edit} type="time" value={moment.utc(endTime).format("HH:mm")} onChange={(e) => handleTimeChange(e, setEndTime, parsedEndDatetime)} />
+                              <div className='inline-flex gap-1'>
+                                 <input disabled={!edit} value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' />
+                                 <input disabled={!edit} value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' />
                               </div>
                            </div>
 
-                           {/* Number of Passenger section*/}
+
+                           {/* Contact Information Section */}
                            <div className='py-[10px] flex flex-col'>
+                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                 Contact Information
+                              </h3>
+                              <div className='inline-flex gap-1'>
+                                 <input disabled={!edit} value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' />
+                                 <input disabled={!edit} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className='border rounded-[10px] p-2' />
+                              </div>
+                           </div>
+
+
+                           {/* Number of Passenger section*/}
+                           <div className='py-[10px] grid grid-rows-4 grid-flow-col gap-4'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Passengers
                               </h3>
-                              <div className='flex flex-col gap-2'>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <div className='w-1/12'>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 12+</h1>
-                                    </div>
-                                    <input disabled={!edit} className='border rounded-[10px] p-2' value={adults} onChange={(e) => setAdults(e.target.value)} />
-                                 </div>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <div className='w-1/12'>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
-                                    </div>
-                                    <input disabled={!edit} className='border rounded-[10px] p-2' value={children} onChange={(e) => setChildren(e.target.value)} />
-                                 </div>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <div className='w-1/12'>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
-                                    </div>
-                                    <input disabled={!edit} className='border rounded-[10px] p-2' value={infants} onChange={(e) => setInfants(e.target.value)} />
-                                 </div>
+                              <input disabled={!edit} value={adultNumber} onChange={(e) => setAdultNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <input disabled={!edit} value={childrenNumber} onChange={(e) => setChildrenNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <input disabled={!edit} value={infantNumber} onChange={(e) => setInfantNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                 Prices
+                              </h3>
+                              <input disabled={!edit} value={adultPrice} onChange={(e) => setAdultPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <input disabled={!edit} value={childrenPrice} onChange={(e) => setChildrenPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <input disabled={!edit} value={infantPrice} onChange={(e) => setInfantPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
+                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                 Category
+                              </h3>
+                              <div className="flex flex-col">
+                                 <h1 className='text-sm text-gray-900'>Adult</h1>
+                                 <p className='text-xs text-gray-900'>Ages 12+</p>
+                              </div>
+                              <div className="flex flex-col">
+                                 <h1 className='text-sm text-gray-900'>Children</h1>
+                                 <p className='text-xs text-gray-900'>Ages 5-11</p>
+                              </div>
+                              <div className="flex flex-col">
+                                 <h1 className='text-sm text-gray-900'>Infants</h1>
+                                 <p className='text-xs text-gray-900'>Ages 0-4</p>
                               </div>
                            </div>
 
-
-                           {/* Event History */}
-                           {/* <div className='py-[10px] flex flex-col overflow-scroll'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900 '>
-                                 Event History
+                           <div className='py-[10px] flex flex-col'>
+                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                 Reservation Notes
                               </h3>
+                              <textarea disabled={!edit} rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' />
+                           </div>
 
-                           </div> */}
 
                            <div className="flex justify-between mt-4">
                               <div>
@@ -181,7 +193,7 @@ export default function EventDetail({ event, scheduledEvent }) {
 
                                  <button
                                     className={`inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${!edit ? 'hidden' : ''}`}
-                                    onClick={() => editSingleEvent()}
+                                    onClick={() => editPassenger()}
                                  >
                                     Save
                                  </button>
@@ -204,7 +216,7 @@ export default function EventDetail({ event, scheduledEvent }) {
                   </div>
                </div>
             </Dialog>
-         </Transition>
+         </Transition >
 
          <Transition appear show={openDelete} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -236,7 +248,7 @@ export default function EventDetail({ event, scheduledEvent }) {
                               as="h3"
                               className="text-lg font-medium leading-6 text-gray-900 text-center"
                            >
-                              Confirm Event Deletion
+                              Confirm Passenger Deletion
                            </Dialog.Title>
 
                            <div className="inline-flex mt-4 w-full justify-between">
@@ -250,7 +262,7 @@ export default function EventDetail({ event, scheduledEvent }) {
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-black hover:bg-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                 onClick={() => deleteEvent()}
+                                 onClick={() => deletePassenger()}
                               >
                                  Delete
                               </button>

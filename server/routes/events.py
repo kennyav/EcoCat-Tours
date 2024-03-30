@@ -40,7 +40,6 @@ def check_for_overlapping_events(start_date, end_date):
 
 @bp.route('/schedule-event', methods=["POST"]) 
 def schedule_event():
-    print("[DEBUG] DO We Get Here?")
     data = request.json
     event_id = data.get('eventId')
     start = data.get('formattedStartDate')
@@ -48,13 +47,13 @@ def schedule_event():
     end_t = data.get('formattedEndTime')
     repeated = data.get('repeated')
     repeated_weekly = data.get('repeatedWeekly')
+    adult_number = data.get('adultNumber')
+    children_number = data.get('childrenNumber')
+    infant_number = data.get('infantNumber')
     run_days = data.get('days')
     start_date = datetime.strptime(start, '%Y-%d-%m %H:%M:%S')
     end_date = datetime.strptime(end, '%Y-%d-%m %H:%M:%S')
     end_time = datetime.strptime(end_t, '%Y-%d-%m %H:%M:%S')
-
-    print("[DEBUG] start time", start, type(start))
-    print("[DEBUG] end time", end_time, type(end))
 
     # Check if there are any overlapping events
     overlapping_event = check_for_overlapping_events(start_date, end_time)
@@ -81,6 +80,9 @@ def schedule_event():
                             event_id=event_id,
                             start_time=current_date,
                             end_time=end_date,
+                            adult_passengers=adult_number,
+                            children_passengers=children_number,
+                            infant_passengers=infant_number,
                             days=run_days
                             )
                         db.session.add(new_schedule)
@@ -102,6 +104,9 @@ def schedule_event():
                             event_id=event_id,
                             start_time=current_date,
                             end_time=end_time,
+                            adult_passengers=adult_number,
+                            children_passengers=children_number,
+                            infant_passengers=infant_number,
                             days=run_days
                             )
                         db.session.add(new_schedule)
@@ -120,6 +125,9 @@ def schedule_event():
             event_id=event_id,
             start_time=start_date,
             end_time=end_time,
+            adult_passengers=adult_number,
+            children_passengers=children_number,
+            infant_passengers=infant_number,
             days=run_days)
         db.session.add(new_schedule)
         db.session.commit()
@@ -134,9 +142,6 @@ def register_event():
    description = data.get('description')
    capacity = data.get('capacity')
    above_drinking_age = data.get('aboveDrinkingAge')
-   adult_number = data.get('adultNumber')
-   children_number = data.get('childrenNumber')
-   infant_number = data.get('infantNumber')
    created_by = data.get('createdBy')
    print("[DEBUG] Do we set variables right?")
 
@@ -146,9 +151,6 @@ def register_event():
      description=description,
      capacity=capacity,
      above_drinking_age=above_drinking_age,
-     adult_passengers=adult_number,
-     children_passengers=children_number,
-     infant_passengers=infant_number,
      created_by=created_by
     )
 
@@ -255,6 +257,18 @@ def delete_event(event_id):
 
     return jsonify({"message": "Event deleted successfully"})
 
+@bp.route("/delete-single-event/<event_id>", methods=["DELETE"])
+def delete_single_event(event_id):
+    event = EventsScheduleModel.query.get(event_id)
+
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    
+    db.session.delete(event)
+    db.session.commit()
+
+    return jsonify({"message": "Single Event deleted successfully"})
+
 @bp.route("/edit-capacity/<event_id>", methods=["PUT"])
 def edit_capacity(event_id):
     event = EventsModel.query.get(event_id)
@@ -271,4 +285,33 @@ def edit_capacity(event_id):
 
     return jsonify({
         "message": "Capacity updated successfully",
+    })
+
+@bp.route("/edit-event/<event_id>", methods=["PUT"])
+def edit_event(event_id):
+    event = EventsScheduleModel.query.get(event_id)
+
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    
+    # Update the salesmen information based on the request data
+    if 'start' in request.json:
+        start_date = datetime.strptime(request.json['start'], '%Y-%d-%m %H:%M:%S')
+        event.start_time = start_date
+    if 'end' in request.json:
+        end_date = datetime.strptime(request.json['end'], '%Y-%d-%m %H:%M:%S')
+        event.end_time = end_date
+    if 'adults' in request.json:
+        event.adult_passengers = request.json['adults']
+    if 'children' in request.json:
+        event.children_passengers = request.json['children']
+    if 'infants' in request.json:
+        event.infant_passengers = request.json['infants']
+    
+    
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Event updated successfully",
     })

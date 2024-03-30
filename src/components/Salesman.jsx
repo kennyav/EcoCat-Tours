@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../reducers/loginSlice';
 
 // components
@@ -7,13 +7,14 @@ import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
 import httpClient from '../httpClient';
 
 export default function Salesman() {
+  const url = useSelector((state) => state.development.value)
   const [salesmen, setSalesmen] = useState([])
   const dispatch = useDispatch()
 
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get("//127.0.0.1:8000/salesmen/@salesmen");
+        const resp = await httpClient.get(`${url}:8000/salesmen/@salesmen`);
         console.log(resp.data)
         setSalesmen(resp.data)
       } catch (error) {

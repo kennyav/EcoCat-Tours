@@ -33,6 +33,7 @@ def create_booking():
     food = data.get('foodOptions')
     t_shirt = data.get('shirts')
     total_price = data.get('totalPrice')
+    checked_in = False
 
     # Create a new passenger booking in the database
     new_passenger_booking = PassengersModel(
@@ -49,6 +50,7 @@ def create_booking():
         payment_type=payment_type,
         payment_status=payment_status,
         commission_received=commission_received,
+        checked_in=checked_in,
         booker_id=booker_id,
         adult_passengers=adult_passengers,
         children_passengers=children_passengers,
@@ -84,14 +86,62 @@ def get_passengers(event_id, year, month, day, start_time):
     else:
         return jsonify({"message": "No passengers found for the specified event and time"}), 404
 
-# @bp.route("/delete/<event_id>", methods=["DELETE"])
-# def delete_salesman(event_id):
-#     event = EventsModel.query.get(event_id)
+@bp.route("/delete/<passenger_id>", methods=["DELETE"])
+def delete_passenger(passenger_id):
+    passenger = PassengersModel.query.get(passenger_id)
 
-#     if not event:
-#         return jsonify({"error": "Event not found"}), 404
+    if not passenger:
+        return jsonify({"error": "Event not found"}), 404
 
-#     db.session.delete(event)
-#     db.session.commit()
+    db.session.delete(passenger)
+    db.session.commit()
 
-#     return jsonify({"message": "Event deleted successfully"})
+    return jsonify({"message": "Passenger deleted successfully"})
+    
+@bp.route("/update-checkedin/<passenger_id>", methods=["PUT"])
+def update_checkedin(passenger_id):
+    passenger = PassengersModel.query.get(passenger_id)
+    if not passenger:
+        return jsonify({"error": "Event not found"}), 404
+    if 'checkedIn' in request.json:
+        passenger.checked_in = request.json['checkedIn']
+    
+    db.session.commit()
+
+    return jsonify({"message": "Checkin updated successfully",
+                    "checked_in": passenger.checked_in
+                    }), 200
+
+@bp.route("/edit-passenger/<passenger_id>", methods=["PUT"])
+def update_passenger(passenger_id):
+    passenger = PassengersModel.query.get(passenger_id)
+    if not passenger:
+        return jsonify({"error": "Event not found"}), 404
+    
+
+    if 'firstName' in request.json:
+        passenger.first_name = request.json['firstName']
+    if 'lastName' in request.json:
+        passenger.last_name = request.json['lastName']
+    if 'email' in request.json:
+        passenger.email = request.json['email']
+    if 'phoneNumber' in request.json:
+        passenger.phone = request.json['phoneNumber']
+    if 'notes' in request.json:
+        passenger.notes = request.json['notes']
+    if 'adultNumber' in request.json:
+        passenger.adult_passengers = request.json['adultNumber']
+    if 'childrenNumber' in request.json:
+        passenger.children_passengers = request.json['childrenNumber']
+    if 'infantNumber' in request.json:
+        passenger.infant_passengers = request.json['infantNumber']
+    if 'adultPrice' in request.json:
+        passenger.adult_price = request.json['adultPrice']
+    if 'childrenPrice' in request.json:
+        passenger.children_price = request.json['childrenPrice']
+    if 'infantPrice' in request.json:
+        passenger.infant_price = request.json['infantPrice']
+    
+    db.session.commit()
+
+    return jsonify({"message": "Passenger updated successfully" }), 200
