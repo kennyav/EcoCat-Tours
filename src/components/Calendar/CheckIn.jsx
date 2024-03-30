@@ -3,9 +3,11 @@ import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
 import { printBoardingPass } from '../../helper/boardingPass'
+import { useSelector } from 'react-redux'
 
 // components
 export default function CheckIn(props) {
+   const url = useSelector((state) => state.development.value)
    let [isOpen, setIsOpen] = useState(false)
    const p = props.passenger
    const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
@@ -13,7 +15,7 @@ export default function CheckIn(props) {
    const checkIn = async () => {
       const checkedIn = true
       try {
-         const resp = await httpClient.put(`http://127.0.0.1:8000/bookings/update-checkedin/${props.passenger.id}`, {
+         const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${props.passenger.id}`, {
             checkedIn
          })
          console.log(resp.data)

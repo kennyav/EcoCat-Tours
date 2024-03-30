@@ -3,9 +3,11 @@ import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
 import { printBoardingPass } from '../../helper/boardingPass'
+import { useSelector } from 'react-redux'
 
 // components
 export default function ManagePassengers(props) {
+   const url = useSelector((state) => state.development.value)
    const p = props.passenger
    let [isOpen, setIsOpen] = useState(false)
    const [openDelete, setOpenDelete] = useState(false)
@@ -25,7 +27,7 @@ export default function ManagePassengers(props) {
 
    const deletePassenger = async () => {
       try {
-         const resp = await httpClient.delete(`http://127.0.0.1:8000/bookings/delete/${p.id}`)
+         const resp = await httpClient.delete(`${url}:8000/bookings/delete/${p.id}`)
          console.log(resp.data)
       } catch (error) {
          console.log("Error", error)
@@ -36,7 +38,7 @@ export default function ManagePassengers(props) {
 
    const editPassenger = async () => {
       try {
-         const resp = await httpClient.put(`http://127.0.0.1:8000/bookings/edit-passenger/${p.id}`,{
+         const resp = await httpClient.put(`${url}:8000/bookings/edit-passenger/${p.id}`,{
             firstName,
             lastName,
             phoneNumber,

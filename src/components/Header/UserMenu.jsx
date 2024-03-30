@@ -4,11 +4,13 @@ import { Fragment } from 'react'
 // icons
 import { EmptyProfileIcon } from '../Icons'
 import httpClient from '../../httpClient';
+import { useSelector } from 'react-redux';
 
 export default function UserMenu() {
 
+   const url = useSelector((state) => state.development.value)
    const logoutUser = async () => {
-      await httpClient.post("//127.0.0.1:8000/auth/logout");
+      await httpClient.post(`${url}:8000/auth/logout`);
       window.location.href = "/login";
     };
 

@@ -3,10 +3,12 @@ import Event from './Event';
 import httpClient from '../../httpClient';
 import { quantum } from 'ldrs'
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export default function DatesGrid({ dates, currentMonth, currentYear, setEventClick, events }) {
+   const url = useSelector((state) => state.development.value)
    const [loading, setLoading] = useState(false)
    const [signal, setSignal] = useState({
       open: false,
@@ -47,7 +49,7 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
 
    const getEvents = async (filteredDates) => {
       try {
-         const resp = await httpClient.get(`http://127.0.0.1:8000/events/dates`, {
+         const resp = await httpClient.get(`${url}:8000/events/dates`, {
             params: {
                eventIds: eventIds.join(','),
                currentYear: currentYear,

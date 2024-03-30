@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
-
+import { useSelector } from 'react-redux'
 
 //icons
 import { CheckedInIcon } from '../Icons'
@@ -11,6 +11,7 @@ import CheckIn from './CheckIn'
 import ManagePassengers from './ManagePassengers'
 
 export default function GuestInfo(props) {
+  const url = useSelector((state) => state.development.value)
   const p = props.passenger
 
   const [booker, setBooker] = useState({
@@ -21,7 +22,7 @@ export default function GuestInfo(props) {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get(`//127.0.0.1:8000/auth/${p.booker_id}`);
+        const resp = await httpClient.get(`${url}:8000/auth/${p.booker_id}`);
         setBooker(resp.data)
       } catch (error) {
         console.log("Error", error)

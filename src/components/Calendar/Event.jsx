@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import httpClient from '../../httpClient';
+import { useSelector } from 'react-redux';
 
 // icons
 import { NewBookingIcon } from '../Icons';
@@ -10,9 +11,10 @@ import EventDetail from './EventDetail';
 import NewBooking from './NewBooking';
 
 export default function Event(props) {
+   const url = useSelector((state) => state.development.value)
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
-   const getPassengerURL = `//127.0.0.1:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.scheduledEvent.start_time}`
+   const getPassengerURL = `${url}:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.scheduledEvent.start_time}`
    
    // Parse the string into a Date object
    const dateObject = new Date(props.scheduledEvent.start_time);

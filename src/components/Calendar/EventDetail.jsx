@@ -2,8 +2,10 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import moment from 'moment'
 import httpClient from '../../httpClient'
+import { useSelector } from 'react-redux'
 
 export default function EventDetail({ event, scheduledEvent }) {
+   const url = useSelector((state) => state.development.value)
    let [isOpen, setIsOpen] = useState(false)
    const [openDelete, setOpenDelete] = useState(false)
    const [startTime, setStartTime] = useState(scheduledEvent.start_time)
@@ -31,7 +33,7 @@ export default function EventDetail({ event, scheduledEvent }) {
       const start = moment(startTime).format('yyyy-DD-MM HH:mm:ss')
       const end = moment(endTime).format('yyyy-DD-MM HH:mm:ss')
       try {
-         const resp = await httpClient.put(`http://127.0.0.1:8000/events/edit-event/${scheduledEvent.id}`,
+         const resp = await httpClient.put(`${url}:8000/events/edit-event/${scheduledEvent.id}`,
             {
                start,
                end,
@@ -48,7 +50,7 @@ export default function EventDetail({ event, scheduledEvent }) {
 
    const deleteEvent = async () => {
       try {
-         const resp = await httpClient.delete(`http://127.0.0.1:8000/events/delete-single-event/${scheduledEvent.id}`);
+         const resp = await httpClient.delete(`${url}:8000/events/delete-single-event/${scheduledEvent.id}`);
          console.log(resp.data)
       } catch (error) {
          console.log("Error", error);

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import httpClient from '../../httpClient';
 import { quantum } from 'ldrs'
+import { useSelector } from 'react-redux';
 
 export default function SingleTransaction(props) {
+   const url = useSelector((state) => state.development.value)
    const [event, setEvent] = useState({})
    quantum.register()
    const [loading, setLoading] = useState(false)
@@ -11,7 +13,7 @@ export default function SingleTransaction(props) {
       (async () => {
          setLoading(true)
          try {
-            const resp = await httpClient.get(`http://127.0.0.1:8000/events/get-event/${props.history.event_id}`)
+            const resp = await httpClient.get(`${url}:8000/events/get-event/${props.history.event_id}`)
             setEvent(resp.data)
          } catch (error) {
             console.log("Error", error)

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 // routing 
 import { Route, Routes } from 'react-router-dom';
 import httpClient from './httpClient';
+import { useSelector } from 'react-redux';
 
 // app
 import App from './App';
@@ -25,11 +26,12 @@ import NotFound from './components/NotFound';
 
 export default function Router() {
    const [userAuthenticated, setUserAuthenticated] = useState(false);
+   const url = useSelector((state) => state.development.value)
 
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get("http://127.0.0.1:8000/auth/@me");
+            const resp = await httpClient.get(`${url}:8000/auth/@me`);
             setUserAuthenticated(resp.data);
          } catch (error) {
             console.log("Not authenticated");

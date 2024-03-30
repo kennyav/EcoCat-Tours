@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../reducers/loginSlice';
+
 
 // components
 import EventLoader from './EventsComponents/EventLoader';
@@ -12,14 +13,14 @@ import { EventAddIcon } from './Icons'
 
 
 export default function Events() {
-
+  const url = useSelector((state) => state.development.value)
   const dispatch = useDispatch()
   const [events, setEvents] = useState([])
 
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get("//127.0.0.1:8000/events/@events");
+        const resp = await httpClient.get(`${url}:8000/events/@events`);
         setEvents(resp.data)
       } catch (error) {
         console.log("Error", error)

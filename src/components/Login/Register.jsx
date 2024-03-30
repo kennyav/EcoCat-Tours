@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import httpClient from '../../httpClient';
+import { useSelector } from 'react-redux';
 
 export default function Register() {
+   const url = useSelector((state) => state.development.value)
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [confirmPassword, setConfirmPassword] = useState("")
@@ -18,7 +20,7 @@ export default function Register() {
 
    const registerUser = async () => {
       try {
-         const resp = await httpClient.post("//127.0.0.1:8000/auth/register", {
+         const resp = await httpClient.post(`${url}:8000/auth/register`, {
             email,
             password,
          });
