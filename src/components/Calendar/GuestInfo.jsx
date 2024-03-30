@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
 
+
 //icons
 import { CheckedInIcon } from '../Icons'
 
@@ -10,6 +11,7 @@ import CheckIn from './CheckIn'
 
 export default function GuestInfo(props) {
   const p = props.passenger
+
   const [booker, setBooker] = useState({
     id: "",
     email: ""
@@ -33,7 +35,7 @@ export default function GuestInfo(props) {
       <div className="justify-start items-start gap-1 inline-flex">
         <div className="w-[179px] flex-col justify-start items-start gap-1 inline-flex">
           <div className="justify-start items-end gap-2 inline-flex">
-            <CheckedInIcon />
+           {p.checked_in && <CheckedInIcon/>}
             <div className="text-stone-900 text-sm font-bold font-['Kumbh Sans']">{p.first_name} {p.last_name}</div>
           </div>
           {p.adult_passengers ? <div className="text-sky-700 text-xs font-medium font-['Kumbh Sans']">{p.adult_passengers} Adult{p.adult_passengers > 1 ? 's' : ''}</div> : <div></div>}
@@ -54,7 +56,7 @@ export default function GuestInfo(props) {
       <div className="w-[215px] h-2.5 text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">Checked-in 3 minutes ago</div>
       <div className="flex-col justify-start items-start gap-[18px] flex">
         <div className="justify-start items-start gap-[7px] inline-flex">
-          <CheckIn />
+          <CheckIn passenger={p}/>
           <div className="w-[104px] h-8 px-[15px] py-2.5 rounded-[30px] border border-sky-700 justify-center items-center gap-2.5 flex">
             <div className="w-[86px] text-center text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">Manage</div>
           </div>

@@ -1,21 +1,34 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
+import httpClient from '../../httpClient'
+import moment from 'moment'
+import { printBoardingPass } from '../../helper/boardingPass'
 
 // components
-import DropDownMenu from './DropDownMenu'
-
-export default function NewBooking(props) {
-   const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   const [adultNumber, setAdultNumber] = useState(0)
-   const [childrenNumber, setChildrenNumber] = useState(0)
-   const [infantNumber, setInfantNumber] = useState(0)
-
+export default function CheckIn(props) {
    let [isOpen, setIsOpen] = useState(false)
+   const p = props.passenger
+   const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
+
+   const checkIn = async () => {
+      const checkedIn = true
+      try {
+         const resp = await httpClient.put(`http://127.0.0.1:8000/bookings/update-checkedin/${props.passenger.id}`, {
+            checkedIn
+         })
+         console.log(resp.data)
+         setIsOpen(false)
+      } catch (error) {
+         setIsOpen(false)
+         console.log("Error", error)
+      } finally {
+         printBoardingPass(p.first_name, p.last_name, p.created_at, "1", numberOfPassengers, p.adult_price, p.food, p.t_shirt, p.notes)
+      }
+   }
 
    function closeModal() {
       setIsOpen(false)
    }
-
    function openModal() {
       setIsOpen(true)
    }
@@ -62,11 +75,11 @@ export default function NewBooking(props) {
                               as="h3"
                               className="text-lg font-medium leading-6 text-gray-900"
                            >
-                              John Smith
+                              {props.passenger.first_name} {props.passenger.last_name}
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 Thursday, Febuary 8 2024 @ 1pm
+                                 {moment().format('dddd, MMMM Do YYYY')}
                               </p>
                            </div>
 
@@ -74,11 +87,10 @@ export default function NewBooking(props) {
 
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Customer Name *
+                                 Customer Name
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input className='border rounded-[10px] p-2' placeholder='First Name' />
-                                 <input className='border rounded-[10px] p-2' placeholder='Last Name' />
+                                 <h1 className='border rounded-[10px] p-2'>{props.passenger.first_name} {props.passenger.last_name}</h1>
                               </div>
                            </div>
 
@@ -86,37 +98,47 @@ export default function NewBooking(props) {
                            {/* Contact Information Section */}
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Contact Information *
+                                 Contact Information
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input className='border rounded-[10px] p-2' placeholder='Email Address' />
-                                 <input className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                                 <h1 className='border rounded-[10px] p-2'>{props.passenger.email}</h1>
+                                 <h1 className='border rounded-[10px] p-2'>{props.passenger.phone}</h1>
                               </div>
                            </div>
 
 
                            {/* Number of Passenger section*/}
                            <div className='py-[10px] flex flex-col'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Passengers *
-                              </h3>
+                              <div className="inline-flex gap-5">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Passengers
+                                 </h3>
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Price
+                                 </h3>
+                              </div>
+
                               <div className='flex flex-col gap-2'>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setAdultNumber} current={adultNumber} />
+                                 <div className='inline-flex gap-16 items-center'>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.adult_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.adult_price}</h1>
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 12+</h1>
                                     </div>
                                  </div>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setChildrenNumber} current={childrenNumber} />
+                                 <div className='inline-flex gap-16 items-center'>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.children_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.children_price}</h1>
+
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
                                     </div>
                                  </div>
-                                 <div className='inline-flex gap-5 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setInfantNumber} current={infantNumber} />
+                                 <div className='inline-flex gap-16 items-center'>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.infant_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.infant_price}</h1>
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
@@ -129,15 +151,15 @@ export default function NewBooking(props) {
                            <div className="inline-flex mt-4 w-full justify-between">
                               <button
                                  type="button"
-                                 className="inline-flex justify-center rounded-md border-2 border-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                 className="inline-flex justify-center rounded-md border-2 border-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
                                  onClick={closeModal}
                               >
                                  Cancel
                               </button>
                               <button
                                  type="button"
-                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                 onClick={closeModal}
+                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
+                                 onClick={() => checkIn()}
                               >
                                  Print Pass
                               </button>

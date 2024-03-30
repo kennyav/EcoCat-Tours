@@ -11,7 +11,7 @@ export default function Event({ event, days, schedule }) {
    // Function to format the time
    const formatTime = (timeStr) => {
       const date = new Date(timeStr);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' })
    };
 
    // Format start and end times

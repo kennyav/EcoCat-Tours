@@ -123,9 +123,6 @@ export default function AddEvent() {
             description,
             capacity,
             aboveDrinkingAge,
-            adultNumber,
-            childrenNumber,
-            infantNumber,
             createdBy
          });
 
@@ -139,6 +136,9 @@ export default function AddEvent() {
             repeated,
             repeatedWeekly,
             repeatedBiWeekly,
+            adultNumber,
+            childrenNumber,
+            infantNumber,
             days,
          });
 

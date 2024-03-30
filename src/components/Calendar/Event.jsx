@@ -10,7 +10,6 @@ import EventDetail from './EventDetail';
 import NewBooking from './NewBooking';
 
 export default function Event(props) {
-
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
    const getPassengerURL = `//127.0.0.1:8000/bookings/${props.event.id}/${props.year}/${props.month}/${props.day}/${props.scheduledEvent.start_time}`
@@ -97,18 +96,18 @@ export default function Event(props) {
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />
-                  <EventDetail />
+                  <EventDetail event={props.event} scheduledEvent={props.scheduledEvent}/>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.adult_passengers}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.adult_passengers}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Adults</div>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.children_passengers}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.children_passengers}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Children</div>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.event.infant_passengers}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.infant_passengers}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Infant</div>
                </div>
             </div>}

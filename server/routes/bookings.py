@@ -33,6 +33,7 @@ def create_booking():
     food = data.get('foodOptions')
     t_shirt = data.get('shirts')
     total_price = data.get('totalPrice')
+    checked_in = False
 
     # Create a new passenger booking in the database
     new_passenger_booking = PassengersModel(
@@ -49,6 +50,7 @@ def create_booking():
         payment_type=payment_type,
         payment_status=payment_status,
         commission_received=commission_received,
+        checked_in=checked_in,
         booker_id=booker_id,
         adult_passengers=adult_passengers,
         children_passengers=children_passengers,
@@ -95,3 +97,17 @@ def get_passengers(event_id, year, month, day, start_time):
 #     db.session.commit()
 
 #     return jsonify({"message": "Event deleted successfully"})
+    
+@bp.route("/update-checkedin/<passenger_id>", methods=["PUT"])
+def update_checkedin(passenger_id):
+    passenger = PassengersModel.query.get(passenger_id)
+    if not passenger:
+        return jsonify({"error": "Event not found"}), 404
+    if 'checkedIn' in request.json:
+        passenger.checked_in = request.json['checkedIn']
+    
+    db.session.commit()
+
+    return jsonify({"message": "Checkin updated successfully",
+                    "checked_in": passenger.checked_in
+                    }), 200

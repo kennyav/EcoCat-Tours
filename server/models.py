@@ -61,9 +61,6 @@ class EventsModel(db.Model):
     description = db.Column(db.Text)
     capacity = db.Column(db.Integer, nullable=False)
     above_drinking_age = db.Column(db.Boolean)
-    adult_passengers = db.Column(db.Integer)
-    children_passengers = db.Column(db.Integer)
-    infant_passengers = db.Column(db.Integer)
     created_by = db.Column(db.String(32))
     created_at = db.Column(DateTime, default=datetime.now)
 
@@ -74,9 +71,6 @@ class EventsModel(db.Model):
             'description': self.description,
             'capacity': self.capacity,
             'above_drinking_age': self.above_drinking_age,
-            'adult_passengers': self.adult_passengers,
-            'children_passengers': self.children_passengers,
-            'infant_passengers': self.infant_passengers,
             'created_by': self.created_by,
             'created_at': self.created_at
         }
@@ -87,6 +81,9 @@ class EventsScheduleModel(db.Model):
     event_id = db.Column(db.String(32))
     start_time = db.Column(DateTime) # this should include year, month, day, and hour
     end_time = db.Column(DateTime)
+    adult_passengers = db.Column(db.Integer)
+    children_passengers = db.Column(db.Integer)
+    infant_passengers = db.Column(db.Integer)
     days = db.Column(db.String(7))
     created_at = db.Column(DateTime, default=datetime.now)
 
@@ -96,6 +93,9 @@ class EventsScheduleModel(db.Model):
             'event_id': self.event_id,
             'start_time': self.start_time,
             'end_time': self.end_time,
+            'adult_passengers': self.adult_passengers,
+            'children_passengers': self.children_passengers,
+            'infant_passengers': self.infant_passengers,
             'days': self.days,
             'created_at': self.created_at
         }
@@ -126,6 +126,7 @@ class PassengersModel(db.Model):
     payment_type = db.Column(db.String(80), nullable=False)
     payment_status = db.Column(db.String(80), nullable=False)
     commission_received = db.Column(db.Boolean)
+    checked_in = db.Column(db.Boolean)
     notes = db.Column(db.Text, nullable=False)
     created_at = db.Column(DateTime, default=datetime.now)
 
@@ -153,6 +154,7 @@ class PassengersModel(db.Model):
             'payment_type': self.payment_type,
             'payment_status': self.payment_status,
             'commission_received': self.commission_received,
+            'checked_in': self.checked_in,
             'booker_id': self.booker_id,
             'notes': self.notes,
             'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S")

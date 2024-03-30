@@ -29,7 +29,6 @@ export default function NewBooking(props) {
    const [paymentStatus, setPaymentStatus] = useState('')
    const [commissionReceived, setCommissionReceived] = useState(false)
    const [bookerId, setBookerId] = useState('')
-   // const [passengerId, setPassengerId] = useState('')
    const [isOpen, setIsOpen] = useState(false)
    const eventId = props.eventId
    const year = props.year

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Event from './Event';
 import httpClient from '../../httpClient';
 import { quantum } from 'ldrs'
+import moment from 'moment';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -34,7 +35,6 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
          try {
             const filteredDates = dates.filter(day => day !== null && day !== undefined && day !== '');
             const fetchedEvents = await getEvents(filteredDates);
-            console.log(scheduledEvents)
          } catch (error) {
             console.error('Error fetching events:', error);
          } finally {
@@ -64,9 +64,25 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
    };
 
    const displayEvent = (day) => {
-      const eventsToDisplay = scheduledEvents.filter(event => parseInt(event.day) === day);
+      const eventsOnDay = scheduledEvents.filter(event => parseInt(event.day) === day);
+      const eventsToDisplay = () => {
+         const temp = []
+         // if the day has events
+         if (eventsOnDay.length > 0) {
+            eventsOnDay[0].list_of_events.forEach(event => {
+               const month = moment.utc(event.start_time).format('M')
+               const year = moment.utc(event.start_time).format('yyyy')
+               if ((parseInt(year) === currentYear) && (parseInt(month) - 1 === currentMonth.index)) {
+                  temp.push(event)
+               }
+            })
+         }
+         return temp
+      }
 
-      return eventsToDisplay.length > 0 && eventsToDisplay[0].list_of_events.map((event) => (
+      const display = eventsToDisplay()
+
+      return display.length > 0 && display.map((event) => (
          <div key={event.id} className="pb-1">
             <Event
                key={event.id}
