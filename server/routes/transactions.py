@@ -1,7 +1,5 @@
 from datetime import datetime
-from flask import (
-   Blueprint, jsonify, request
-)
+from flask import (Blueprint, jsonify, request)
 from sqlalchemy import func
 from models import db, TransactionsModel, PassengersModel
 import json

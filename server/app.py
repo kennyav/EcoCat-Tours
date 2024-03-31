@@ -12,7 +12,7 @@ def create_app():
     app.config.from_object(ApplicationConfig)
 
     bcrypt = Bcrypt(app)
-    #server_session = Session(app)
+    server_session = Session(app)
 
 
     import routes.auth as auth, routes.salesman as salesman, routes.events as events, routes.bookings as bookings, routes.transactions as transactions

@@ -45,11 +45,16 @@ def init_app(bcrypt):
         register_code = request.json["registerCode"]
         admin = False
 
-        if not register_code == os.environ["REGISTER_CODE"] and not register_code == os.environ["ADMIN_CODE"]:
+        if not register_code == "eco-cat-reservations-72@L5" and not register_code == "uncle_mikey_lives_forever":
             return jsonify({"error": "incorrect register code"}), 400
 
-        if register_code == os.environ["ADMIN_CODE"]:
+        if register_code == "uncle_mikey_lives_forever":
             admin = True
+        # if not register_code == os.environ["REGISTER_CODE"] and not register_code == os.environ["ADMIN_CODE"]:
+        #     return jsonify({"error": "incorrect register code"}), 400
+
+        # if register_code == os.environ["ADMIN_CODE"]:
+        #     admin = True
 
         user_exists = UserModel.query.filter_by(email=email).first() is not None
 
