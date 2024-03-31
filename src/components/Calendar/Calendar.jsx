@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../../reducers/loginSlice';
 
 // components
@@ -8,8 +8,9 @@ import DatesGrid from './DatesGrid';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export default function Calendar({ events, setEventClick, eventClick, title }) {
+export default function Calendar({ events, title }) {
 
+   const calendarInformation = useSelector((state) => state.calendarInformation)
    const dispatch = useDispatch()
    const [currentMonth, setCurrentMonth] = useState({
       name: "",
@@ -55,7 +56,7 @@ export default function Calendar({ events, setEventClick, eventClick, title }) {
    }, [currentMonth, currentYear]);
 
    return (
-      <div className={`flex flex-col w-full h-full transition-all duration-500 ${eventClick ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
+      <div className={`flex flex-col w-full h-full transition-all duration-500 ${calendarInformation.clicked ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
          <Header
             currentMonth={currentMonth}
             setCurrentMonth={setCurrentMonth}
@@ -66,7 +67,7 @@ export default function Calendar({ events, setEventClick, eventClick, title }) {
             dates={daysOfMonth}
             currentMonth={currentMonth}
             currentYear={currentYear}
-            setEventClick={setEventClick}
+            // setEventClick={setEventClick}
             events={events}
          />
       </div>

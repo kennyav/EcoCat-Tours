@@ -62,7 +62,6 @@ def init_app(bcrypt):
         email = request.json["email"]
         password = request.json["password"]
 
-        # TODO: compare the hashed password with the requested passwords
         user = UserModel.query.filter_by(email=email).first()
 
         if user is None:

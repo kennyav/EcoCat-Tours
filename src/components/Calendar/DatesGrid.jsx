@@ -3,12 +3,15 @@ import Event from './Event';
 import httpClient from '../../httpClient';
 import { quantum } from 'ldrs'
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { update } from '../../reducers/calendarSlice';
+
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export default function DatesGrid({ dates, currentMonth, currentYear, setEventClick, events }) {
+export default function DatesGrid({ dates, currentMonth, currentYear, events }) {
    const url = useSelector((state) => state.development.value)
+   const dispatch = useDispatch()
    const [loading, setLoading] = useState(false)
    const [signal, setSignal] = useState({
       open: false,
@@ -23,13 +26,13 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
    const eventIds = events ? events.map(event => event.id) : []
 
    useEffect(() => {
-      setEventClick({
+      dispatch(update({
          eventInfo: signal.event,
          passengerInfo: signal.passengers,
          clicked: signal.open,
          date: signal.date
-      });
-   }, [signal, setEventClick]);
+      }))
+   }, [signal]);
 
    useEffect(() => {
       const fetchEvents = async () => {
