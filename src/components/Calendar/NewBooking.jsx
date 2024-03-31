@@ -32,10 +32,20 @@ export default function NewBooking(props) {
    const [commissionReceived, setCommissionReceived] = useState(false)
    const [bookerId, setBookerId] = useState('')
    const [isOpen, setIsOpen] = useState(false)
+   const [atCapacity, setAtCapacity] = useState(false)
    const scheduledEventId = props.scheduledEvent.id
 
 
 
+   useEffect(() => {
+      const capacity = adultNumber + childrenNumber + infantNumber
+      if (capacity > props.scheduledEvent.capacity){
+         setAtCapacity(true)
+      } else {
+         setAtCapacity(false)
+      }
+
+   }, [adultNumber, childrenNumber, infantNumber])
    useEffect(() => {
       (async () => {
          try {
@@ -259,12 +269,14 @@ export default function NewBooking(props) {
 
                            <div className="flex w-full justify-between  mt-4">
                               <button
+                                 disabled={atCapacity}
                                  type="button"
-                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                 className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
                                  onClick={() => creatingNewBooking()}
                               >
                                  Create
                               </button>
+                              {atCapacity && "* at capacity"}
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
