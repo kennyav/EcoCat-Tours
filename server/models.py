@@ -14,22 +14,22 @@ class UserModel(db.Model):
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     email = db.Column(db.String(345), unique=True)
     password = db.Column(db.Text, nullable=False)
-    # first_name = db.Column(db.String(80), nullable=False)
-    # last_name = db.Column(db.String(80), nullable=False)
-    # admin = db.Column(db.Boolean)
-    #created_at = db.Column(DateTime, default=datetime.now)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    admin = db.Column(db.Boolean)
+    created_at = db.Column(DateTime, default=datetime.now)
 
-    # def serialize(self):
-    #     return {
-    #         'id': self.id,
-    #         'email': self.email,
-    #         'password': self.password,
-    #         'first_name': self.first_name,
-    #         'last_name': self.last_name,
-    #         'admin': self.admin,
-    #         'created_at': self.created_at
+    def serialize(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'password': self.password,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'admin': self.admin,
+            'created_at': self.created_at
 
-    #     }
+        }
 
 class SalesmenModel(db.Model):
     __tablename__ = "salesmen"

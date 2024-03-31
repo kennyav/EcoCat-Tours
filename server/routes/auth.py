@@ -39,6 +39,16 @@ def init_app(bcrypt):
     def register_user():
         email = request.json["email"]
         password = request.json["password"]
+        first_name = request.json["firstName"]
+        last_name = request.json["lastName"]
+        register_code = request.json["registerCode"]
+        admin = False
+
+        if not register_code == "eco-cat-reservations-72@L5" and not register_code == "uncle_mikey_lives_forever":
+            return jsonify({"error": "incorrect register code"}), 400
+
+        if register_code == "uncle_mikey_lives_forever":
+            admin = True
 
         user_exists = UserModel.query.filter_by(email=email).first() is not None
 
@@ -46,7 +56,12 @@ def init_app(bcrypt):
             return jsonify({"error": "User already exists"}), 409
 
         hashed_password = bcrypt.generate_password_hash(password)
-        new_user = UserModel(email=email, password=hashed_password)
+        new_user = UserModel(
+            first_name=first_name,
+            last_name=last_name,
+            email=email, 
+            password=hashed_password,
+            admin=admin)
         db.session.add(new_user)
         db.session.commit()
         
