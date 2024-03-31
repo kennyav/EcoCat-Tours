@@ -132,6 +132,7 @@ export default function AddEvent() {
          const eventId = resp.data.id
          const schedule = await httpClient.post(`${url}:8000/events/schedule-event`, {
             eventId,
+            capacity,
             formattedStartDate,
             formattedEndDate,
             formattedEndTime,

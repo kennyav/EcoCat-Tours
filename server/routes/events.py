@@ -51,6 +51,7 @@ def schedule_event():
     children_number = data.get('childrenNumber')
     infant_number = data.get('infantNumber')
     run_days = data.get('days')
+    capacity = data.get('capacity')
     start_date = datetime.strptime(start, '%Y-%d-%m %H:%M:%S')
     end_date = datetime.strptime(end, '%Y-%d-%m %H:%M:%S')
     end_time = datetime.strptime(end_t, '%Y-%d-%m %H:%M:%S')
@@ -83,7 +84,8 @@ def schedule_event():
                             adult_passengers=adult_number,
                             children_passengers=children_number,
                             infant_passengers=infant_number,
-                            days=run_days
+                            days=run_days,
+                            capacity=capacity
                             )
                         db.session.add(new_schedule)
                         db.session.commit()
@@ -107,7 +109,8 @@ def schedule_event():
                             adult_passengers=adult_number,
                             children_passengers=children_number,
                             infant_passengers=infant_number,
-                            days=run_days
+                            days=run_days,
+                            capacity=capacity
                             )
                         db.session.add(new_schedule)
                         db.session.commit()
@@ -128,7 +131,8 @@ def schedule_event():
             adult_passengers=adult_number,
             children_passengers=children_number,
             infant_passengers=infant_number,
-            days=run_days)
+            days=run_days,
+            capacity=capacity)
         db.session.add(new_schedule)
         db.session.commit()
 
@@ -271,7 +275,7 @@ def delete_single_event(event_id):
 
 @bp.route("/edit-capacity/<event_id>", methods=["PUT"])
 def edit_capacity(event_id):
-    event = EventsModel.query.get(event_id)
+    event = EventsScheduleModel.query.get(event_id)
 
     if not event:
         return jsonify({"error": "Event not found"}), 404

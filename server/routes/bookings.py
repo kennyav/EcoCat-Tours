@@ -10,11 +10,7 @@ bp = Blueprint('bookings', __name__, url_prefix='/bookings')
 @bp.route('/create-booking', methods=["POST"])
 def create_booking():
     data = request.json
-    year = data.get('year')
-    month = data.get('month')
-    day = data.get('day')
-    start_time = data.get('startTime')
-    event_id = data.get('eventId')
+    scheduled_event_id = data.get('scheduledEventId')
     first_name = data.get('firstName')
     last_name = data.get('lastName')
     email = data.get('email')
@@ -37,11 +33,7 @@ def create_booking():
 
     # Create a new passenger booking in the database
     new_passenger_booking = PassengersModel(
-        event_id=event_id,
-        year=year,
-        month=month,
-        day=day,
-        start_time=start_time,
+        scheduled_event_id=scheduled_event_id,
         first_name=first_name,
         last_name=last_name,
         email=email,
@@ -70,17 +62,10 @@ def create_booking():
 
 
 
-@bp.route('/<event_id>/<year>/<month>/<day>/<start_time>', methods=["GET"])
-def get_passengers(event_id, year, month, day, start_time):
-    selected_passengers = PassengersModel.query.filter_by(
-        event_id = event_id,
-        year = year,
-        month = month,
-        day = day,
-        start_time = start_time
-        ).all()
-    
-    print(selected_passengers)
+@bp.route('/<scheduled_event_id>', methods=["GET"])
+def get_passengers(scheduled_event_id):
+    selected_passengers = PassengersModel.query.filter_by(scheduled_event_id=scheduled_event_id).all()
+
     if selected_passengers:
         return jsonify([passenger.serialize() for passenger in selected_passengers]), 200
     else:

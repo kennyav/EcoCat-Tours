@@ -3,12 +3,16 @@ import Event from './Event';
 import httpClient from '../../httpClient';
 import { quantum } from 'ldrs'
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { update } from '../../reducers/calendarSlice';
+
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export default function DatesGrid({ dates, currentMonth, currentYear, setEventClick, events }) {
+export default function DatesGrid({ dates, events }) {
    const url = useSelector((state) => state.development.value)
+   const date = useSelector((state) => state.dateValue)
+   const dispatch = useDispatch()
    const [loading, setLoading] = useState(false)
    const [signal, setSignal] = useState({
       open: false,
@@ -23,13 +27,13 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
    const eventIds = events ? events.map(event => event.id) : []
 
    useEffect(() => {
-      setEventClick({
+      dispatch(update({
          eventInfo: signal.event,
          passengerInfo: signal.passengers,
          clicked: signal.open,
          date: signal.date
-      });
-   }, [signal, setEventClick]);
+      }))
+   }, [signal]);
 
    useEffect(() => {
       const fetchEvents = async () => {
@@ -45,15 +49,15 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
       };
 
       fetchEvents();
-   }, [dates, currentMonth.index, currentYear, events]);
+   }, [dates, date, events]);
 
    const getEvents = async (filteredDates) => {
       try {
          const resp = await httpClient.get(`${url}:8000/events/dates`, {
             params: {
                eventIds: eventIds.join(','),
-               currentYear: currentYear,
-               currentMonth: currentMonth.index + 1,
+               currentYear: date.year,
+               currentMonth: date.monthIndex + 1,
                dates: filteredDates.join(',')
             }
          })
@@ -74,7 +78,7 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
             eventsOnDay[0].list_of_events.forEach(event => {
                const month = moment.utc(event.start_time).format('M')
                const year = moment.utc(event.start_time).format('yyyy')
-               if ((parseInt(year) === currentYear) && (parseInt(month) - 1 === currentMonth.index)) {
+               if ((parseInt(year) === date.year) && (parseInt(month) - 1 === date.monthIndex)) {
                   temp.push(event)
                }
             })
@@ -93,8 +97,6 @@ export default function DatesGrid({ dates, currentMonth, currentYear, setEventCl
                setSignal={setSignal}
                scheduledEvent={event}
                event={events.find(e => e.id === event.event_id)}
-               month={currentMonth.name}
-               year={currentYear}
                day={day}
             />
          </div>

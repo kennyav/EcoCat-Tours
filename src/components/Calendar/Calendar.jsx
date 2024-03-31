@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../../reducers/loginSlice';
+import { updateDate } from '../../reducers/dateSlice';
 
 // components
 import Header from './Header';
@@ -8,14 +9,11 @@ import DatesGrid from './DatesGrid';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export default function Calendar({ events, setEventClick, eventClick, title }) {
+export default function Calendar({ events, title }) {
 
+   const calendarInformation = useSelector((state) => state.calendarInformation)
+   const date = useSelector((state) => state.dateValue)
    const dispatch = useDispatch()
-   const [currentMonth, setCurrentMonth] = useState({
-      name: "",
-      index: -1
-   });
-   const [currentYear, setCurrentYear] = useState(2024);
    const [daysOfMonth, setDaysOfMonth] = useState([]);
 
    useEffect(() => {
@@ -28,17 +26,17 @@ export default function Calendar({ events, setEventClick, eventClick, title }) {
       const monthIndex = today.getMonth()
       const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(today);
 
-      setCurrentYear(yearIndex)
-      setCurrentMonth({
-         name: `${monthName}`,
-         index: monthIndex
-      });
+      dispatch(updateDate({
+         year: yearIndex,
+         monthName: monthName,
+         monthIndex: monthIndex
+      }))
    }, []);
 
 
    useEffect(() => {
-      const year = currentYear;
-      const month = MONTH_NAMES.indexOf(currentMonth.name);
+      const year = date.year;
+      const month = MONTH_NAMES.indexOf(date.monthName);
 
       const firstDayOfMonth = new Date(year, month, 1);
       const startingDayOfWeek = firstDayOfMonth.getDay() - 1; // 0 for Monday, 6 for Sunday, etc.
@@ -52,21 +50,13 @@ export default function Calendar({ events, setEventClick, eventClick, title }) {
 
       setDaysOfMonth(daysArray);
 
-   }, [currentMonth, currentYear]);
+   }, [date]);
 
    return (
-      <div className={`flex flex-col w-full h-full transition-all duration-500 ${eventClick ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
-         <Header
-            currentMonth={currentMonth}
-            setCurrentMonth={setCurrentMonth}
-            currentYear={currentYear}
-            setCurrentYear={setCurrentYear}
-         />
+      <div className={`flex flex-col w-full h-full transition-all duration-500 ${calendarInformation.clicked ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
+         <Header/>
          <DatesGrid
             dates={daysOfMonth}
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            setEventClick={setEventClick}
             events={events}
          />
       </div>

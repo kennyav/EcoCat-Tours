@@ -10,7 +10,7 @@ export default function EventInfo(props) {
   const event = props.ev.eventInfo
   const date = props.ev.date
   const passengers = props.ev.passengerInfo
-  const eventTimeInfo = date.month ? `${date.month} ${date.day}, ${date.year} @ ${event.start_time}` : 'No Event Selected'
+  const eventTimeInfo = date.month ? `${date.month} ${date.day}, ${date.year} @ ${date.time}` : 'No Event Selected'
 
   // have to use states for this
   const [title, setTitle] = useState()
@@ -20,7 +20,6 @@ export default function EventInfo(props) {
     setTitle(event.title)
   }, [event])
 
-  console.log("Passenger Information", passengers)
 
   // takes in the event information and displays it in the column
   return (
@@ -38,7 +37,7 @@ export default function EventInfo(props) {
         </div>
       </div>
       {passengers && passengers.map((passenger) => {
-        return <GuestInfo passenger={passenger}/>
+        return <GuestInfo key={passenger.id} passenger={passenger}/>
       })}
     </div >
   )

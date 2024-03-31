@@ -8,6 +8,9 @@ export default function Register() {
    const [password, setPassword] = useState("");
    const [confirmPassword, setConfirmPassword] = useState("")
    const [confirmed, setConfirmed] = useState(false)
+   const [firstName, setFirstName] = useState("")
+   const [lastName, setLastName] = useState("")
+   const [registerCode, setRegisterCode] = useState("")
 
    let confirmPassCSS = confirmed ? "focus:ring-green-600 focus:border-green-600 dark:focus:ring-green-500 dark:focus:border-green-500" : "focus:ring-red-600 focus:border-red-600 dark:focus:ring-red-500 dark:focus:border-red-500"
 
@@ -23,6 +26,9 @@ export default function Register() {
          const resp = await httpClient.post(`${url}:8000/auth/register`, {
             email,
             password,
+            firstName,
+            lastName,
+            registerCode
          });
 
          console.log(resp)
@@ -46,6 +52,34 @@ export default function Register() {
                   <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                      Create and Account
                   </h1>
+                  <div>
+                        <label
+                           htmlFor="email"
+                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                           First Name
+                        </label>
+                        <input
+                           name="firstName"
+                           id="firstName"
+                           value={firstName}
+                           onChange={(e) => setFirstName(e.target.value)}
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           required />
+                     </div>
+                     <div>
+                        <label
+                           htmlFor="email"
+                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                           Last Name
+                        </label>
+                        <input
+                           name="lastName"
+                           id="lastName"
+                           value={lastName}
+                           onChange={(e) => setLastName(e.target.value)}
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           required />
+                     </div>
                      <div>
                         <label
                            htmlFor="email"
@@ -92,6 +126,22 @@ export default function Register() {
                            onChange={(e) => setConfirmPassword(e.target.value)}
                            placeholder="••••••••"
                            className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 ${confirmPassCSS} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white`}
+                           required />
+                     </div>
+                     <div>
+                        <label
+                           htmlFor="password"
+                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                           Register Code
+                        </label>
+                        <input
+                           type="password"
+                           name="register"
+                           id="register"
+                           value={registerCode}
+                           onChange={(e) => setRegisterCode(e.target.value)}
+                           placeholder="••••••••"
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                            required />
                      </div>
                      <button type="button" onClick={() => registerUser()} disabled={!confirmed} className={`w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}>Create Account</button>

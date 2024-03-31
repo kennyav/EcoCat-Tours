@@ -14,22 +14,21 @@ class UserModel(db.Model):
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     email = db.Column(db.String(345), unique=True)
     password = db.Column(db.Text, nullable=False)
-    # first_name = db.Column(db.String(80), nullable=False)
-    # last_name = db.Column(db.String(80), nullable=False)
-    # admin = db.Column(db.Boolean)
-    #created_at = db.Column(DateTime, default=datetime.now)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    admin = db.Column(db.Boolean)
+    created_at = db.Column(DateTime, default=datetime.now)
 
-    # def serialize(self):
-    #     return {
-    #         'id': self.id,
-    #         'email': self.email,
-    #         'password': self.password,
-    #         'first_name': self.first_name,
-    #         'last_name': self.last_name,
-    #         'admin': self.admin,
-    #         'created_at': self.created_at
+    def serialize(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'admin': self.admin,
+            'created_at': self.created_at
 
-    #     }
+        }
 
 class SalesmenModel(db.Model):
     __tablename__ = "salesmen"
@@ -82,6 +81,7 @@ class EventsScheduleModel(db.Model):
     start_time = db.Column(DateTime) # this should include year, month, day, and hour
     end_time = db.Column(DateTime)
     adult_passengers = db.Column(db.Integer)
+    capacity = db.Column(db.Integer, nullable=False)
     children_passengers = db.Column(db.Integer)
     infant_passengers = db.Column(db.Integer)
     days = db.Column(db.String(7))
@@ -95,6 +95,7 @@ class EventsScheduleModel(db.Model):
             'end_time': self.end_time,
             'adult_passengers': self.adult_passengers,
             'children_passengers': self.children_passengers,
+            'capacity': self.capacity,
             'infant_passengers': self.infant_passengers,
             'days': self.days,
             'created_at': self.created_at
@@ -104,12 +105,8 @@ class EventsScheduleModel(db.Model):
 class PassengersModel(db.Model):
     __tablename__ = "passengers"
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    event_id = db.Column(db.String(32))
+    scheduled_event_id = db.Column(db.String(32))
     booker_id = db.Column(db.String(32))
-    year = db.Column(db.Integer)
-    month = db.Column(db.String(20))
-    day = db.Column(db.Integer)
-    start_time = db.Column(db.String(20))
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(345))
@@ -133,11 +130,7 @@ class PassengersModel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'event_id': self.event_id,
-            'year': self.year,
-            'month': self.month,
-            'day': self.day,
-            'start_time': self.start_time,
+            'scheduled_event_id': self.scheduled_event_id,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
