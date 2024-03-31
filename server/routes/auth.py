@@ -1,3 +1,4 @@
+import os
 from flask import (
    Blueprint, jsonify, request, session
 )
@@ -44,10 +45,10 @@ def init_app(bcrypt):
         register_code = request.json["registerCode"]
         admin = False
 
-        if not register_code == "eco-cat-reservations-72@L5" and not register_code == "uncle_mikey_lives_forever":
+        if not register_code == os.environ["REGISTER_CODE"] and not register_code == os.environ["ADMIN_CODE"]:
             return jsonify({"error": "incorrect register code"}), 400
 
-        if register_code == "uncle_mikey_lives_forever":
+        if register_code == os.environ["ADMIN_CODE"]:
             admin = True
 
         user_exists = UserModel.query.filter_by(email=email).first() is not None
@@ -74,15 +75,18 @@ def init_app(bcrypt):
 
     @bp.route("/login", methods=["POST"])
     def login_user():
+        print("[DEBUG] does it run?")
         email = request.json["email"]
         password = request.json["password"]
 
         user = UserModel.query.filter_by(email=email).first()
 
         if user is None:
+            print("[DEBUG] user is none")
             return jsonify({"error": "Unauthorized"}), 401
 
         if not bcrypt.check_password_hash(user.password, password):
+            print("[DEBUG] passwords is wrong")
             return jsonify({"error": "Unauthorized, wrong password"}), 401
         
         # chrome issue 
@@ -97,5 +101,13 @@ def init_app(bcrypt):
     def logout_user():
         session.pop("user_id")
         return "200"
+    
+    @bp.route("/all-users", methods=["GET"])
+    def get_all_user():
+        users = UserModel.query.all()
+        if not users:
+            return jsonify({"error": "No users found"}), 404
+        return jsonify([user.serialize() for user in users]), 200 
+                
     
 
