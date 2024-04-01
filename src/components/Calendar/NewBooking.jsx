@@ -57,7 +57,17 @@ export default function NewBooking(props) {
       })();
    }, []);
 
+
+  const validatePhoneNumber = (phoneNumber) => {
+      return phoneNumber.length === 10 && /^\d+$/.test(phoneNumber);
+  };
+
+
    const creatingNewBooking = async () => {
+      if (!validatePhoneNumber(phoneNumber)) {
+         alert("Invalid phone number. Please enter exactly 10 digits.");
+         return;
+     }
       let passengerId = ''
       const totalPrice = (adultNumber * adultPrice) + (childrenNumber * childrenPrice) + (infantNumber * infantPrice)
       try {
