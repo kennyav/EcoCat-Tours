@@ -13,8 +13,8 @@ class ApplicationConfig:
    SQLALCHEMY_ECHO = True
    SQLALCHEMY_DATABASE_URI = r"sqlite:///./db.sqlite"
 
-   SESSION_COOKIE_SAMESITE = "None"
-   SESSION_COOKIE_SECURE = True
+   #SESSION_COOKIE_SAMESITE = "None"
+   #SESSION_COOKIE_SECURE = True
 
    SESSION_TYPE = "redis"
    SESSION_PERMANANT = False
