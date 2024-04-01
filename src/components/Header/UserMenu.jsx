@@ -326,7 +326,7 @@ export default function UserMenu() {
 //    )
 // }
 
-function DeleteInactiveIcon(props) {
+export function DeleteInactiveIcon(props) {
    return (
       <svg
          {...props}
@@ -349,7 +349,7 @@ function DeleteInactiveIcon(props) {
    )
 }
 
-function DeleteActiveIcon(props) {
+export function DeleteActiveIcon(props) {
    return (
       <svg
          {...props}

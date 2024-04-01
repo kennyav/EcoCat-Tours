@@ -198,31 +198,34 @@ export default function AddEvent() {
                </div>
             </div>
 
-
+            {/* JOSEPH EDIT 4/1/2024 4:00 PM START */}
             {/* Second Column */}
             <div className="">
-
                <div className="flex flex-col justify-between w-2/3 py-[10px]">
                   <h2 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                      Event Type *
                   </h2>
-                  <div className="flex justify-between w-full pr-24">
-                     <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                  {/* <div className="flex justify-between w-full pr-24"> */}
+                  <div className="flex flex-col">
+                     {/* <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                         Single
-                     </h3>
+                     </h3> */}
                      <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                         Repeated
                      </h3>
-                  </div>
-                  <div className="pl-5">
+                  
+                  {/* <div className="pl-5"> */}
+                     
                      <Switch
                         checked={repeated}
                         onChange={() => setRepeated(!repeated)}
-                        className={`${repeated ? 'bg-blue-600' : 'bg-green-600'} relative inline-flex h-6 w-1/2 items-center rounded-full`}
+                        className={`${repeated ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full`}
                      >
-                        <span className="sr-only">Enable notifications</span>
-                        <span className={`${repeated ? 'translate-x-[125px]' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition`} />
+                        <span className="sr-only">Enable notifications</span> 
+                        <span className={`${repeated ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition`} />
                      </Switch>
+                     </div>
+                     
                      {repeated && (
                         <div className="py-[10px]">
                            <div>
@@ -282,7 +285,8 @@ export default function AddEvent() {
                            </div>
                         </div>
                      )}
-                  </div>
+                  {/* </div> */}
+               {/* JOSEPH EDIT 4/1/2024 4:00 PM END */}
                </div>
 
                {/* is the event 21+ */}
