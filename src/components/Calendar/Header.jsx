@@ -42,7 +42,7 @@ export default function Header() {
       const today = new Date();
       const yearIndex = +today.getFullYear()
       let list = []
-      for (let i = 0; i < 5; i++) {
+      for (let i = -2; i < 4; i++) {
          list.push(yearIndex - i)
       }
       return list
@@ -50,7 +50,6 @@ export default function Header() {
 
    const handlePreviousMonth = () => {
       const newMonthIndex = MONTH_NAMES.indexOf(date.monthName) - 1;
-      console.log("Index of", newMonthIndex)
       if (newMonthIndex < 0) {
          dispatch(updateDate({
             year: date.year - 1,

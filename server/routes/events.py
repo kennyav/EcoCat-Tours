@@ -192,10 +192,11 @@ def get_event_schedule(event_id):
     
 @bp.route('/get-event/<event_id>', methods=["GET"])
 def get_event(event_id):
-    event_schedule = EventsModel.query.filter_by(id=event_id).first()
+    event_s = EventsScheduleModel.query.get(event_id)
+    event = EventsModel.query.filter_by(id=event_s.event_id).first()
     
-    if event_schedule:
-        return jsonify(event_schedule.serialize()), 200
+    if event:
+        return jsonify(event.serialize()), 200
     else:
         return jsonify({"message": "No events found"}), 404
     

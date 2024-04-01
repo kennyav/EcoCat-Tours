@@ -99,7 +99,7 @@ export default function SalesmanInfo(props) {
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 {props.person.date}
+                                 Created on {props.person.date}
                               </p>
                            </div>
 

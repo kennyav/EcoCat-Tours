@@ -4,6 +4,12 @@ import httpClient from '../../httpClient'
 import moment from 'moment'
 import { printBoardingPass } from '../../helper/boardingPass'
 import { useSelector } from 'react-redux'
+import RadioGroup from './RadioGroup'
+
+const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
+const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
+const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
+
 
 // components
 export default function ManagePassengers(props) {
@@ -22,6 +28,9 @@ export default function ManagePassengers(props) {
    const [adultPrice, setAdultPrice] = useState(p.adult_price)
    const [childrenPrice, setChildrenPrice] = useState(p.children_price)
    const [infantPrice, setInfantPrice] = useState(p.infant_price)
+   const [paymentSource, setPaymentSource] = useState(p.payment_source)
+   const [paymentStatus, setPaymentStatus] = useState(p.payment_status)
+   const [commissionReceived, setCommissionReceived] = useState(p.commission_received)
    const [notes, setNotes] = useState(p.notes)
    const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
@@ -49,6 +58,9 @@ export default function ManagePassengers(props) {
             childrenPrice,
             infantNumber,
             infantPrice,
+            paymentSource,
+            paymentStatus,
+            commissionReceived,
             notes
          })
          console.log(resp.data)
@@ -124,7 +136,7 @@ export default function ManagePassengers(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Customer Name
                               </h3>
-                              <div className='inline-flex gap-1'>
+                              <div className='inline-flex gap-12'>
                                  <input disabled={!edit} value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' />
                                  <input disabled={!edit} value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' />
                               </div>
@@ -136,8 +148,8 @@ export default function ManagePassengers(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Contact Information
                               </h3>
-                              <div className='inline-flex gap-1'>
-                                 <input disabled={!edit} value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' />
+                              <div className='flex gap-1'>
+                                 <input disabled={!edit} value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2 w-1/3' />
                                  <input disabled={!edit} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className='border rounded-[10px] p-2' />
                               </div>
                            </div>
@@ -172,6 +184,12 @@ export default function ManagePassengers(props) {
                                  <h1 className='text-sm text-gray-900'>Infants</h1>
                                  <p className='text-xs text-gray-900'>Ages 0-4</p>
                               </div>
+                           </div>
+
+                           <div className='inline-flex w-full justify-between'>
+                              <RadioGroup disabled={!edit} label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource} />
+                              <RadioGroup disabled={!edit} label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus}/>
+                              <RadioGroup disabled={!edit} label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived}/>
                            </div>
 
                            <div className='py-[10px] flex flex-col'>

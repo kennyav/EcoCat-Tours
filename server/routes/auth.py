@@ -16,10 +16,7 @@ def init_app(bcrypt):
     def get_booker(user_id):        
         user = UserModel.query.filter_by(id=user_id).first()
         if user:
-            return jsonify({
-                "id": user.id,
-                "email": user.email
-            }) 
+            return jsonify(user.serialize()) 
         else: 
             return jsonify({"message": "No user found"}), 404
     

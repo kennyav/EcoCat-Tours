@@ -5,13 +5,16 @@ import { quantum } from 'ldrs'
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import { update } from '../../reducers/calendarSlice';
+import { useMediaQuery } from "@react-hook/media-query";
 
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const ABRV_DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function DatesGrid({ dates, events }) {
    const url = useSelector((state) => state.development.value)
    const date = useSelector((state) => state.dateValue)
+   const isSmallScreen = useMediaQuery("(max-width: 1000px)");
    const dispatch = useDispatch()
    const [loading, setLoading] = useState(false)
    const [signal, setSignal] = useState({
@@ -106,7 +109,7 @@ export default function DatesGrid({ dates, events }) {
 
    return (
       <div className="grid grid-cols-7 grid-flow-row p-5 font-KumbhSans">
-         {DAYS_OF_WEEK.map((dayName, i) => (
+         {(isSmallScreen ? ABRV_DAYS_OF_WEEK : DAYS_OF_WEEK).map((dayName, i) => (
             <div key={i} className="font-bold text-center text-[14px] p-4">
                {dayName}
             </div>

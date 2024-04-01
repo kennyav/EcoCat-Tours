@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react'
 import { RadioGroup } from '@headlessui/react'
 
 export default function RadioGroupComponent(props) {
-   const [selected, setSelected] = useState(props.plans[0])
+   const index = () => {
+      const i = props.plans.findIndex(item => item.name === props.name);
+      return i !== -1 ? i : 0
+   }
+   
+   const [selected, setSelected] = useState(props.plans[index()])
    const setFunctionTest = props.setCurrent
    
    useEffect(() => {
@@ -20,6 +25,7 @@ export default function RadioGroupComponent(props) {
                <div className="space-y-2">
                   {props.plans.map((plan) => (
                      <RadioGroup.Option
+                        disabled={props.disabled}
                         key={plan.name}
                         value={plan}
                         className={({ active, checked }) =>

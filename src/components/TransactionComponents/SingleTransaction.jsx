@@ -9,11 +9,13 @@ export default function SingleTransaction(props) {
    quantum.register()
    const [loading, setLoading] = useState(false)
 
+   console.log(props.history.scheduled_event_id)
+
    useEffect(() => {
       (async () => {
          setLoading(true)
          try {
-            const resp = await httpClient.get(`${url}:8000/events/get-event/${props.history.event_id}`)
+            const resp = await httpClient.get(`${url}:8000/events/get-event/${props.history.scheduled_event_id}`)
             setEvent(resp.data)
          } catch (error) {
             console.log("Error", error)

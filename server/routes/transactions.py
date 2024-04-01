@@ -19,7 +19,7 @@ def create_transaction():
     return jsonify(new_transaction.serialize()), 200
 
 
-@bp.route('/get-transactions/<int:month>/<int:day>/<int:year>', methods=["GET"])
+@bp.route('/get-transactions/<month>/<day>/<year>', methods=["GET"])
 def get_transactions(month, day, year):
     try:
         date_string = f"{year}-{month}-{day}"  # Construct the date string

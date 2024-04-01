@@ -11,9 +11,9 @@ export default function Menus({ children }) {
    return (
       <div className='flex flex-row w-full h-screen'>
          <NavBar />
-         <div className='flex flex-col w-full h-screen bg-[#F2F8FC]'>
+         <div className='flex flex-col w-full h-screen bg-[#F2F8FC] overflow-y-scroll overflow-x-hidden'>
             <Header title={title} />
-            <div className='w-full h-screen  py-[20px] overflow-scroll'>
+            <div className='py-[20px]'>
                {children}
             </div>
          </div>

@@ -25,7 +25,7 @@ export default function Bookings() {
 
 
   return (
-    <div className={`flex flex-row overflow-x-hidden pl-[41px]`}>
+    <div className={`flex flex-row pl-[41px]`}>
       <Calendar
         title={"Bookings"}
         events={events} />

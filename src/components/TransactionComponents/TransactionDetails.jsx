@@ -19,6 +19,7 @@ export default function TransactionDetails() {
 
    const location = useLocation();
    const { date } = location.state;
+   console.log("transaction in transaction detail", date)
 
    useEffect(() => {
 
@@ -26,7 +27,6 @@ export default function TransactionDetails() {
          try {
             const resp = await httpClient.get(`${url}:8000/transactions/get-transactions/${date}`)
             setHistory(resp.data)
-            console.log(resp.data)
          } catch (error) {
             console.log("Error", error)
          }
@@ -48,20 +48,6 @@ export default function TransactionDetails() {
                      )
                   })
                }
-
-               {/* {
-                  transactions.map((transaction) => {
-                     return (
-                        <span key={transaction.date} className="flex justify-between border-b-2 font-KumbhSans px-[20px] py-[25px]">
-                           <p className='font-bold text-[20px]'>{transaction.date}</p>
-                           <span className='flex flex-row gap-4 items-center'>
-                              <button className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full text-white px-[15px] py-[10px] text-[10px] text-center">View</button>
-                              <TransactionOptionsIcon />
-                           </span>
-                        </span>
-                     )
-                  })
-               } */}
             </div>
          </div>
       </div>

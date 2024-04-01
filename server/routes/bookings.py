@@ -126,6 +126,12 @@ def update_passenger(passenger_id):
         passenger.children_price = request.json['childrenPrice']
     if 'infantPrice' in request.json:
         passenger.infant_price = request.json['infantPrice']
+    if 'paymentSource' in request.json:
+        passenger.payment_source = request.json['paymentSource']
+    if 'paymentStatus' in request.json:
+        passenger.payment_status = request.json['paymentStatus']
+    if 'commissionReceived' in request.json:
+        passenger.commission_received = request.json['commissionReceived']
     
     db.session.commit()
 

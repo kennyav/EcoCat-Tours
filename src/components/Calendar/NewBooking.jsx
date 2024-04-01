@@ -165,7 +165,7 @@ export default function NewBooking(props) {
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 {props.month} {props.day}, {props.year} @ {props.scheduledEvent.startTime}
+                                 {props.scheduledEvent.start_time}
                               </p>
                            </div>
 
@@ -250,10 +250,11 @@ export default function NewBooking(props) {
                                  </div>
                               </div>
                            </div>
+
                            <div className='inline-flex w-full justify-between'>
-                              <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} />
-                              <RadioGroup label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} />
-                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} />
+                              <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource}/>
+                              <RadioGroup label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus}/>
+                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived}/>
                            </div>
 
 
