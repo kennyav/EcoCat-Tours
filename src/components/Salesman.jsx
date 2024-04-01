@@ -15,7 +15,6 @@ export default function Salesman() {
     (async () => {
       try {
         const resp = await httpClient.get(`${url}:8000/salesmen/@salesmen`);
-        console.log(resp.data)
         setSalesmen(resp.data)
       } catch (error) {
         console.log("Error", error)

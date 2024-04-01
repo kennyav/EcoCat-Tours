@@ -2,6 +2,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState, useEffect } from 'react'
 import httpClient from '../../httpClient'
 
+// helper functions
+import { handlePhoneNumberChange } from '../../helper/formHelper'
+
 // components
 import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
@@ -34,18 +37,19 @@ export default function NewBooking(props) {
    const [isOpen, setIsOpen] = useState(false)
    const [atCapacity, setAtCapacity] = useState(false)
    const scheduledEventId = props.scheduledEvent.id
-
-
+   const isPhoneNumberValid = /^(\(\d{3}\)\s\d{3}-\d{4})$/.test(phoneNumber);
+   const isCreateButtonDisabled = !firstName || !lastName || !isPhoneNumberValid || !email || !adultNumber || !childrenNumber || !infantNumber || !adultPrice || !childrenPrice || !infantPrice;
 
    useEffect(() => {
       const capacity = adultNumber + childrenNumber + infantNumber
-      if (capacity > props.scheduledEvent.capacity){
+      if (capacity > props.scheduledEvent.capacity) {
          setAtCapacity(true)
       } else {
          setAtCapacity(false)
       }
 
    }, [adultNumber, childrenNumber, infantNumber])
+
    useEffect(() => {
       (async () => {
          try {
@@ -55,7 +59,7 @@ export default function NewBooking(props) {
             console.log("Not authenticated");
          }
       })();
-   }, []);
+   }, [url]);
 
    const creatingNewBooking = async () => {
       let passengerId = ''
@@ -187,7 +191,7 @@ export default function NewBooking(props) {
                               </h3>
                               <div className='inline-flex gap-1'>
                                  <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' placeholder='Email Address' />
-                                 <input type='tel' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className='border rounded-[10px] p-2' placeholder='Phone Number' />
+                                 <input type='tel' value={phoneNumber} onChange={(e) => handlePhoneNumberChange(e, setPhoneNumber)} className='border rounded-[10px] p-2' placeholder='Phone Number' />
                               </div>
                            </div>
 
@@ -252,9 +256,9 @@ export default function NewBooking(props) {
                            </div>
 
                            <div className='inline-flex w-full justify-between'>
-                              <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource}/>
-                              <RadioGroup label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus}/>
-                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived}/>
+                              <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource} />
+                              <RadioGroup label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus} />
+                              <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived} />
                            </div>
 
 
@@ -270,14 +274,15 @@ export default function NewBooking(props) {
 
                            <div className="flex w-full justify-between  mt-4">
                               <button
-                                 disabled={atCapacity}
+                                 disabled={atCapacity || isCreateButtonDisabled}
                                  type="button"
-                                 className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
+                                 className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity || isCreateButtonDisabled ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
                                  onClick={() => creatingNewBooking()}
                               >
                                  Create
                               </button>
                               {atCapacity && "* at capacity"}
+                              {isCreateButtonDisabled && "*There are missing fields"}
                               <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"

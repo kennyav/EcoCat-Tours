@@ -1,7 +1,7 @@
 from flask import (
    Blueprint, jsonify, request
 )
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from models import db, EventsModel, EventsScheduleModel
 from sqlalchemy import extract 
 
@@ -42,9 +42,9 @@ def check_for_overlapping_events(start_date, end_date):
 def schedule_event():
     data = request.json
     event_id = data.get('eventId')
-    start = data.get('formattedStartDate')
-    end = data.get('formattedEndDate')
-    end_t = data.get('formattedEndTime')
+    start = data.get('startDate')
+    end = data.get('endDate')
+    end_t = data.get('endTime')
     repeated = data.get('repeated')
     repeated_weekly = data.get('repeatedWeekly')
     adult_number = data.get('adultNumber')
@@ -52,9 +52,17 @@ def schedule_event():
     infant_number = data.get('infantNumber')
     run_days = data.get('days')
     capacity = data.get('capacity')
-    start_date = datetime.strptime(start, '%Y-%d-%m %H:%M:%S')
-    end_date = datetime.strptime(end, '%Y-%d-%m %H:%M:%S')
-    end_time = datetime.strptime(end_t, '%Y-%d-%m %H:%M:%S')
+    #2024-04-01T08:00
+    start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
+    if end:
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_time = datetime.strptime(end_t, '%H:%M')
+        combined_datetime = datetime.combine(end_date.date(), end_time.time())
+    else:
+        # If end doesn't exist, attach today's date to end_time
+        end_time = datetime.strptime(end_t, '%H:%M')
+        today_date = date.today()
+        combined_datetime = datetime.combine(today_date, end_time.time())
 
     # Check if there are any overlapping events
     overlapping_event = check_for_overlapping_events(start_date, end_time)
@@ -80,7 +88,7 @@ def schedule_event():
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
                             start_time=current_date,
-                            end_time=end_date,
+                            end_time=combined_datetime,
                             adult_passengers=adult_number,
                             children_passengers=children_number,
                             infant_passengers=infant_number,
@@ -105,7 +113,7 @@ def schedule_event():
                         new_schedule = EventsScheduleModel(
                             event_id=event_id,
                             start_time=current_date,
-                            end_time=end_time,
+                            end_time=combined_datetime,
                             adult_passengers=adult_number,
                             children_passengers=children_number,
                             infant_passengers=infant_number,
@@ -127,7 +135,7 @@ def schedule_event():
         new_schedule = EventsScheduleModel(
             event_id=event_id,
             start_time=start_date,
-            end_time=end_time,
+            end_time=combined_datetime,
             adult_passengers=adult_number,
             children_passengers=children_number,
             infant_passengers=infant_number,
@@ -140,14 +148,12 @@ def schedule_event():
 
 @bp.route('/register-event', methods=["POST"])
 def register_event():
-   print("[DEBUG] Do we get to register event?")
    data = request.json
    title = data.get('title')
    description = data.get('description')
    capacity = data.get('capacity')
    above_drinking_age = data.get('aboveDrinkingAge')
    created_by = data.get('createdBy')
-   print("[DEBUG] Do we set variables right?")
 
    # Create a new event in the database
    new_event = EventsModel(
@@ -158,16 +164,12 @@ def register_event():
      created_by=created_by
     )
 
-   print("[DEBUG] Do we create a new event model")
    db.session.add(new_event)
    db.session.commit()
-   print("[DEBUG] Do we add and commit event?")
 
    if new_event:
-        print("[DEBUG] Do we get return 200?")
         return jsonify(new_event.serialize()), 200
    else:
-       print("[DEBUG] Do we return 404?")
        return jsonify({"message": "No passengers found for the specified event and time"}), 404
 
 
@@ -209,6 +211,10 @@ def get_scheduled_events():
     month = request.args.get('currentMonth')
     dates = request.args.get('dates')
 
+    #2024-04-01T08:00
+    start_date = datetime.strptime("2024-04-01T08:00", '%Y-%d-%mT%H:%M')
+    print("[DEBUG] Test", start_date.year, start_date.month, start_date.day)
+
     ids_list = ids.split(',')
     dates_list = dates.split(',')
 
@@ -219,9 +225,10 @@ def get_scheduled_events():
     # return {day_number, [List of Events]} if true
     # return nothing if false
     for day in dates_list:
-        print("Day", day,type(day), type(month), type(year))
+        print("[DEBUG]", day,type(day), month, year)
         if day:
             date = datetime(int(year), int(month), int(day))
+
             day_events = []
             for event_id in ids_list:
                 # Iterate through each event ID, because for edit events we need

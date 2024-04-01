@@ -18,41 +18,42 @@ export default function AddEvent() {
    const [endTime, setEndTime] = useState()
    const [endDate, setEndDate] = useState()
    const [runDays, setRunDays] = useState(["0", "0", "0", "0", "0", "0", "0"]) // 1 to represent the day running and 0 means it is not in the format of "SuMTWThFSa"
-   const [repeated, setRepeated] = useState(false)
-   const [repeatedWeekly, setRepeatedWeekly] = useState(false)
-   const [repeatedBiWeekly, setReaptedBiWeekly] = useState(false)
-   const [aboveDrinkingAge, setAboveDrinkingAge] = useState(false)
-   const [adultNumber, setAdultNumber] = useState(0)
-   const [childrenNumber, setChildrenNumber] = useState(0)
-   const [infantNumber, setInfantNumber] = useState(0)
-   const [createdBy, setCreatedBy] = useState()
+   const [repeated, setRepeated] = useState(false);
+   const [repeatedWeekly, setRepeatedWeekly] = useState(false);
+   const [repeatedBiWeekly, setReaptedBiWeekly] = useState(false);
+   const [aboveDrinkingAge, setAboveDrinkingAge] = useState(false);
+   const [adultNumber, setAdultNumber] = useState(0);
+   const [childrenNumber, setChildrenNumber] = useState(0);
+   const [infantNumber, setInfantNumber] = useState(0);
+   const [createdBy, setCreatedBy] = useState();
    const navigate = useNavigate();
    const [formattedStartDate, setFormattedDate] = useState();
    const [formattedEndDate, setFormattedEndDate] = useState();
    const [formattedEndTime, setFormattedEndTime] = useState();
+   const isCreateButtonDisabled = repeated ?  !title || !startDate || !endTime || !endDate || !adultNumber : !title || !startDate || !endTime || !adultNumber
 
    useEffect(() => {
       dispatch(update("Add Event"))
    }, [dispatch])
 
-   useEffect(() => {
-      let test = new Date(startDate)
-      const formattedDate = moment(test).format('yyyy-DD-MM HH:mm:ss');
-      setFormattedDate(formattedDate)
+   // useEffect(() => {
+   //    let test = new Date(startDate)
+   //    const formattedDate = moment(test).format('yyyy-DD-MM HH:mm:ss');
+   //    setFormattedDate(formattedDate)
 
-      let test3 = new Date(endTime)
-      const formattedDate3 = moment(test3).format('yyyy-DD-MM HH:mm:ss');
-      setFormattedEndTime(formattedDate3)
+   //    let test3 = new Date(endTime)
+   //    const formattedDate3 = moment(test3).format('yyyy-DD-MM HH:mm:ss');
+   //    setFormattedEndTime(formattedDate3)
 
-      if (endDate) {
-         let test2 = new Date(endDate)
-         const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
-         setFormattedEndDate(formattedDate2)
-      } else {
-         setFormattedEndDate(formattedDate3)
-      }
+   //    if (endDate) {
+   //       let test2 = new Date(endDate)
+   //       const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
+   //       setFormattedEndDate(formattedDate2)
+   //    } else {
+   //       setFormattedEndDate(formattedDate3)
+   //    }
 
-   }, [endDate, endTime, startDate])
+   // }, [endDate, endTime, startDate])
 
    const [days, setDays] = useState([
       {
@@ -133,9 +134,9 @@ export default function AddEvent() {
          const schedule = await httpClient.post(`${url}:8000/events/schedule-event`, {
             eventId,
             capacity,
-            formattedStartDate,
-            formattedEndDate,
-            formattedEndTime,
+            startDate,
+            endDate,
+            endTime,
             repeated,
             repeatedWeekly,
             repeatedBiWeekly,
@@ -193,7 +194,8 @@ export default function AddEvent() {
                   <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                      Event Start Date and Time*
                   </h3>
-                  <DatePicker showTime onChange={(date) => setStartDate(date)} />
+                  <input type='datetime-local' onChange={(e) => setStartDate(e.target.value)} />
+                  {/* <DatePicker showTime onChange={(date) => setStartDate(date)} /> */}
                </div>
 
 
@@ -201,7 +203,8 @@ export default function AddEvent() {
                   <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                      Event End Time*
                   </h3>
-                  <TimePicker onChange={(time) => setEndTime(time)} />
+                  <input type='time' onChange={(e) => setEndTime(e.target.value)} />
+                  {/* <TimePicker onChange={(time) => setEndTime(time)} /> */}
                </div>
             </div>
 
@@ -262,7 +265,8 @@ export default function AddEvent() {
                               <h3 className='py-[10px] font-medium leading-6 text-gray-900'>
                                  Event End Date*
                               </h3>
-                              <DatePicker onChange={(date) => setEndDate(date)} />
+                              <input type='date' onChange={(e) => setEndDate(e.target.value)} />
+                              {/* <DatePicker onChange={(date) => setEndDate(date)} /> */}
                            </div>
 
                            {/* Start Date */}
@@ -347,7 +351,8 @@ export default function AddEvent() {
 
 
          <button
-            className={`flex w-1/5 justify-center items-end px-6 py-1.5 text-sm font-light rounded bg-[#0E5BB5] hover:shadow-lg text-white`}
+            disabled={isCreateButtonDisabled}
+            className={`flex w-1/5 justify-center items-end px-6 py-1.5 text-sm font-light rounded ${isCreateButtonDisabled ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"}`}
             onClick={() => registerEvent()}>
             Add Event
          </button>

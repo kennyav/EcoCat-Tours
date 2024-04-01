@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux';
 import { update } from '../../reducers/loginSlice';
 import { useSelector } from 'react-redux';
 
+// helper functions
+// helper functions
+import { handlePhoneNumberChange } from '../../helper/formHelper'
 import httpClient from '../../httpClient';
 
 export default function AddSalesMan() {
@@ -41,20 +44,6 @@ export default function AddSalesMan() {
       navigate('/salesman');
    }
 
-   function formatPhoneNumber(input) {
-      // Remove all non-digit characters from the input string
-      const cleaned = input.replace(/\D/g, '');
-      // Format the cleaned input into a phone number format
-      const formatted = cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-      return formatted;
-   }
-
-   function handlePhoneNumberChange(event) {
-      // Format the input value and update the state
-      const formattedValue = formatPhoneNumber(event.target.value);
-      setPhoneNumber(formattedValue);
-   }
-
    const isPhoneNumberValid = /^(\(\d{3}\)\s\d{3}-\d{4})$/.test(phoneNumber);
    const isSaveButtonDisabled = !firstName || !lastName || !isPhoneNumberValid;
 
@@ -82,7 +71,7 @@ export default function AddSalesMan() {
             <div className="flex flex-col gap-1 w-1/2">
                <div className="">
                   <h1 className="text-black text-sm font-bold font-['Kumbh Sans'] mb-2">Phone Number *</h1>
-                  <input type="tel" className={`${inputCSS} w-full`} placeholder="Phone Number" value={phoneNumber} onChange={handlePhoneNumberChange} />
+                  <input type="tel" className={`${inputCSS} w-full`} placeholder="Phone Number" value={phoneNumber} onChange={(e) => handlePhoneNumberChange(e, setPhoneNumber)} />
                </div>
                <div className="">
                   <h1 className="text-black text-sm font-bold font-['Kumbh Sans'] mb-2">Email *</h1>
