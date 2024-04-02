@@ -24,6 +24,7 @@ export default function Event(props) {
    const dateObject = new Date(props.scheduledEvent.start_time);
    // Extract the time component
    const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' });
+   //const refresh = useSelector((state) => state.refresh.value)
 
    const getPassengers = async () => {
       try {

@@ -2,8 +2,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
-import { printBoardingPass } from '../../helper/boardingPass'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch} from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
 import RadioGroup from './RadioGroup'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
@@ -14,6 +14,8 @@ const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 // components
 export default function ManagePassengers(props) {
    const url = useSelector((state) => state.development.value)
+   const refresh = useSelector((state) => state.refresh.value)
+   const dispatch = useDispatch()
    const p = props.passenger
    let [isOpen, setIsOpen] = useState(false)
    const [openDelete, setOpenDelete] = useState(false)
@@ -32,7 +34,6 @@ export default function ManagePassengers(props) {
    const [paymentStatus, setPaymentStatus] = useState(p.payment_status)
    const [commissionReceived, setCommissionReceived] = useState(p.commission_received)
    const [notes, setNotes] = useState(p.notes)
-   const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
    const deletePassenger = async () => {
       try {
@@ -72,6 +73,7 @@ export default function ManagePassengers(props) {
    }
 
    function closeModal() {
+      dispatch(updateRefresh(!refresh))
       setOpenDelete(false)
       setEdit(false)
       setIsOpen(false)

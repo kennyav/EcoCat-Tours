@@ -28,7 +28,8 @@ export default function Header() {
          monthName: month.name,
          monthIndex: MONTH_NAMES.indexOf(month.name)
       }))
-   }, [month])
+   // eslint-disable-next-line
+   }, [month. dispatch])
 
    useEffect(() => {
       dispatch(updateDate({
@@ -36,6 +37,7 @@ export default function Header() {
          monthName: date.monthName,
          monthIndex: date.monthIndex
       }))
+   // eslint-disable-next-line
    }, [year])
 
    const yearsList = () => {

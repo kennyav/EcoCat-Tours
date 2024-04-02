@@ -8,7 +8,8 @@ import { handlePhoneNumberChange } from '../../helper/formHelper'
 // components
 import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
 const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
@@ -16,6 +17,8 @@ const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 export default function NewBooking(props) {
    const url = useSelector((state) => state.development.value)
+   const dispatch = useDispatch()
+   const refresh = useSelector((state) => state.refresh.value)
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    const [firstName, setFirstName] = useState('');
    const [lastName, setLastName] = useState('');
@@ -38,7 +41,7 @@ export default function NewBooking(props) {
    const [atCapacity, setAtCapacity] = useState(false)
    const scheduledEventId = props.scheduledEvent.id
    const isPhoneNumberValid = /^(\(\d{3}\)\s\d{3}-\d{4})$/.test(phoneNumber);
-   const isCreateButtonDisabled = !firstName || !lastName || !isPhoneNumberValid || !email || !adultNumber || !childrenNumber || !infantNumber || !adultPrice || !childrenPrice || !infantPrice;
+   const isCreateButtonDisabled = !firstName || !lastName || !isPhoneNumberValid || !email || !adultNumber;
 
    useEffect(() => {
       const capacity = adultNumber + childrenNumber + infantNumber
@@ -48,7 +51,7 @@ export default function NewBooking(props) {
          setAtCapacity(false)
       }
 
-   }, [adultNumber, childrenNumber, infantNumber])
+   }, [adultNumber, childrenNumber, infantNumber, props.scheduledEvent.capacity])
 
    useEffect(() => {
       (async () => {
@@ -89,7 +92,7 @@ export default function NewBooking(props) {
          passengerId = resp.data.id
 
       } catch (error) {
-         setIsOpen(false)
+         closeModal()
          alert("error", error)
       } finally {
 
@@ -112,11 +115,12 @@ export default function NewBooking(props) {
             console.log("Error", error)
          }
 
-         setIsOpen(false)
+         closeModal()
       }
    }
 
    function closeModal() {
+      dispatch(updateRefresh(!refresh))
       setIsOpen(false)
    }
 

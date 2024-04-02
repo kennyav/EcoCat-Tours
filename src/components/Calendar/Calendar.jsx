@@ -31,7 +31,7 @@ export default function Calendar({ events, title }) {
          monthName: monthName,
          monthIndex: monthIndex
       }))
-   }, []);
+   }, [dispatch]);
 
 
    useEffect(() => {

@@ -1,15 +1,7 @@
 
-import React, {useEffect} from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
 
-export default function NotFound({authenticated}) {
-
-   // const navigate = useNavigate()
-   // useEffect(() => {
-   //    if(window.location.href === 'http://localhost:3000/' && !authenticated) {
-   //       navigate('/login')
-   //    }
-   // }, [])
+export default function NotFound() {
 
    return (
       <section className="bg-white dark:bg-gray-900">

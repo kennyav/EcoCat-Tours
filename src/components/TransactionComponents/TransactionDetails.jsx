@@ -31,7 +31,7 @@ export default function TransactionDetails() {
             console.log("Error", error)
          }
       })();
-   }, [])
+   }, [url, date])
 
    return (
       <div className='px-[41px]'>

@@ -14,6 +14,7 @@ const ABRV_DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 export default function DatesGrid({ dates, events }) {
    const url = useSelector((state) => state.development.value)
    const date = useSelector((state) => state.dateValue)
+   const refresh = useSelector((state) => state.refresh.value)
    const isSmallScreen = useMediaQuery("(max-width: 1000px)");
    const dispatch = useDispatch()
    const [loading, setLoading] = useState(false)
@@ -36,13 +37,14 @@ export default function DatesGrid({ dates, events }) {
          clicked: signal.open,
          date: signal.date
       }))
-   }, [signal]);
+   }, [signal, dispatch]);
 
    useEffect(() => {
       const fetchEvents = async () => {
          setLoading(true); // Set loading to true before fetching data
          try {
             const filteredDates = dates.filter(day => day !== null && day !== undefined && day !== '');
+            // eslint-disable-next-line
             const fetchedEvents = await getEvents(filteredDates);
          } catch (error) {
             console.error('Error fetching events:', error);
@@ -52,7 +54,8 @@ export default function DatesGrid({ dates, events }) {
       };
 
       fetchEvents();
-   }, [dates, date, events]);
+   // eslint-disable-next-line
+   }, [dates, date, events, refresh]);
 
    const getEvents = async (filteredDates) => {
       try {

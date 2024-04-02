@@ -31,7 +31,7 @@ export default function Transactions() {
 
   useEffect(() => {
     dispatch(update("Transactions"))
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className='px-[41px]'>

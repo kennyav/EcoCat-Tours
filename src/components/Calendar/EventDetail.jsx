@@ -2,10 +2,13 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import moment from 'moment'
 import httpClient from '../../httpClient'
-import { useSelector } from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
+import { useSelector, useDispatch } from 'react-redux'
 
 export default function EventDetail({ event, scheduledEvent }) {
    const url = useSelector((state) => state.development.value)
+   const dispatch = useDispatch()
+   const refresh = useSelector((state) => state.refresh.value)
    let [isOpen, setIsOpen] = useState(false)
    const [openDelete, setOpenDelete] = useState(false)
    const [startTime, setStartTime] = useState(scheduledEvent.start_time)
@@ -61,6 +64,7 @@ export default function EventDetail({ event, scheduledEvent }) {
 
 
    function closeModal() {
+      dispatch(updateRefresh(!refresh))
       setEdit(false)
       setIsOpen(false)
    }

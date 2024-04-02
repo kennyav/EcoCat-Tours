@@ -23,7 +23,7 @@ export default function SingleTransaction(props) {
             setLoading(false); // Set loading to false after fetching data
          }
       })();
-   }, [])
+   }, [props.history.scheduled_event_id, url])
 
    let price = props.history.total_price >= 0 ? 'text-green-600' : 'text-red-700';
 

@@ -3,6 +3,7 @@ import loginReducer from './reducers/loginSlice'
 import developmenReducer from './reducers/developmentSlice'
 import calendarReducer from './reducers/calendarSlice'
 import dateReducer from './reducers/dateSlice'
+import refreshReducer from './reducers/refreshSlice'
 
 
 export default configureStore({
@@ -10,6 +11,7 @@ export default configureStore({
     loginTitle: loginReducer,
     development: developmenReducer,
     calendarInformation: calendarReducer,
-    dateValue: dateReducer
+    dateValue: dateReducer,
+    refresh: refreshReducer
   },
 })

@@ -3,12 +3,14 @@ import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
 import moment from 'moment'
 import { printBoardingPass } from '../../helper/boardingPass'
-import { useSelector } from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
+import { useSelector, useDispatch } from 'react-redux'
 
 // components
 export default function CheckIn(props) {
    const calendarInformation = useSelector((state) => state.calendarInformation)
-   console.log(calendarInformation)
+   const dispatch = useDispatch()
+   const refresh = useSelector((state) => state.refresh.value)
    const url = useSelector((state) => state.development.value)
    let [isOpen, setIsOpen] = useState(false)
    const p = props.passenger
@@ -22,9 +24,9 @@ export default function CheckIn(props) {
             checkedIn
          })
          console.log(resp.data)
-         setIsOpen(false)
+         closeModal()
       } catch (error) {
-         setIsOpen(false)
+         closeModal()
          console.log("Error", error)
       } finally {
          printBoardingPass({
@@ -42,6 +44,7 @@ export default function CheckIn(props) {
    }
 
    function closeModal() {
+      dispatch(updateRefresh(!refresh))
       setIsOpen(false)
    }
    function openModal() {

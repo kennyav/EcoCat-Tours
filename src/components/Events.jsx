@@ -32,7 +32,7 @@ export default function Events() {
         setLoading(false)
       }
     })();
-  }, []);
+  }, [url]);
 
 
 
