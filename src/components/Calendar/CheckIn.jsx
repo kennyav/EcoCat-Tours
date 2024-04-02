@@ -7,9 +7,12 @@ import { useSelector } from 'react-redux'
 
 // components
 export default function CheckIn(props) {
+   const calendarInformation = useSelector((state) => state.calendarInformation)
+   console.log(calendarInformation)
    const url = useSelector((state) => state.development.value)
    let [isOpen, setIsOpen] = useState(false)
    const p = props.passenger
+   console.log(p)
    const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
    const checkIn = async () => {
@@ -24,7 +27,17 @@ export default function CheckIn(props) {
          setIsOpen(false)
          console.log("Error", error)
       } finally {
-         printBoardingPass(p.first_name, p.last_name, p.created_at, "1", numberOfPassengers, p.adult_price, p.food, p.t_shirt, p.notes)
+         printBoardingPass({
+            firstName: p.first_name,
+            lastName: p.last_name,
+            date: calendarInformation.date.month.toString() + " " + calendarInformation.date.day.toString() + ", " + calendarInformation.date.year,
+            time: calendarInformation.date.time,
+            numberOfPassengers: numberOfPassengers,
+            pricePerPassenger: p.adult_price,
+            foodOption: p.food,
+            tShirtOption: p.t_shirt,
+            otherDetails: 'Please provide a window seat if possible',
+          })
       }
    }
 

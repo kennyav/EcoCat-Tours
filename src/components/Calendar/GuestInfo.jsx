@@ -23,7 +23,6 @@ export default function GuestInfo(props) {
     (async () => {
       try {
         const resp = await httpClient.get(`${url}:8000/auth/${p.booker_id}`);
-        console.log(resp.data)
         setBooker(resp.data)
       } catch (error) {
         console.log("Error", error)

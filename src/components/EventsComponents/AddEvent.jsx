@@ -36,24 +36,6 @@ export default function AddEvent() {
       dispatch(update("Add Event"))
    }, [dispatch])
 
-   // useEffect(() => {
-   //    let test = new Date(startDate)
-   //    const formattedDate = moment(test).format('yyyy-DD-MM HH:mm:ss');
-   //    setFormattedDate(formattedDate)
-
-   //    let test3 = new Date(endTime)
-   //    const formattedDate3 = moment(test3).format('yyyy-DD-MM HH:mm:ss');
-   //    setFormattedEndTime(formattedDate3)
-
-   //    if (endDate) {
-   //       let test2 = new Date(endDate)
-   //       const formattedDate2 = moment(test2).format('yyyy-DD-MM HH:mm:ss');
-   //       setFormattedEndDate(formattedDate2)
-   //    } else {
-   //       setFormattedEndDate(formattedDate3)
-   //    }
-
-   // }, [endDate, endTime, startDate])
 
    const [days, setDays] = useState([
       {
