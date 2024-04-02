@@ -29,11 +29,19 @@ export default function Event(props) {
    const getPassengers = async () => {
       try {
          const resp = await httpClient.get(getPassengerURL);
+         let a = 0
+         let c = 0
+         let i = 0
          resp.data.forEach((data) => {
-            setAdults(adults + data.adult_passengers)
-            setChildren(children + data.children_passengers)
-            setInfants(infants + data.infant_passengers)
+            a = a + data.adult_passengers
+            c = c + data.children_passengers
+            i = i + infants + data.infant_passengers
          })
+
+         setAdults(a)
+         setChildren(c)
+         setInfants(i)
+         
          props.setSignal({
             open: true,
             id: props.id,
