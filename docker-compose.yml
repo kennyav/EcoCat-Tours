@@ -3,7 +3,8 @@ version: '3'
 services:
   frontend:
     tty: true
-    build: .
+    build: 
+      context: ./frontend
     ports:
        - '3000:3000'
 
