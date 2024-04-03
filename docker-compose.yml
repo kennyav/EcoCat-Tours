@@ -1,5 +1,30 @@
-version: '3'
+# version: '3'
 
+# services:
+#   frontend:
+#     tty: true
+#     build: 
+#       context: ./frontend
+#     ports:
+#        - '3000:3000'
+
+#   redis:
+#     image: redis
+#     ports:
+#       - "6379:6379"
+
+#   backend:
+#     build:
+#       context: ./server  # Adjust the context to point to your backend directory
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - redis
+#     volumes:
+#       - ./server/instance:/instance  # Mount SQLite database volume
+
+version: '3'
 services:
   frontend:
     tty: true
@@ -7,8 +32,14 @@ services:
       context: ./frontend
     ports:
        - '3000:3000'
-
+    volumes: 
+        - /app/node_modules
+        - ./frontend:/app
+   # environment: 
+   #   - CHOKIDAR_USEPOLLING=true
+   # this should be turned on if Frontend is not updating to the changes, but changes are happening
   redis:
+    restart: always
     image: redis
     ports:
       - "6379:6379"
@@ -22,5 +53,5 @@ services:
     depends_on:
       - redis
     volumes:
-      - ./server/instance:/instance  # Mount SQLite database volume
-
+      - ./server:/backend # new have to test if this is updating
+    #  - ./server/instance:/backend/instance  # Mount SQLite database volume

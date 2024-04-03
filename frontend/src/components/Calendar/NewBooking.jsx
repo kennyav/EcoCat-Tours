@@ -3,55 +3,66 @@ import { Fragment, useState, useEffect } from 'react'
 import httpClient from '../../httpClient'
 
 // helper functions
-import { handlePhoneNumberChange } from '../../helper/formHelper'
+import { creatingNewBooking } from '../../helper/formHelper'
 
 // components
 import DropDownMenu from './NBDropDown'
 import RadioGroup from './RadioGroup'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateRefresh } from '../../reducers/refreshSlice'
+import Tabs from './Tab'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
 const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
 const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 export default function NewBooking(props) {
+   // redux vars
    const url = useSelector((state) => state.development.value)
    const dispatch = useDispatch()
    const refresh = useSelector((state) => state.refresh.value)
+   const salesmanId = useSelector((state) => state.salesman.value)
+
+   // extra
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   const [firstName, setFirstName] = useState('');
-   const [lastName, setLastName] = useState('');
-   const [phoneNumber, setPhoneNumber] = useState('');
-   const [notes, setNotes] = useState('');
-   const [email, setEmail] = useState('');
-   const [adultNumber, setAdultNumber] = useState(0)
-   const [childrenNumber, setChildrenNumber] = useState(0)
-   const [infantNumber, setInfantNumber] = useState(0)
-   const [adultPrice, setAdultPrice] = useState(0)
-   const [childrenPrice, setChildrenPrice] = useState(0)
-   const [infantPrice, setInfantPrice] = useState(0)
-   const [shirts, setShirts] = useState(0)
+   const scheduledEventId = props.scheduledEvent.id
+   const [atCapacity, setAtCapacity] = useState(false)
+   const [bookerId, setBookerId] = useState('')
+   const [isOpen, setOpen] = useState(false)
+
+   // route vars
+   const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      notes: '',
+      email: '',
+      adultNumber: 0,
+      childrenNumber: 0,
+      infantNumber: 0,
+      adultPrice: 0,
+      childrenPrice: 0,
+      infantPrice: 0,
+      shirts: 0,
+   });
+
+   // states for the drop down
    const [foodOptions, setFoodOption] = useState(0)
    const [paymentSource, setPaymentSource] = useState('')
    const [paymentStatus, setPaymentStatus] = useState('')
    const [commissionReceived, setCommissionReceived] = useState(false)
-   const [bookerId, setBookerId] = useState('')
-   const [isOpen, setIsOpen] = useState(false)
-   const [atCapacity, setAtCapacity] = useState(false)
-   const scheduledEventId = props.scheduledEvent.id
-   const isPhoneNumberValid = /^(\(\d{3}\)\s\d{3}-\d{4})$/.test(phoneNumber);
-   const isCreateButtonDisabled = !firstName || !lastName || !isPhoneNumberValid || !email || !adultNumber;
+   const isCreateButtonDisabled = !formData.firstName || !formData.lastName || !formData.adultNumber;
+
 
    useEffect(() => {
-      const capacity = adultNumber + childrenNumber + infantNumber
+      const capacity = formData.adultNumber + formData.childrenNumber + formData.infantNumber
       if (capacity > props.scheduledEvent.capacity) {
          setAtCapacity(true)
       } else {
          setAtCapacity(false)
       }
 
-   }, [adultNumber, childrenNumber, infantNumber, props.scheduledEvent.capacity])
+   }, [formData.adultNumber, formData.childrenNumber, formData.infantNumber, props.scheduledEvent.capacity])
 
    useEffect(() => {
       (async () => {
@@ -64,69 +75,21 @@ export default function NewBooking(props) {
       })();
    }, [url]);
 
-   const creatingNewBooking = async () => {
-      let passengerId = ''
-      const totalPrice = (adultNumber * adultPrice) + (childrenNumber * childrenPrice) + (infantNumber * infantPrice)
-      try {
-         const resp = await httpClient.post(`${url}:8000/bookings/create-booking`, {
-            scheduledEventId,
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            notes,
-            paymentSource,
-            paymentStatus,
-            commissionReceived,
-            bookerId,
-            adultNumber,
-            childrenNumber,
-            infantNumber,
-            adultPrice,
-            childrenPrice,
-            infantPrice,
-            foodOptions,
-            shirts,
-            totalPrice
-         });
-         passengerId = resp.data.id
 
-      } catch (error) {
-         closeModal()
-         alert("error", error)
-      } finally {
-
-         try {
-            const capacity = adultNumber + childrenNumber + infantNumber
-            const changeCapacity = await httpClient.put(`${url}:8000/events/edit-capacity/${props.scheduledEvent.id}`, {
-               capacity
-            });
-            console.log(changeCapacity.data)
-         } catch (error) {
-
-         }
-
-         try {
-            const transaction = await httpClient.post(`${url}:8000/transactions/create-transaction`, {
-               passengerId
-            })
-            console.log(transaction.data)
-         } catch (error) {
-            console.log("Error", error)
-         }
-
-         closeModal()
-      }
-   }
 
    function closeModal() {
-      dispatch(updateRefresh(!refresh))
-      setIsOpen(false)
+      dispatch(updateRefresh(!refresh));
+      setOpen(false);
    }
 
    function openModal() {
-      setIsOpen(true)
+      setOpen(true)
    }
+
+   const handleInputChange = (key, value) => {
+      setFormData(prevState => ({ ...prevState, [key]: value }));
+   };
+
 
    return (
       <>
@@ -179,25 +142,30 @@ export default function NewBooking(props) {
 
                            <div className="w-full h-[0px] border border-slate-300"></div>
 
+                           {/* Customer information */}
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Customer/Party Name *
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' placeholder='First Name' />
-                                 <input value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' placeholder='Last Name' />
+                                 <input
+                                    value={formData.firstName}
+                                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                                    className='border rounded-[10px] p-2'
+                                    placeholder='First Name' />
+                                 <input
+                                    value={formData.lastName}
+                                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                                    className='border rounded-[10px] p-2'
+                                    placeholder='Last Name' />
                               </div>
                            </div>
 
-                           <div className='py-[10px] flex flex-col'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Contact Information *
-                              </h3>
-                              <div className='inline-flex gap-1'>
-                                 <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2' placeholder='Email Address' />
-                                 <input type='tel' value={phoneNumber} onChange={(e) => handlePhoneNumberChange(e, setPhoneNumber)} className='border rounded-[10px] p-2' placeholder='Phone Number' />
-                              </div>
-                           </div>
+                           {/* For attaching a salesman to the booking */}
+                           <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                              Salesman Information
+                           </h3>
+                           <Tabs />
 
 
                            {/* Number of Passenger section*/}
@@ -206,35 +174,78 @@ export default function NewBooking(props) {
                                  <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                     Passengers *
                                  </h3>
-                                 <h3 className='py-[10px] pr-28 text-lg font-medium leading-6 text-gray-900'>
-                                    Pricing *
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Price Per Passenger*
                                  </h3>
                               </div>
                               <div className='flex flex-col gap-2'>
-                                 <div className='inline-flex justify-between gap-1 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setAdultNumber} current={adultNumber} />
+                                 <div className='inline-flex gap-5 justify-between items-center'>
+
+                                    <input
+                                       value={formData.adultNumber || 0}
+                                       onChange={(e) => handleInputChange("adultNumber", parseInt(e.target.value))}
+                                       className='w-20 h-12 rounded-full border-2 py-2 text-center border-[#0E5BB5] cursor-pointer'
+                                    />
+
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 12+</h1>
+                                       <h1 className='text-xs text-left font-light text-gray-900'>{props.event.above_drinking_age ? "Ages 21+" : "Ages 12+"}</h1>
                                     </div>
-                                    <input value={adultPrice} onChange={(e) => setAdultPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
+
+                                    <input
+                                       value={formData.adultPrice}
+                                       onChange={(e) => handleInputChange("adultPrice", parseInt(e.target.value) || 0)}
+                                       className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
+                                       placeholder='Price'
+                                    />
+
                                  </div>
-                                 <div className='inline-flex justify-between gap-1 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setChildrenNumber} current={childrenNumber} />
-                                    <div>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
-                                    </div>
-                                    <input value={childrenPrice} onChange={(e) => setChildrenPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
-                                 </div>
-                                 <div className='inline-flex justify-between gap-1 items-center'>
-                                    <DropDownMenu list={passengerNumbers} setCurrent={setInfantNumber} current={infantNumber} />
-                                    <div>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
-                                    </div>
-                                    <input value={infantPrice} onChange={(e) => setInfantPrice(parseInt(e.target.value) || 0)} className='border rounded-[10px] p-2' placeholder='Price' />
-                                 </div>
+
+                                 {!props.event.above_drinking_age &&
+                                    <div className="flex flex-col gap-2">
+                                       <div className='inline-flex justify-between gap-5 items-center'>
+
+                                          <input
+                                             value={formData.childrenNumber || 0}
+                                             onChange={(e) => handleInputChange("childrenNumber", parseInt(e.target.value))}
+                                             className='w-20 h-12 rounded-full border-2 border-[#0E5BB5] py-2 text-center cursor-pointer'
+                                          />
+
+                                          <div>
+                                             <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
+                                             <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
+                                          </div>
+
+                                          <input
+                                             value={formData.childrenPrice}
+                                             onChange={(e) => handleInputChange("childrenPrice", parseInt(e.target.value) || 0)}
+                                             className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
+                                             placeholder='Price'
+                                          />
+
+                                       </div>
+
+                                       <div className='inline-flex gap-5 justify-between items-center'>
+
+                                          <input
+                                             value={formData.infantNumber || 0}
+                                             onChange={(e) => handleInputChange("infantNumber", parseInt(e.target.value))}
+                                             className='w-20 h-12 rounded-full py-2 text-center border-2 border-[#0E5BB5] cursor-pointer'
+                                          />
+                                          <div>
+                                             <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
+                                             <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
+                                          </div>
+
+                                          <input
+                                             value={formData.infantPrice}
+                                             onChange={(e) => handleInputChange("infantPrice", parseInt(e.target.value) || 0)}
+                                             className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
+                                             placeholder='Price'
+                                          />
+
+                                       </div>
+                                    </div>}
                               </div>
                            </div>
 
@@ -244,16 +255,11 @@ export default function NewBooking(props) {
                                  Booking Additions
                               </h3>
                               <div className='inline-flex justify-between gap-2'>
-                                 <DropDownMenu list={passengerNumbers} setCurrent={setShirts} current={shirts} />
-                                 <div>
-                                    <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>If you would like to purchase an EcoCat T-Shirt, select how many shirts you want. (Pick-up at check-in)</h1>
-                                    <h1 className='text-xs text-left font-light text-gray-900'>$19.99</h1>
-                                 </div>
-                              </div>
-                              <div className='inline-flex justify-between gap-2'>
                                  <DropDownMenu list={passengerNumbers} setCurrent={setFoodOption} current={foodOptions} />
                                  <div>
-                                    <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>(FOOD OPTION) Select how many people want to upgrade to include our BBQ Hamburgers [NOTE: Base ticket does not include food. Please select this option if you wish to eat onboard!]</h1>
+                                    <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>
+                                       (FOOD OPTION) Select how many people want to upgrade to include our BBQ Hamburgers [NOTE: Base ticket does not include food. Please select this option if you wish to eat onboard!]
+                                    </h1>
                                     <h1 className='text-xs text-left font-light text-gray-900'>$9.99</h1>
                                  </div>
                               </div>
@@ -271,7 +277,12 @@ export default function NewBooking(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Reservation Notes
                               </h3>
-                              <textarea rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' />
+                              <textarea
+                                 rows={5}
+                                 value={formData.notes}
+                                 onChange={(e) => handleInputChange("notes", e.target.value)}
+                                 className='border rounded-[10px] p-2'
+                              />
                            </div>
 
 
@@ -281,7 +292,11 @@ export default function NewBooking(props) {
                                  disabled={atCapacity || isCreateButtonDisabled}
                                  type="button"
                                  className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity || isCreateButtonDisabled ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
-                                 onClick={() => creatingNewBooking()}
+                                 onClick={() => {
+                                    creatingNewBooking({formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url}).then(
+                                       closeModal()
+                                    )
+                                 }}
                               >
                                  Create
                               </button>

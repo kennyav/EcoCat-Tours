@@ -34,19 +34,17 @@ class SalesmenModel(db.Model):
     __tablename__ = "salesmen"
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(345), unique=True)
-    phone = db.Column(db.String(20), nullable=False)
-    notes = db.Column(db.Text, nullable=False)
+    last_name = db.Column(db.String(80))
+    email = db.Column(db.String(345))
+    phone = db.Column(db.String(20))
+    notes = db.Column(db.Text)
     created_at = db.Column(DateTime, default=datetime.now)
     def serialize(self):
         return {
             'id': self.id,
             'email': self.email,
-            'password': self.password,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email,
             'phone': self.phone,
             'notes': self.notes,
             'created_at': self.created_at
@@ -107,6 +105,7 @@ class PassengersModel(db.Model):
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     scheduled_event_id = db.Column(db.String(32))
     booker_id = db.Column(db.String(32))
+    salesman_id = db.Column(db.String(32))
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(345))
@@ -131,6 +130,7 @@ class PassengersModel(db.Model):
         return {
             'id': self.id,
             'scheduled_event_id': self.scheduled_event_id,
+            'salesman_id': self.salesman_id,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,

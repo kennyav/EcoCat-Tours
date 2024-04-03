@@ -7,12 +7,15 @@ import { CalendarRightIcon } from '../Icons';
 
 // components
 import DropDownMenu from './DropDownMenu'
+import BasicDropDown from '../Header/BasicDropDown'
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DATE_VIEW = ['Month', 'Week', 'Day']
 
 export default function Header() {
    const dispatch = useDispatch()
    const date = useSelector((state) => state.dateValue)
+
    const [month, setMonth] = useState({
       name: "",
       index: -1
@@ -28,8 +31,8 @@ export default function Header() {
          monthName: month.name,
          monthIndex: MONTH_NAMES.indexOf(month.name)
       }))
-   // eslint-disable-next-line
-   }, [month. dispatch])
+      // eslint-disable-next-line
+   }, [month, dispatch])
 
    useEffect(() => {
       dispatch(updateDate({
@@ -37,7 +40,7 @@ export default function Header() {
          monthName: date.monthName,
          monthIndex: date.monthIndex
       }))
-   // eslint-disable-next-line
+      // eslint-disable-next-line
    }, [year])
 
    const yearsList = () => {
@@ -85,15 +88,21 @@ export default function Header() {
    };
 
    return (
-      <div className='flex gap-4 w-full h-auto items-center justify-center py-[15px] font-KumbhSans text-[20px] font-extrabold leading-normal text-[#1E1E1E]'>
-         <button onClick={handlePreviousMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
-            <CalendarLeftIcon />
-         </button>
-         <DropDownMenu list={MONTH_NAMES} setCurrent={setMonth} current={date.monthName} />
-         <DropDownMenu list={yearsList()} setCurrent={setYear} current={date.year} />
-         <button onClick={handleNextMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
-            <CalendarRightIcon />
-         </button>
+      <div className="font-KumbhSans">
+         <div className='flex z-20 gap-4 w-full h-auto items-center justify-center py-[15px] text-[20px] font-extrabold leading-normal text-[#1E1E1E]'>
+            <button onClick={handlePreviousMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
+               <CalendarLeftIcon />
+            </button>
+            <DropDownMenu list={MONTH_NAMES} setCurrent={setMonth} current={date.monthName} />
+            <DropDownMenu list={yearsList()} setCurrent={setYear} current={date.year} />
+            <button onClick={handleNextMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
+               <CalendarRightIcon />
+            </button>
+
+         </div>
+         <div className="flex gap-4 items-center px-10">
+            <BasicDropDown list={DATE_VIEW} />
+         </div>
       </div>
 
    )

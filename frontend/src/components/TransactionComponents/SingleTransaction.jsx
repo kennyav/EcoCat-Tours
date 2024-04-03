@@ -6,10 +6,11 @@ import { useSelector } from 'react-redux';
 export default function SingleTransaction(props) {
    const url = useSelector((state) => state.development.value)
    const [event, setEvent] = useState({})
+   const [salesman, setSalesman] = useState({})
    quantum.register()
    const [loading, setLoading] = useState(false)
 
-   console.log(props.history.scheduled_event_id)
+   console.log(props.history.salesman_id)
 
    useEffect(() => {
       (async () => {
@@ -19,11 +20,17 @@ export default function SingleTransaction(props) {
             setEvent(resp.data)
          } catch (error) {
             console.log("Error", error)
+         } 
+         try {
+            const resp = await httpClient.get(`${url}:8000/salesmen/${props.history.salesman_id}`)
+            setSalesman(resp.data)
+         } catch (error) {
+            console.log("Error", error)
          } finally {
             setLoading(false); // Set loading to false after fetching data
          }
       })();
-   }, [props.history.scheduled_event_id, url])
+   }, [props.history.scheduled_event_id,props.history.salesman_id, url])
 
    let price = props.history.total_price >= 0 ? 'text-green-600' : 'text-red-700';
 
@@ -41,8 +48,12 @@ export default function SingleTransaction(props) {
             ) : (
                <div className="flex h-auto w-full px-6 justify-between items-center">
                   <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                     <div className="text-sm font-bold">Passenger</div>
                      <div className="text-sm font-bold">{props.history.first_name} {props.history.last_name}</div>
-                     <div className="text-[10px] font-normal">{props.history.start_time}</div>
+                  </div>
+                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                     <div className="text-sm font-bold">Salesman</div>
+                     <div className="text-sm font-bold">{salesman.first_name} {salesman.last_name}</div>
                   </div>
                   <div className="flex-col justify-center items-start gap-1.5 inline-flex">
                      <div className="text-sm font-bold">Price</div>

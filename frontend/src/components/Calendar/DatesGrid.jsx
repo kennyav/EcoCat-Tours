@@ -7,16 +7,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { update } from '../../reducers/calendarSlice';
 import { useMediaQuery } from "@react-hook/media-query";
 
+export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek }) {
 
-const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const ABRV_DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-export default function DatesGrid({ dates, events }) {
+   // redux
+   const dispatch = useDispatch()
    const url = useSelector((state) => state.development.value)
    const date = useSelector((state) => state.dateValue)
    const refresh = useSelector((state) => state.refresh.value)
-   const isSmallScreen = useMediaQuery("(max-width: 1000px)");
-   const dispatch = useDispatch()
+
+   // responsize design
+   const isSmallScreen = useMediaQuery("(max-width: 1170px)");
+   const canSpan = daysOfWeek.length < 5
+
+   // loading and clickable states
    const [loading, setLoading] = useState(false)
    const [signal, setSignal] = useState({
       open: false,
@@ -26,9 +29,9 @@ export default function DatesGrid({ dates, events }) {
       date: {}
    });
    quantum.register()
-
    const [scheduledEvents, setScheduledEvents] = useState([]);
    const eventIds = events ? events.map(event => event.id) : []
+
 
    useEffect(() => {
       dispatch(update({
@@ -54,7 +57,7 @@ export default function DatesGrid({ dates, events }) {
       };
 
       fetchEvents();
-   // eslint-disable-next-line
+      // eslint-disable-next-line
    }, [dates, date, events, refresh]);
 
    const getEvents = async (filteredDates) => {
@@ -88,6 +91,7 @@ export default function DatesGrid({ dates, events }) {
                   temp.push(event)
                }
             })
+            temp.sort((a, b) => moment(a.start_time).valueOf() - moment(b.start_time).valueOf());
          }
          return temp
       }
@@ -95,7 +99,7 @@ export default function DatesGrid({ dates, events }) {
       const display = eventsToDisplay()
 
       return display.length > 0 && display.map((event) => (
-         <div key={event.id} className="pb-1">
+         <div key={event.id} className={`pb-2`}>
             <Event
                key={event.id}
                signal={signal}
@@ -112,8 +116,8 @@ export default function DatesGrid({ dates, events }) {
 
    return (
       <div className="grid grid-cols-7 grid-flow-row p-5 font-KumbhSans">
-         {(isSmallScreen ? ABRV_DAYS_OF_WEEK : DAYS_OF_WEEK).map((dayName, i) => (
-            <div key={i} className="font-bold text-center text-[14px] p-4">
+         {(isSmallScreen ? abrvDaysOfWeek : daysOfWeek).map((dayName, i) => (
+            <div key={i} className={`font-bold text-center text-[14px] p-4  ${canSpan ? 'col-span-7' : ''}`}>
                {dayName}
             </div>
          ))}
@@ -128,7 +132,7 @@ export default function DatesGrid({ dates, events }) {
             </div>
          ) : (
             dates.map((dayNumber, i) => (
-               <div key={i} className="p-2">
+               <div key={i} className={`${canSpan ? 'col-span-7' : ''} pb-2`}>
                   <div key={i} className="text-left text-[14px] p-2">
                      {dayNumber}
                   </div>

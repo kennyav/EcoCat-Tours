@@ -122,7 +122,7 @@ export default function Event(props) {
             <div className="z-10 w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
-                  <NewBooking scheduledEvent={props.scheduledEvent} />
+                  <NewBooking scheduledEvent={props.scheduledEvent}  event={props.event}/>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />

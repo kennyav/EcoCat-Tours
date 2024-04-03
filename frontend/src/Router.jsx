@@ -55,6 +55,7 @@ export default function Router() {
                <Route path='/transaction-details' element={<Menus> <TransactionDetails /> </Menus>} />
                <Route path='/edit-events' element={<Menus> <EditEvent /> </Menus>} />
                <Route path='/add-events' element={<Menus> <AddEvent /> </Menus>} />
+               <Route path="*" element={<NotFound authenticated={userAuthenticated} />} />
             </>
          }
       </Routes>

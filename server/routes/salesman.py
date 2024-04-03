@@ -10,25 +10,21 @@ bp = Blueprint('salesmen', __name__, url_prefix='/salesmen')
 @bp.route('/register-salesmen', methods=["POST"])
 def upload_salesmen():
     # first, last, email, phone, notes
+    email = ''
+    phone = ''
     first_name = request.json["firstName"]
     last_name = request.json["lastName"]
-    email = request.json["email"]
-    phone = request.json["phoneNumber"]
+    if 'email' in request.json:
+        email = request.json["email"]
+    if 'phone' in request.json:
+        phone = request.json["phoneNumber"]
     notes = request.json["notes"]
 
     new_salesmen = SalesmenModel(first_name=first_name, last_name=last_name, email=email, phone=phone, notes=notes)
     db.session.add(new_salesmen)
     db.session.commit()
     
-    return jsonify({
-        "id": new_salesmen.id,
-        "first_name": new_salesmen.first_name,
-        "last_name": new_salesmen.last_name,
-        "email": new_salesmen.email,
-        "phone": new_salesmen.phone,
-        "notes": new_salesmen.notes,
-        "date": new_salesmen.created_at,
-    })
+    return jsonify(new_salesmen.serialize())
 
 
 @bp.route("/delete/<salesman_id>", methods=["DELETE"])
@@ -59,6 +55,13 @@ def get_all_salesmen():
             "date": salesman.created_at
         })
     return jsonify(salesmen_list)
+
+@bp.route("/<salesman_id>", methods=["GET"])
+def get_salesman(salesman_id):
+    salesman = SalesmenModel.query.get(salesman_id)
+    if not salesman:
+        return jsonify({"error": "salesman does not exist"}), 404
+    return jsonify(salesman.serialize())
 
 @bp.route("/edit-salesmen/<salesmen_id>", methods=["PUT"])
 def edit_salesmen(salesmen_id):

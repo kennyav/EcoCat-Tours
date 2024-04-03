@@ -4,6 +4,8 @@ import developmenReducer from './reducers/developmentSlice'
 import calendarReducer from './reducers/calendarSlice'
 import dateReducer from './reducers/dateSlice'
 import refreshReducer from './reducers/refreshSlice'
+import salesmanReducer from './reducers/salesmanSlice'
+import dateViewReducer from './reducers/dateViewSlice'
 
 
 export default configureStore({
@@ -12,6 +14,8 @@ export default configureStore({
     development: developmenReducer,
     calendarInformation: calendarReducer,
     dateValue: dateReducer,
-    refresh: refreshReducer
+    refresh: refreshReducer,
+    salesman: salesmanReducer,
+    dateView: dateViewReducer
   },
 })

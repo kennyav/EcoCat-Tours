@@ -124,15 +124,15 @@ export default function AddEvent() {
          });
 
          console.log(schedule.data)
+         // Redirect to /events URL
+         navigate('/events');
 
       } catch (error) {
          console.log("OVERLAP ERROR HERE", error.response)
          if (error.response.status === 400) {
-            alert("Event overlaps, would you like to continue?")
+            alert("Event overlaps, check times and resubmit?")
          }
       }
-      // Redirect to /events URL
-      navigate('/events');
    }
 
 

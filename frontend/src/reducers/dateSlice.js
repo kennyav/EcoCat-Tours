@@ -6,6 +6,7 @@ export const dateSlice = createSlice({
       year: 0,
       monthName: "",
       monthIndex: -1,
+      
    },
    reducers: {
       updateDate: (state, action) => {

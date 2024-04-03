@@ -213,7 +213,6 @@ def get_scheduled_events():
 
     #2024-04-01T08:00
     start_date = datetime.strptime("2024-04-01T08:00", '%Y-%d-%mT%H:%M')
-    print("[DEBUG] Test", start_date.year, start_date.month, start_date.day)
 
     ids_list = ids.split(',')
     dates_list = dates.split(',')
@@ -225,7 +224,6 @@ def get_scheduled_events():
     # return {day_number, [List of Events]} if true
     # return nothing if false
     for day in dates_list:
-        print("[DEBUG]", day,type(day), month, year)
         if day:
             date = datetime(int(year), int(month), int(day))
 

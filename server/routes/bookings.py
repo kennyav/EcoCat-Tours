@@ -11,6 +11,7 @@ bp = Blueprint('bookings', __name__, url_prefix='/bookings')
 def create_booking():
     data = request.json
     scheduled_event_id = data.get('scheduledEventId')
+    salesman_id = data.get('salesmanId')
     first_name = data.get('firstName')
     last_name = data.get('lastName')
     email = data.get('email')
@@ -34,6 +35,7 @@ def create_booking():
     # Create a new passenger booking in the database
     new_passenger_booking = PassengersModel(
         scheduled_event_id=scheduled_event_id,
+        salesman_id=salesman_id,
         first_name=first_name,
         last_name=last_name,
         email=email,
