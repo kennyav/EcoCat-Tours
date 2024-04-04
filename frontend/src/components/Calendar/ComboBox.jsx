@@ -18,6 +18,7 @@ export default function ComboBox() {
       if (selected) {
          dispatch(updateSalesmanId(selected.id))
       }
+   // eslint-disable-next-line
    }, [selected])
 
    useEffect(() => {

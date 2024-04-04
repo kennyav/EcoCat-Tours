@@ -19,7 +19,7 @@ export default function Bookings() {
         setEvents(resp.data)
       } catch (error) {
         console.log("Error", error)
-      }
+      } 
     })();
   }, [url]);
 

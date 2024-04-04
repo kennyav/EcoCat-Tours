@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { updateDate } from '../../reducers/dateSlice';
+import moment from 'moment';
+
 // icons
 import { CalendarLeftIcon } from '../Icons';
 import { CalendarRightIcon } from '../Icons';
@@ -14,31 +16,34 @@ const DATE_VIEW = ['Month', 'Week', 'Day']
 
 export default function Header() {
    const dispatch = useDispatch()
-   const date = useSelector((state) => state.dateValue)
+   const dateState = useSelector((state) => state.dateValue)
+   const date = moment(dateState.date)
+   const dateView = useSelector((state) => state.dateView.value)
 
    const [month, setMonth] = useState({
-      name: "",
-      index: -1
+      name: date.format('MMMM'),
+      index: date.month()
    })
    const [year, setYear] = useState({
-      name: "",
+      name: date.year(),
       index: -1
    })
 
    useEffect(() => {
+      const newDay = moment(`${date.year()}-${month.name}-${date.date()}`);
+      const serializedDay = newDay.format('YYYY-MMMM-DD');
       dispatch(updateDate({
-         year: date.year,
-         monthName: month.name,
-         monthIndex: MONTH_NAMES.indexOf(month.name)
-      }))
-      // eslint-disable-next-line
-   }, [month, dispatch])
+          date: serializedDay
+      }));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month]);
 
+   // whenever we change the year we go back to the first of the month for day
    useEffect(() => {
+      const newDay = moment(`${parseInt(year.name)}-${date.month()+1}-${date.date()}`)
+      const serializedDay = newDay.format('YYYY-MM-DD');
       dispatch(updateDate({
-         year: parseInt(year.name),
-         monthName: date.monthName,
-         monthIndex: date.monthIndex
+         date: serializedDay
       }))
       // eslint-disable-next-line
    }, [year])
@@ -53,36 +58,61 @@ export default function Header() {
       return list
    }
 
-   const handlePreviousMonth = () => {
-      const newMonthIndex = MONTH_NAMES.indexOf(date.monthName) - 1;
-      if (newMonthIndex < 0) {
+   const handlePrevious = () => {
+      const newMonthIndex = date.month() - 1;
+
+      if (dateView === "Month") {
+         if (newMonthIndex < 0) {
+            dispatch(updateDate({
+               date: moment(`${date.year() - 1}-12-1`).format('YYYY-MM-DD'),
+            }))
+         } else {
+            dispatch(updateDate({
+               date: moment(`${date.year()}-${date.month()}-${date.date()}`).format('YYYY-MM-DD'),
+            }))
+         }
+      } else if (dateView === "Week") {
+         const newDate = date.clone().add(-7, 'day')
+         const serializedDay = newDate.format('YYYY-MM-DD');
          dispatch(updateDate({
-            year: date.year - 1,
-            monthName: MONTH_NAMES[11],
-            monthIndex: 11
+            date: serializedDay,
          }))
-      } else {
+
+      } else if (dateView === "Day") {
+         const newDate = date.clone().add(-1, 'day')
+         const serializedDay = newDate.format('YYYY-MM-DD');
          dispatch(updateDate({
-            year: date.year,
-            monthName: MONTH_NAMES[newMonthIndex],
-            monthIndex: date.monthIndex - 1
+            date: serializedDay,
          }))
       }
    };
 
-   const handleNextMonth = () => {
-      const newMonthIndex = MONTH_NAMES.indexOf(date.monthName) + 1;
-      if (newMonthIndex > 11) {
+   const handleNext = () => {
+      const newMonthIndex = date.month() + 1;
+
+      if (dateView === "Month") {
+         if (newMonthIndex > 11) {
+            dispatch(updateDate({
+               date: moment(`${date.year() + 1}-1-${date.date()}`).format('YYYY-MM-DD'),
+            }))
+         } else {
+            dispatch(updateDate({
+               date: moment(`${date.year()}-${date.month() + 2}-${date.date()}`).format('YYYY-MM-DD'),
+            }))
+         }
+      } else if (dateView === "Week") {
+
+         const newDate = date.clone().add(7, 'day')
+         const serializedDay = newDate.format('YYYY-MM-DD');
          dispatch(updateDate({
-            year: date.year + 1,
-            monthName: MONTH_NAMES[0],
-            monthIndex: 0
+            date: serializedDay,
          }))
-      } else {
+
+      } else if (dateView === "Day") {
+         const newDate = date.clone().add(1, 'day')
+         const serializedDay = newDate.format('YYYY-MM-DD');
          dispatch(updateDate({
-            year: date.year,
-            monthName: MONTH_NAMES[newMonthIndex],
-            monthIndex: date.monthIndex + 1
+            date: serializedDay,
          }))
       }
    };
@@ -90,12 +120,12 @@ export default function Header() {
    return (
       <div className="font-KumbhSans">
          <div className='flex z-20 gap-4 w-full h-auto items-center justify-center py-[15px] text-[20px] font-extrabold leading-normal text-[#1E1E1E]'>
-            <button onClick={handlePreviousMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
+            <button onClick={handlePrevious} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
                <CalendarLeftIcon />
             </button>
-            <DropDownMenu list={MONTH_NAMES} setCurrent={setMonth} current={date.monthName} />
-            <DropDownMenu list={yearsList()} setCurrent={setYear} current={date.year} />
-            <button onClick={handleNextMonth} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
+            <DropDownMenu list={MONTH_NAMES} setCurrent={setMonth} current={date.format('MMMM')} />
+            <DropDownMenu list={yearsList()} setCurrent={setYear} current={date.year()} />
+            <button onClick={handleNext} className='flex p-3 bg-transparent hover:bg-[#0E5BB5] hover:border-transparent rounded-md'>
                <CalendarRightIcon />
             </button>
 

@@ -8,11 +8,10 @@ import { update } from '../../reducers/calendarSlice';
 import { useMediaQuery } from "@react-hook/media-query";
 
 export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek }) {
-
    // redux
    const dispatch = useDispatch()
    const url = useSelector((state) => state.development.value)
-   const date = useSelector((state) => state.dateValue)
+   const dateValue = useSelector((state) => state.dateValue)
    const refresh = useSelector((state) => state.refresh.value)
 
    // responsize design
@@ -43,43 +42,37 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
    }, [signal, dispatch]);
 
    useEffect(() => {
-      const fetchEvents = async () => {
-         setLoading(true); // Set loading to true before fetching data
-         try {
-            const filteredDates = dates.filter(day => day !== null && day !== undefined && day !== '');
-            // eslint-disable-next-line
-            const fetchedEvents = await getEvents(filteredDates);
-         } catch (error) {
-            console.error('Error fetching events:', error);
-         } finally {
-            setLoading(false); // Set loading to false after fetching data
-         }
-      };
-
-      fetchEvents();
-      // eslint-disable-next-line
-   }, [dates, date, events, refresh]);
-
-   const getEvents = async (filteredDates) => {
-      try {
-         const resp = await httpClient.get(`${url}:8000/events/dates`, {
-            params: {
-               eventIds: eventIds.join(','),
-               currentYear: date.year,
-               currentMonth: date.monthIndex + 1,
-               dates: filteredDates.join(',')
+      if (eventIds.length !== 0 && dates.length > 0) {
+         (async () => {
+            setLoading(true); // Set loading to true before fetching data
+            try {
+               const filteredDates = dates.filter(day => day !== null && day !== undefined && day !== '');
+               const resp = await httpClient.get(`${url}:8000/events/dates`, {
+                  params: {
+                     eventIds: eventIds.join(','),
+                     dates: filteredDates.join(',')
+                  }
+               })
+               setScheduledEvents(resp.data);
+               return resp.data;
+            } catch (error) {
+               console.error('Error fetching events:', error);
+            } finally {
+               setLoading(false); // Set loading to false after fetching data
             }
-         })
-         setScheduledEvents(resp.data);
-         return resp.data;
-      } catch (error) {
-         console.error('Error fetching events:', error);
-         return [];
-      }
-   };
+         })();
 
+      }
+      // eslint-disable-next-line
+   }, [dates, refresh]);
+   //dateValue.date, events,
+
+   
    const displayEvent = (day) => {
-      const eventsOnDay = scheduledEvents.filter(event => parseInt(event.day) === day);
+
+      
+      const eventsOnDay = scheduledEvents.filter(event => parseInt(event.day) === day.date());
+
       const eventsToDisplay = () => {
          const temp = []
          // if the day has events
@@ -87,7 +80,8 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
             eventsOnDay[0].list_of_events.forEach(event => {
                const month = moment.utc(event.start_time).format('M')
                const year = moment.utc(event.start_time).format('yyyy')
-               if ((parseInt(year) === date.year) && (parseInt(month) - 1 === date.monthIndex)) {
+
+               if ((parseInt(year) === day.year()) && (parseInt(month) - 1 === day.month())) {
                   temp.push(event)
                }
             })
@@ -99,7 +93,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
       const display = eventsToDisplay()
 
       return display.length > 0 && display.map((event) => (
-         <div key={event.id} className={`pb-2`}>
+         <div key={event.id} className={`p-1`}>
             <Event
                key={event.id}
                signal={signal}
@@ -118,7 +112,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
       <div className="grid grid-cols-7 grid-flow-row p-5 font-KumbhSans">
          {(isSmallScreen ? abrvDaysOfWeek : daysOfWeek).map((dayName, i) => (
             <div key={i} className={`font-bold text-center text-[14px] p-4  ${canSpan ? 'col-span-7' : ''}`}>
-               {dayName}
+               {dates.length > 1 ? dayName : moment(dateValue.date).format("dddd")}
             </div>
          ))}
          <div className="col-span-7 border" />
@@ -134,9 +128,9 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
             dates.map((dayNumber, i) => (
                <div key={i} className={`${canSpan ? 'col-span-7' : ''} pb-2`}>
                   <div key={i} className="text-left text-[14px] p-2">
-                     {dayNumber}
+                     {dayNumber ? moment(dayNumber).date() : ""}
                   </div>
-                  {displayEvent(dayNumber)}
+                  {displayEvent(moment(dayNumber))}
                </div>
             ))
          )}

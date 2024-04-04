@@ -1,18 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
+import moment from 'moment'
+
+const initialDate = moment();
 
 export const dateSlice = createSlice({
    name: 'dateValue',
    initialState: {
-      year: 0,
-      monthName: "",
-      monthIndex: -1,
-      
+      date: initialDate.format('YYYY-MM-DD')
    },
    reducers: {
       updateDate: (state, action) => {
-         state.year = action.payload.year
-         state.monthName = action.payload.monthName
-         state.monthIndex = action.payload.monthIndex
+         state.date = action.payload.date
       }
    },
 })

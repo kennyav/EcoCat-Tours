@@ -207,12 +207,7 @@ def get_event(event_id):
 def get_scheduled_events():
     # Split the event IDs and convert them to a list
     ids = request.args.get('eventIds')
-    year = request.args.get('currentYear')
-    month = request.args.get('currentMonth')
     dates = request.args.get('dates')
-
-    #2024-04-01T08:00
-    start_date = datetime.strptime("2024-04-01T08:00", '%Y-%d-%mT%H:%M')
 
     ids_list = ids.split(',')
     dates_list = dates.split(',')
@@ -225,7 +220,9 @@ def get_scheduled_events():
     # return nothing if false
     for day in dates_list:
         if day:
-            date = datetime(int(year), int(month), int(day))
+            date_string = day.replace("GMT-0700", "").strip()
+            date = datetime.strptime(date_string, "%a %b %d %Y %H:%M:%S")
+            print("[DEBUG]", date, date.year, date.month, date.day)
 
             day_events = []
             for event_id in ids_list:
@@ -237,13 +234,13 @@ def get_scheduled_events():
                     EventsScheduleModel.event_id == event_id,
                     extract('year', EventsScheduleModel.start_time) == date.year,
                     extract('month', EventsScheduleModel.start_time) == date.month,
-                    extract('day', EventsScheduleModel.start_time) == int(day)
+                    extract('day', EventsScheduleModel.start_time) == date.day
                 ).first()
                 if event_schedule:
                     day_events.append(event_schedule.serialize())
 
             if day_events:
-                events.append({'day': day, 'list_of_events': day_events})
+                events.append({'day': date.day, 'list_of_events': day_events})
 
     if events:
         return jsonify(events), 200
