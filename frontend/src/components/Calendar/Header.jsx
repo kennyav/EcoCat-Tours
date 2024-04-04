@@ -19,6 +19,7 @@ export default function Header() {
    const dateState = useSelector((state) => state.dateValue)
    const date = moment(dateState.date)
    const dateView = useSelector((state) => state.dateView.value)
+   const currDay = () => moment().date()
 
    const [month, setMonth] = useState({
       name: date.format('MMMM'),
@@ -30,7 +31,7 @@ export default function Header() {
    })
 
    useEffect(() => {
-      const newDay = moment(`${date.year()}-${month.name}-${date.date()}`);
+      const newDay = moment(`${date.year()}-${month.name}-${currDay()}`);
       const serializedDay = newDay.format('YYYY-MMMM-DD');
       dispatch(updateDate({
           date: serializedDay
@@ -40,7 +41,7 @@ export default function Header() {
 
    // whenever we change the year we go back to the first of the month for day
    useEffect(() => {
-      const newDay = moment(`${parseInt(year.name)}-${date.month()+1}-${date.date()}`)
+      const newDay = moment(`${parseInt(year.name)}-${date.month()+1}-${currDay()}`)
       const serializedDay = newDay.format('YYYY-MM-DD');
       dispatch(updateDate({
          date: serializedDay
@@ -64,11 +65,11 @@ export default function Header() {
       if (dateView === "Month") {
          if (newMonthIndex < 0) {
             dispatch(updateDate({
-               date: moment(`${date.year() - 1}-12-1`).format('YYYY-MM-DD'),
+               date: moment(`${date.year() - 1}-12-${currDay()}`).format('YYYY-MM-DD'),
             }))
          } else {
             dispatch(updateDate({
-               date: moment(`${date.year()}-${date.month()}-${date.date()}`).format('YYYY-MM-DD'),
+               date: moment(`${date.year()}-${date.month()}-${currDay()}`).format('YYYY-MM-DD'),
             }))
          }
       } else if (dateView === "Week") {
@@ -93,11 +94,11 @@ export default function Header() {
       if (dateView === "Month") {
          if (newMonthIndex > 11) {
             dispatch(updateDate({
-               date: moment(`${date.year() + 1}-1-${date.date()}`).format('YYYY-MM-DD'),
+               date: moment(`${date.year() + 1}-1-${currDay()}`).format('YYYY-MM-DD'),
             }))
          } else {
             dispatch(updateDate({
-               date: moment(`${date.year()}-${date.month() + 2}-${date.date()}`).format('YYYY-MM-DD'),
+               date: moment(`${date.year()}-${date.month() + 2}-${currDay()}`).format('YYYY-MM-DD'),
             }))
          }
       } else if (dateView === "Week") {

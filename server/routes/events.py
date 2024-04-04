@@ -1,3 +1,4 @@
+import re
 from flask import (
    Blueprint, jsonify, request
 )
@@ -220,9 +221,8 @@ def get_scheduled_events():
     # return nothing if false
     for day in dates_list:
         if day:
-            date_string = day.replace("GMT-0700", "").strip()
+            date_string = re.sub(r' GMT-[0-9]{4}', '', day)
             date = datetime.strptime(date_string, "%a %b %d %Y %H:%M:%S")
-            print("[DEBUG]", date, date.year, date.month, date.day)
 
             day_events = []
             for event_id in ids_list:

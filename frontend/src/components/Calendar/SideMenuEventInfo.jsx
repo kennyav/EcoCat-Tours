@@ -3,9 +3,18 @@ import React, { useState, useEffect } from 'react'
 // component
 import GuestInfo from './GuestInfo'
 import DropDownMenu from './DropDownMenu'
+import { SideMenuExpandLeft, SideMenuExpandRight } from '../Icons'
+
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { updateSideMenu } from '../../reducers/sideMenuSlice'
 
 const FILTERS = ["Checked-In", "Most Recent", "Least Recent"]
 export default function EventInfo(props) {
+
+  // redux
+  const dispatch = useDispatch()
+  const open = useSelector((state) => state.sideMenu.value)
   const event = props.ev.eventInfo
   const date = props.ev.date
   const passengers = props.ev.passengerInfo
@@ -42,7 +51,23 @@ export default function EventInfo(props) {
   return (
     <div className={`flex flex-col w-[272px] min-h-full h-auto font-['Kumbh Sans'] rounded-l-[25px] bg-white`} >
       <div className='flex flex-col pl-[26px] py-[30px] border-b'>
-        <div className="text-stone-900 text-xl font-bold">{title}</div>
+        <div className="flex items-center text-stone-900 text-xl font-bold">
+          {open ?
+            <div
+              onClick={() => dispatch(updateSideMenu(false))}
+              className="w-6 h-6 hover:text-[#0e88b5] hover:cursor-pointer hover:bg-black rounded-full text-gray-800 dark:text-white">
+              <SideMenuExpandRight />
+            </div>
+            :
+            <div
+              onClick={() => dispatch(updateSideMenu(true))}
+              className="w-6 h-6 hover:text-[#0e88b5] hover:cursor-pointer hover:bg-black rounded-full text-gray-800 dark:text-white">
+              <SideMenuExpandLeft />
+            </div>
+
+          }
+          {title}
+        </div>
         <div className="text-stone-900 text-[10px] font-normal pb-[14px] ">{eventTimeInfo}</div>
         <DropDownMenu list={FILTERS} setCurrent={setFilter} current={filter.name} />
       </div>

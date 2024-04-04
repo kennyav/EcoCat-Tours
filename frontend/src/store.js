@@ -6,6 +6,7 @@ import dateReducer from './reducers/dateSlice'
 import refreshReducer from './reducers/refreshSlice'
 import salesmanReducer from './reducers/salesmanSlice'
 import dateViewReducer from './reducers/dateViewSlice'
+import sideMenuReducer from './reducers/sideMenuSlice'
 
 
 export default configureStore({
@@ -16,6 +17,7 @@ export default configureStore({
     dateValue: dateReducer,
     refresh: refreshReducer,
     salesman: salesmanReducer,
-    dateView: dateViewReducer
+    dateView: dateViewReducer,
+    sideMenu: sideMenuReducer
   },
 })

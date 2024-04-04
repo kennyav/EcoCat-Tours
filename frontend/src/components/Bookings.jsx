@@ -9,6 +9,7 @@ import Calendar from './Calendar/Calendar';
 export default function Bookings() {
   const url = useSelector((state) => state.development.value)
   const calendarInformation = useSelector((state) => state.calendarInformation)
+  const openSideMenuFull = useSelector((state) => state.sideMenu.value)
   const [events, setEvents] = useState([])
 
 

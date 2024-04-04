@@ -7,6 +7,22 @@ export function CalendarIconLight() {
    )
 }
 
+export function SideMenuExpandLeft() {
+   return (
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12l4-4m-4 4 4 4" />
+      </svg>
+   )
+}
+
+export function SideMenuExpandRight() {
+   return (
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
+      </svg>
+   )
+}
+
 export function CalendarIconDark() {
    return (
       <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
@@ -119,7 +135,7 @@ export function TransactionOptionsIcon() {
    )
 }
 
-export function EventAddIcon({onClick}) {
+export function EventAddIcon({ onClick }) {
    return (
       <svg onClick={() => onClick()} className="w-[100px] h-[100px] text-[#0E5BB5] hover:text-[#0e88b5] hover:cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
          <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />

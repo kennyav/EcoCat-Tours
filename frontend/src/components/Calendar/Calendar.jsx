@@ -18,6 +18,7 @@ export default function Calendar({ events, title }) {
 
    // redux
    const calendarInformation = useSelector((state) => state.calendarInformation)
+   const openedFull = useSelector((state) => state.sideMenu.value)
    const dateState = useSelector((state) => state.dateValue)
    const date = moment(dateState.date)
    const dateView = useSelector((state) => state.dateView.value)
@@ -69,7 +70,7 @@ export default function Calendar({ events, title }) {
 
 
    return (
-      <div className={`flex flex-col w-full h-full transition-all duration-500 ${calendarInformation.clicked ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
+      <div className={`flex flex-col w-full h-full transition-all duration-500 ${openedFull ? '-translate-x-full' : calendarInformation.clicked ? 'mr-[0px]' : 'mr-[-250px]'} rounded-[25px] bg-white`}>
          <Header />
          <DatesGrid
             dates={days}
