@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import Event from './Event';
+// backend 
 import httpClient from '../../httpClient';
+// components
+import Event from './Event';
+// loader 
 import { quantum } from 'ldrs'
-import moment from 'moment';
+// css screen size
+import { useMediaQuery } from "@react-hook/media-query";
+// redux
 import { useSelector, useDispatch } from 'react-redux';
 import { update } from '../../reducers/calendarSlice';
-import { useMediaQuery } from "@react-hook/media-query";
 
+// time handling
+import moment from 'moment';
+
+// start of component
 export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek }) {
    // redux
    const dispatch = useDispatch()
    const url = useSelector((state) => state.development.value)
    const dateValue = useSelector((state) => state.dateValue)
-   const refresh = useSelector((state) => state.refresh.value)
 
    // responsize design
    const isSmallScreen = useMediaQuery("(max-width: 1170px)");
@@ -64,7 +71,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
 
       }
       // eslint-disable-next-line
-   }, [dates, refresh]);
+   }, [dates]);
    //dateValue.date, events,
 
    

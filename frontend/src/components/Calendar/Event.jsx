@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import httpClient from '../../httpClient';
 import { useSelector } from 'react-redux';
 
+// time
+import moment from 'moment';
+
 // icons
 import { NewBookingIcon } from '../Icons';
 import { EventDetailsIcon } from '../Icons';
@@ -11,20 +14,26 @@ import EventDetail from './EventDetail';
 import NewBooking from './NewBooking';
 
 export default function Event(props) {
+
+   // redux
    const url = useSelector((state) => state.development.value)
    const date = useSelector((state) => state.dateValue)
+
+   // open state
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
    const getPassengerURL = `${url}:8000/bookings/${props.scheduledEvent.id}`
+   
+   // number of passengers variables
    const [adults, setAdults] = useState(0)
    const [children, setChildren] = useState(0)
    const [infants, setInfants] = useState(0)
 
+   const startDate = moment.utc(props.scheduledEvent.start_time)
    // Parse the string into a Date object
    const dateObject = new Date(props.scheduledEvent.start_time);
    // Extract the time component
    const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' });
-   //const refresh = useSelector((state) => state.refresh.value)
 
    const getPassengers = async () => {
       try {
@@ -47,13 +56,7 @@ export default function Event(props) {
             id: props.id,
             passengers: resp.data, // Use resp.data directly
             event: props.event,
-            date: {
-               month: date.monthName,
-               day: props.day,
-               year: date.year,
-               time: timeString
-
-            }
+            date: startDate
          });
       } catch (error) {
          props.setSignal({
@@ -61,13 +64,7 @@ export default function Event(props) {
             id: props.id,
             passengers: [], // if it doesn't work then it will be blank
             event: props.event,
-            date: {
-               month: date.monthName,
-               day: props.day,
-               year: date.year,
-               time: timeString
-
-            }
+            date: startDate
          });
          console.log("Error", error)
       }
