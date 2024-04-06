@@ -38,6 +38,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
          adultPrice: formData.adultPrice,
          childrenPrice: formData.childrenPrice,
          infantPrice: formData.infantPrice,
+         partialPayment: formData.partialPayment,
          foodOptions,
          totalPrice
       });

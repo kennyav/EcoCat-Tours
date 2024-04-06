@@ -167,12 +167,15 @@ export default function EventDetail({ event, scheduledEvent }) {
 
 
                            {/* Event History */}
-                           {/* <div className='py-[10px] flex flex-col overflow-scroll'>
+                           <div className='py-[10px] flex flex-col overflow-scroll'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900 '>
                                  Event History
                               </h3>
+                              <div className='flex flex-col h-[25%] bg-gray-100 rounded-[25px] p-2 overflow-y-scroll'>
+                                 History coming soon
+                              </div>
 
-                           </div> */}
+                           </div>
 
                            <div className="flex justify-between mt-4">
                               <div>

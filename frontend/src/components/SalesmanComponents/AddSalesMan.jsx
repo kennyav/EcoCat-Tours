@@ -15,7 +15,7 @@ export default function AddSalesMan({ toggle }) {
    const url = useSelector((state) => state.development.value)
    const inputCSS =
       "rounded-[10px] pl-[14px] py-[9px] border border-slate-300 text-xs text-justify font-medium font-['Kumbh Sans'] resize-none outline-none";
-
+   
    const dispatch = useDispatch()
    const [firstName, setFirstName] = useState('');
    const [lastName, setLastName] = useState('');

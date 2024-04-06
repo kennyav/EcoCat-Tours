@@ -23,6 +23,8 @@ export default function NewBooking(props) {
    const refresh = useSelector((state) => state.refresh.value)
    const salesmanId = useSelector((state) => state.salesman.value)
 
+   console.log(salesmanId)
+
    // extra
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    const scheduledEventId = props.scheduledEvent.id
@@ -44,6 +46,7 @@ export default function NewBooking(props) {
       childrenPrice: 0,
       infantPrice: 0,
       shirts: 0,
+      partialPayment: 0,
    });
 
    // states for the drop down
@@ -271,6 +274,16 @@ export default function NewBooking(props) {
                               <RadioGroup label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived} />
                            </div>
 
+                           {paymentStatus === "Partial Payment" &&
+                              <div className="" >
+                                 <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Partial Payment</h1>
+                                 <input
+                                    value={formData.partialPayment}
+                                    onChange={(e) => handleInputChange("partialPayment", e.target.value)}
+                                    className='border rounded-[10px] p-2'
+                                    placeholder='Payment Amount' />
+                              </div>}
+
 
                            {/* Reservation Notes section*/}
                            <div className='py-[10px] flex flex-col'>
@@ -293,7 +306,7 @@ export default function NewBooking(props) {
                                  type="button"
                                  className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity || isCreateButtonDisabled ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
                                  onClick={() => {
-                                    creatingNewBooking({formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url}).then(
+                                    creatingNewBooking({ formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url }).then(
                                        closeModal()
                                     )
                                  }}

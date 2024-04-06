@@ -16,16 +16,23 @@ export default function ComboBox() {
 
    useEffect(() => {
       if (selected) {
-         dispatch(updateSalesmanId(selected.id))
+         if (selected.first_name !== "In" && selected.last_name !== "Person") {
+            dispatch(updateSalesmanId(selected.id))
+         } else {
+            dispatch(updateSalesmanId(""))
+         }
       }
-   // eslint-disable-next-line
+      // eslint-disable-next-line
    }, [selected])
 
    useEffect(() => {
       (async () => {
          try {
             const resp = await httpClient.get(`${url}:8000/salesmen/@salesmen`);
-            setPeople(resp.data)
+            setPeople([{
+               first_name: "In",
+               last_name: "Person"
+            }, ...resp.data])
             setSelected(resp.data[0])
          } catch (error) {
             console.log("Error", error)

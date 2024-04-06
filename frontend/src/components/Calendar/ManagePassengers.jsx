@@ -1,17 +1,20 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
+// time handling
 import moment from 'moment'
-import { useSelector, useDispatch} from 'react-redux'
-import { updateRefresh } from '../../reducers/refreshSlice'
+// components
 import RadioGroup from './RadioGroup'
+import { Fragment, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import CheckIn from './CheckIn'
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
 
 const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
 const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
 const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 
-// components
 export default function ManagePassengers(props) {
    const url = useSelector((state) => state.development.value)
    const refresh = useSelector((state) => state.refresh.value)
@@ -32,6 +35,7 @@ export default function ManagePassengers(props) {
    const [infantPrice, setInfantPrice] = useState(p.infant_price)
    const [paymentSource, setPaymentSource] = useState(p.payment_source)
    const [paymentStatus, setPaymentStatus] = useState(p.payment_status)
+   const [partialPayment, setPartialPayment] = useState(p.partial_payment)
    const [commissionReceived, setCommissionReceived] = useState(p.commission_received)
    const [notes, setNotes] = useState(p.notes)
 
@@ -48,7 +52,7 @@ export default function ManagePassengers(props) {
 
    const editPassenger = async () => {
       try {
-         const resp = await httpClient.put(`${url}:8000/bookings/edit-passenger/${p.id}`,{
+         const resp = await httpClient.put(`${url}:8000/bookings/edit-passenger/${p.id}`, {
             firstName,
             lastName,
             phoneNumber,
@@ -61,6 +65,7 @@ export default function ManagePassengers(props) {
             infantPrice,
             paymentSource,
             paymentStatus,
+            partialPayment,
             commissionReceived,
             notes
          })
@@ -88,9 +93,9 @@ export default function ManagePassengers(props) {
             <button
                type="button"
                onClick={openModal}
-               className="w-[104px] h-8 px-[15px] py-2.5 border-bg-sky-700 rounded-[30px] justify-center items-center gap-2.5 flex hover:shadow-md"
+               className="w-[104px] h-8 px-[15px] py-2.5 bg-[#0E5BB5] rounded-[30px] justify-center items-center gap-2.5 flex hover:shadow-md"
             >
-               <p className="w-[86px] text-center text-sky-700 text-[10px] font-semibold font-['Kumbh Sans']">Manage</p>
+               <p className="w-[86px] text-center text-white text-[10px] font-semibold font-['Kumbh Sans']">Manage</p>
             </button>
          </div>
 
@@ -190,9 +195,20 @@ export default function ManagePassengers(props) {
 
                            <div className='inline-flex w-full justify-between'>
                               <RadioGroup disabled={!edit} label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource} />
-                              <RadioGroup disabled={!edit} label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus}/>
-                              <RadioGroup disabled={!edit} label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived}/>
+                              <RadioGroup disabled={!edit} label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus} />
+                              <RadioGroup disabled={!edit} label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived} />
                            </div>
+
+                           {paymentStatus === "Partial Payment" &&
+                              <div className="" >
+                                 <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Partial Payment</h1>
+                                 <input
+                                    disabled={!edit}
+                                    value={partialPayment}
+                                    onChange={(e) => setPartialPayment(e.target.value)}
+                                    className='border rounded-[10px] p-2'
+                                    placeholder='Payment Amount' />
+                              </div>}
 
                            <div className='py-[10px] flex flex-col'>
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
@@ -218,6 +234,7 @@ export default function ManagePassengers(props) {
                                     Save
                                  </button>
                               </div>
+                              <CheckIn passenger={p} />
                               <button
                                  className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-black hover:bg-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                  onClick={() => setOpenDelete(true)}

@@ -29,6 +29,7 @@ def create_booking():
     infant_price = data.get('infantPrice')
     food = data.get('foodOptions')
     t_shirt = data.get('shirts')
+    partial_payment = data.get("partialPayment")
     total_price = data.get('totalPrice')
     checked_in = False
 
@@ -43,6 +44,7 @@ def create_booking():
         notes=notes,
         payment_type=payment_type,
         payment_status=payment_status,
+        partial_payment=partial_payment,
         commission_received=commission_received,
         checked_in=checked_in,
         booker_id=booker_id,
@@ -132,6 +134,8 @@ def update_passenger(passenger_id):
         passenger.payment_source = request.json['paymentSource']
     if 'paymentStatus' in request.json:
         passenger.payment_status = request.json['paymentStatus']
+    if 'partialPayment' in request.json:
+        passenger.partial_payment = request.json['partialPayment']
     if 'commissionReceived' in request.json:
         passenger.commission_received = request.json['commissionReceived']
     

@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux'
 // components
 export default function CheckIn(props) {
    const calendarInformation = useSelector((state) => state.calendarInformation)
+   const date = moment.utc(calendarInformation.date)
    const dispatch = useDispatch()
    const refresh = useSelector((state) => state.refresh.value)
    const url = useSelector((state) => state.development.value)
@@ -32,8 +33,8 @@ export default function CheckIn(props) {
             printBoardingPass({
                firstName: p.first_name,
                lastName: p.last_name,
-               date: calendarInformation.date.month.toString() + " " + calendarInformation.date.day.toString() + ", " + calendarInformation.date.year,
-               time: calendarInformation.date.time,
+               date: date.format("MMM DD, YYYY"),
+               time:  date.format("hh:mm"),
                numberOfPassengers: numberOfPassengers,
                pricePerPassenger: p.adult_price,
                foodOption: p.food,
@@ -58,9 +59,8 @@ export default function CheckIn(props) {
             <button
                type="button"
                onClick={openModal}
-               className="w-[104px] h-8 px-[15px] py-2.5 bg-sky-700 rounded-[30px] justify-center items-center gap-2.5 flex hover:shadow-md"
-            >
-               <p className="w-[86px] text-center text-white text-[10px] font-semibold font-['Kumbh Sans']">Check In</p>
+               className="inline-flex justify-center rounded-md bg-green-200 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+            >Check In
             </button>
          </div>
 

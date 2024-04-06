@@ -119,6 +119,7 @@ class PassengersModel(db.Model):
     total_price = db.Column(db.Integer)
     t_shirt = db.Column(db.Integer)
     food = db.Column(db.Integer)
+    partial_payment = db.Column(db.Integer)
     payment_type = db.Column(db.String(80), nullable=False)
     payment_status = db.Column(db.String(80), nullable=False)
     commission_received = db.Column(db.Boolean)
@@ -146,6 +147,7 @@ class PassengersModel(db.Model):
             'food': self.food,
             'payment_type': self.payment_type,
             'payment_status': self.payment_status,
+            'partial_payment': self.partial_payment,
             'commission_received': self.commission_received,
             'checked_in': self.checked_in,
             'booker_id': self.booker_id,

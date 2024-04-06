@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 import { CheckedInIcon } from '../Icons'
 
 // modal
-import CheckIn from './CheckIn'
 import ManagePassengers from './ManagePassengers'
 
 export default function GuestInfo(props) {
@@ -51,7 +50,7 @@ export default function GuestInfo(props) {
       </div>
       <div className="flex-col justify-start items-start gap-1 flex">
         <div className="flex w-full justify-between items-center">
-          <div className="text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">Booking In Person</div>
+          <div className="text-stone-900 text-[10px] font-semibold font-['Kumbh Sans']">{p.salesman_id ? "Booking By OPC" : "Booking In Person"}</div>
           <div className="text-right text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']">{p.commission_received ? "Commission received" : ""}</div>
         </div>
         <div className="w-full h-2.5 text-stone-900 text-[8px] font-normal font-['Kumbh Sans']">{moment(p.created_at, "yyyy-MM-DD HH:mm:ss").fromNow()} by {booker.first_name} {booker.last_name}</div>
@@ -59,7 +58,6 @@ export default function GuestInfo(props) {
       <div className="w-full h-2.5 text-stone-900 text-[8px] font-semibold font-['Kumbh Sans']"> {p.checked_in && "Checked In"}</div>
       <div className="flex-col justify-start items-start gap-[18px] flex">
         <div className="justify-start items-start gap-[7px] md:flex-col">
-          <CheckIn passenger={p} />
           <div className="w-[104px] h-8 px-[15px] py-2.5 rounded-[30px] border border-sky-700 justify-center items-center gap-2.5 flex">
             <ManagePassengers passenger={p} />
           </div>

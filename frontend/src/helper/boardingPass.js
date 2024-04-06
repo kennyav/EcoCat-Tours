@@ -239,12 +239,14 @@ export const printBoardingPass = ({
     </div>
   `;
 
-  // Open a new window with the boarding pass HTML
-  const printWindow = window.open('', '_blank');
-  printWindow.document.open();
-  printWindow.document.write(boardingPassHTML);
-  printWindow.document.close();
 
+  const printWindow = window.open('', '_blank');
+   printWindow.document.open();
+   for(let i=0;i<numberOfPassengers;i++){
+    printWindow.document.write(boardingPassHTML);
+    printWindow.document.close();
+   }
+   
   // Print the boarding pass
   printWindow.print();
 };
