@@ -13,10 +13,10 @@ class ApplicationConfig:
    SQLALCHEMY_ECHO = True
    SQLALCHEMY_DATABASE_URI = r"sqlite:///./db.sqlite"
 
-   SESSION_COOKIE_SAMESITE = "None"
-   SESSION_COOKIE_SECURE = True
+   # SESSION_COOKIE_SAMESITE = "None"
+   # SESSION_COOKIE_SECURE = True
 
    SESSION_TYPE = "redis"
    SESSION_PERMANANT = False
-   SESSION_REDIS = redis.from_url("redis://127.0.0.1:6379")
-   #SESSION_REDIS = redis.from_url("redis://redis:6379/0")
+   #SESSION_REDIS = redis.from_url("redis://127.0.0.1:6379")
+   SESSION_REDIS = redis.from_url("redis://redis:6379/0")
