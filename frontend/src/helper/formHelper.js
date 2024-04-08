@@ -51,7 +51,10 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
       try {
          const capacity = formData.adultNumber + formData.childrenNumber + formData.infantNumber
          const changeCapacity = await httpClient.put(`${url}:8000/events/edit-capacity/${scheduledEventId}`, {
-            capacity
+            capacity,
+            adult: parseInt(formData.adultNumber),
+            children: parseInt(formData.childrenNumber),
+            infant: parseInt(formData.infantNumber)
          });
          console.log(changeCapacity.data)
       } catch (error) {

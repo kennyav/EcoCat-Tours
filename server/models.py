@@ -79,9 +79,12 @@ class EventsScheduleModel(db.Model):
     start_time = db.Column(DateTime) # this should include year, month, day, and hour
     end_time = db.Column(DateTime)
     adult_passengers = db.Column(db.Integer)
+    curr_adult = db.Column(db.Integer, default=0)
     capacity = db.Column(db.Integer, nullable=False)
     children_passengers = db.Column(db.Integer)
+    curr_children = db.Column(db.Integer, default=0)
     infant_passengers = db.Column(db.Integer)
+    curr_infant = db.Column(db.Integer, default=0)
     days = db.Column(db.String(7))
     created_at = db.Column(DateTime, default=datetime.now)
 
@@ -92,9 +95,12 @@ class EventsScheduleModel(db.Model):
             'start_time': self.start_time,
             'end_time': self.end_time,
             'adult_passengers': self.adult_passengers,
+            'curr_adult': self.curr_adult,
             'children_passengers': self.children_passengers,
+            'curr_children': self.curr_children,
             'capacity': self.capacity,
             'infant_passengers': self.infant_passengers,
+            'curr_infant': self.curr_infant,
             'days': self.days,
             'created_at': self.created_at
         }

@@ -23,8 +23,6 @@ export default function NewBooking(props) {
    const refresh = useSelector((state) => state.refresh.value)
    const salesmanId = useSelector((state) => state.salesman.value)
 
-   console.log(salesmanId)
-
    // extra
    const passengerNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    const scheduledEventId = props.scheduledEvent.id

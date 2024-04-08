@@ -4,7 +4,7 @@ export const calendarSlice = createSlice({
    name: 'calendarInformation',
    initialState: {
       eventInfo: {},
-      passengerInfo: [],
+      id: "",
       date: {
          month: "",
          day: 0,
@@ -16,7 +16,7 @@ export const calendarSlice = createSlice({
    reducers: {
       update: (state, action) => {
          state.eventInfo = action.payload.eventInfo
-         state.passengerInfo = action.payload.passengerInfo
+         state.id = action.payload.id
          state.date = action.payload.date
          state.clicked = action.payload.clicked
       }

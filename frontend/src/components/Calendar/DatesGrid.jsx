@@ -30,7 +30,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
    const [signal, setSignal] = useState({
       open: false,
       id: "",
-      passengers: [],
+      se_id: "",
       event: {},
       date: {}
    });
@@ -42,7 +42,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
    useEffect(() => {
       dispatch(update({
          eventInfo: signal.event,
-         passengerInfo: signal.passengers,
+         id: signal.se_id,
          clicked: signal.open,
          date: signal.date
       }))

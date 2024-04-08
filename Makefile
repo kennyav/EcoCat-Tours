@@ -20,6 +20,7 @@ redis:
 	@redis-server
 
 # screen -r flask to open the flask terminal
+# flask run | grep '\[DEBUG\]'  
 # Run all services
 run:
 	@echo "Starting all services..."

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import httpClient from '../httpClient';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,8 +12,13 @@ import EventLoader from './EventsComponents/EventLoader';
 // icons
 import { EventAddIcon } from './Icons'
 
+export const RefreshContext = createContext(null)
 
 export default function Events() {
+  // create context for refresh
+  const [refresh, setRefresh] = useState(false)
+
+  // redux
   const url = useSelector((state) => state.development.value)
   const dispatch = useDispatch()
   const [events, setEvents] = useState([])
@@ -32,7 +37,7 @@ export default function Events() {
         setLoading(false)
       }
     })();
-  }, [url]);
+  }, [url, refresh]);
 
 
 
@@ -58,10 +63,11 @@ export default function Events() {
         </div>
       ) : (
         <div className='grid grid-cols-2 grid-flow-row gap-5 px-[41px] py-[46px] place-content-center'>
-          {
-            events && events.map((event) => (
+          <RefreshContext.Provider value={{refresh,setRefresh }}>
+            {events && events.map((event) => (
               <EventLoader key={event.id} event={event} eventId={event.id} />
             ))}
+          </RefreshContext.Provider>
           <div className='flex items-center justify-center'>
             <EventAddIcon onClick={() => handleClick()} />
           </div>

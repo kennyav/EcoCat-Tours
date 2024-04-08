@@ -14,20 +14,9 @@ import EventDetail from './EventDetail';
 import NewBooking from './NewBooking';
 
 export default function Event(props) {
-
-   // redux
-   const url = useSelector((state) => state.development.value)
-   const date = useSelector((state) => state.dateValue)
-
    // open state
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
-   const getPassengerURL = `${url}:8000/bookings/${props.scheduledEvent.id}`
-   
-   // number of passengers variables
-   const [adults, setAdults] = useState(0)
-   const [children, setChildren] = useState(0)
-   const [infants, setInfants] = useState(0)
 
    const startDate = moment.utc(props.scheduledEvent.start_time)
    // Parse the string into a Date object
@@ -36,38 +25,13 @@ export default function Event(props) {
    const timeString = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'GMT' });
 
    const getPassengers = async () => {
-      try {
-         const resp = await httpClient.get(getPassengerURL);
-         let a = 0
-         let c = 0
-         let i = 0
-         resp.data.forEach((data) => {
-            a = a + data.adult_passengers
-            c = c + data.children_passengers
-            i = i + infants + data.infant_passengers
-         })
-
-         setAdults(a)
-         setChildren(c)
-         setInfants(i)
-         
-         props.setSignal({
-            open: true,
-            id: props.id,
-            passengers: resp.data, // Use resp.data directly
-            event: props.event,
-            date: startDate
-         });
-      } catch (error) {
-         props.setSignal({
-            open: true,
-            id: props.id,
-            passengers: [], // if it doesn't work then it will be blank
-            event: props.event,
-            date: startDate
-         });
-         console.log("Error", error)
-      }
+      props.setSignal({
+         open: true,
+         id: props.id,
+         se_id: props.scheduledEvent.id,
+         event: props.event,
+         date: startDate
+      });
    }
 
 
@@ -92,7 +56,7 @@ export default function Event(props) {
          props.setSignal({
             open: false,
             id: "",
-            passengerInfo: [],
+            se_id: props.scheduledEvent.id,
             event: {},
             date: {}
 
@@ -119,22 +83,22 @@ export default function Event(props) {
             <div className="z-10 w-[174px] h-auto absolute mt-[10px] bg-[#F2F8FC] rounded-[10px] shadow-md">
                <div className='inline-flex items-center p-[10px] gap-2 w-full rounded-[10px] bg-[#0E5BB5]'>
                   <NewBookingIcon />
-                  <NewBooking scheduledEvent={props.scheduledEvent}  event={props.event}/>
+                  <NewBooking scheduledEvent={props.scheduledEvent} event={props.event} />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px] hover:shadow-md'>
                   <EventDetailsIcon />
                   <EventDetail event={props.event} scheduledEvent={props.scheduledEvent} />
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{adults}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.curr_adult}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Adults</div>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{children}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.curr_children}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Children</div>
                </div>
                <div className='inline-flex items-center p-[7px] gap-2 w-full rounded-[10px]'>
-                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{infants}</div>
+                  <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">{props.scheduledEvent.curr_infant}</div>
                   <div className="text-stone-900 text-[10px] font-normal font-['Kumbh Sans']">Infants</div>
                </div>
             </div>}

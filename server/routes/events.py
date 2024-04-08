@@ -20,17 +20,12 @@ def check_for_overlapping_events(start_date, end_date):
     if events_on_same_day:
         # Check for overlapping events
         for event in events_on_same_day:
-            print("[DEBUG]", event.start_time.time(), event.end_time.time())
-            print("[DEBUG]", start_date.time(), end_date.time())
             # Check if event overlaps with the provided date range
             if (start_date.time() >= event.start_time.time() and start_date.time() <= event.end_time.time()):
-                print("1 ====================================================")
                 return True
             elif (end_date.time() >= event.start_time.time() and end_date.time() <= event.end_time.time()):
-                print("2 ====================================================")
                 return True
             elif (start_date.time() <= event.start_time.time() and end_date.time() >= event.end_time.time()):
-                print("3 ====================================================")
                 return True
            
 
@@ -77,11 +72,12 @@ def schedule_event():
     # run days format "MTWThFSaSu"
     if repeated:
         index = start_date.weekday()
-        current_date = datetime(start_date.year, start_date.month, start_date.day,
-                             start_date.hour, start_date.minute, start_date.second)
+        current_date = datetime(start_date.year, start_date.month, start_date.day)
+        
+        print("[DEBUG]", current_date, start_date, end_date)
         
         if repeated_weekly:
-            while not current_date >= end_date:
+            while not current_date > end_date:
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
@@ -99,14 +95,14 @@ def schedule_event():
                         db.session.add(new_schedule)
                         db.session.commit()
                     current_date = current_date + timedelta(days=1)
-                    if current_date >= end_date:
+                    if current_date > end_date:
                         break
                 # set index to 0 to reset week
                 index = 0
         else:
             # else we are going bi weekly so we increment the current_date by a week
             # when we are done with the current week 
-            while not current_date >= end_date:
+            while not current_date > end_date:
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
@@ -124,7 +120,7 @@ def schedule_event():
                         db.session.add(new_schedule)
                         db.session.commit()
                     current_date = current_date + timedelta(days=1)
-                    if current_date >= end_date:
+                    if current_date > end_date:
                         break
                 # set index to 0 to reset week
                 # once we are out of the for loop we are on Mon because we incerment 
@@ -283,9 +279,17 @@ def edit_capacity(event_id):
     if not event:
         return jsonify({"error": "Event not found"}), 404
     
+
+    print("[DEBUG]", request.json['adult'], type(request.json['adult']), event.curr_adult, type(event.curr_adult))
     # Update the salesmen information based on the request data
     if 'capacity' in request.json:
         event.capacity = event.capacity - request.json['capacity']
+    if 'adult' in request.json:
+        event.curr_adult = event.curr_adult + request.json['adult']
+    if 'children' in request.json:
+        event.curr_children = event.curr_children + request.json['children']
+    if 'infant' in request.json:
+        event.curr_infant = event.curr_infant + request.json['infant']
     
 
     db.session.commit()

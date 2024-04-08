@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import httpClient from '../../httpClient'
 
 // loader
 import { quantum } from 'ldrs'
@@ -17,16 +18,17 @@ import { updateSideMenu } from '../../reducers/sideMenuSlice'
 const FILTERS = ["Checked-In", "Most Recent", "Least Recent"]
 
 export default function EventInfo(props) {
-
   // redux
   const dispatch = useDispatch()
   const openedFull = useSelector((state) => state.sideMenu.value)
+  const url = useSelector((state) => state.development.value)
+  const refresh = useSelector((state) => state.refresh.value)
+  const getPassengerURL = `${url}:8000/bookings/${props.ev.id}`
 
   // props
   const event = props.ev.eventInfo
   const date = moment.utc(props.ev.date)
-
-  const passengers = props.ev.passengerInfo
+  const [passengers, setPassengers] = useState([])
 
   // handling render
   quantum.register()
@@ -41,7 +43,7 @@ export default function EventInfo(props) {
 
   useEffect(() => {
     setTitle(event.title)
-  }, [event])
+  }, [event, refresh])
 
   // Function to sort passengers based on selected filter
   const sortPassengers = (passengers, filter) => {
@@ -57,7 +59,25 @@ export default function EventInfo(props) {
     }
   };
 
-  const filteredPassengers = passengers ? sortPassengers(passengers, filter.name) : [];
+  // get passengers
+  useEffect(() => {
+    (async () => {
+      // first clear passenger cache
+      setPassengers([])
+
+      try {
+        setLoading(true)
+        const resp = await httpClient.get(getPassengerURL);
+        setPassengers(sortPassengers(resp.data, filter.name))
+      } catch (error) {
+        console.log(error, "Could not fetch passengers")
+      } finally {
+        setLoading(false)
+      }
+    })();
+  }, [refresh, getPassengerURL])
+
+
 
   // useEffect for setting hidden after the animation
   useEffect(() => {
@@ -117,9 +137,9 @@ export default function EventInfo(props) {
         </div>
         :
         <div className={`${openedFull ? 'grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 grid-row-flow' : 'flex flex-col'} ${hidden ? 'hidden' : ''} gap-1 p-1`} >
-          {filteredPassengers && filteredPassengers.map((passenger) => {
+          {passengers && passengers.map((passenger) => {
             return (
-              <div className="bg-[#C4D2DC] rounded-[25px] w-full">
+              <div key={passenger.id} className="bg-[#C4D2DC] rounded-[25px] w-full">
                 <GuestInfo key={passenger.id} passenger={passenger} />
               </div>
             )

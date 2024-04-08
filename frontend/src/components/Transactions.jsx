@@ -46,7 +46,7 @@ export default function Transactions() {
                   <button
                     className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full text-white px-[15px] py-[10px] text-[10px] text-center"
                     onClick={() => handleClick(transaction)}>View</button>
-                  <TransactionOptionsIcon />
+                  {/* <TransactionOptionsIcon /> */}
                 </span>
               </span>
             ))

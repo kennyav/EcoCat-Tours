@@ -10,7 +10,9 @@ export default function SingleTransaction(props) {
    quantum.register()
    const [loading, setLoading] = useState(false)
 
-   console.log(props.history.salesman_id)
+   //
+   const inlineStyling = 'flex-col justify-center items-start gap-1.5 inline-flex w-[20%]'
+
 
    useEffect(() => {
       (async () => {
@@ -47,23 +49,23 @@ export default function SingleTransaction(props) {
                </div>
             ) : (
                <div className="flex h-auto w-full px-6 justify-between items-center">
-                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                  <div className={`${inlineStyling}`}>
                      <div className="text-sm font-bold">Passenger</div>
                      <div className="text-sm font-bold">{props.history.first_name} {props.history.last_name}</div>
                   </div>
-                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                  <div className={`${inlineStyling}`}>
                      <div className="text-sm font-bold">Salesman</div>
                      <div className="text-sm font-bold">{salesman.first_name} {salesman.last_name}</div>
                   </div>
-                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                  <div className={`${inlineStyling}`}>
                      <div className="text-sm font-bold">Price</div>
                      <div className={`w-44 ${price} text-sm font-bold `}>${props.history.total_price}</div>
                   </div>
-                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                  <div className={`${inlineStyling}`}>
                      <div className="text-sm font-bold">Event</div>
                      <div className="text-[10px] font-normal">{event.title}</div>
                   </div>
-                  <div className="flex-col justify-center items-start gap-1.5 inline-flex">
+                  <div className={`${inlineStyling}`}>
                      <div className="text-sm font-bold">Recipient </div>
                      <div className="text-[10px] font-normal">EcoCat</div>
                   </div>
