@@ -2,10 +2,34 @@ import { useState, useContext } from 'react';
 import { Br, Cut, Line, Printer, render, Row, Text, Barcode } from 'react-thermal-printer';
 import { EventContext } from '../Calendar/SideMenuEventInfo';
 
+// redux
+import { useSelector } from 'react-redux'
+
+// axios request
+import httpClient from '../../httpClient';
+
 export default function PrintReceipt({ passenger }) {
+   // redux
+   const url = useSelector((state) => state.development.value)
+
+   // event info
    const { event, eventTimeInfo } = useContext(EventContext);
    const quantity = passenger.adult_passengers + passenger.children_passengers + passenger.infant_passengers
-   console.log(passenger)
+
+
+
+   const checkIn = async () => {
+      const checkedIn = true
+      try {
+         const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${passenger.id}`, {
+            checkedIn
+         })
+         console.log(resp.data)
+      } catch (error) {
+         console.log("Error", error)
+      }
+   }
+
    const receipt = (
       <Printer type="star" width={42} debug={true}>
          <Text size={{ width: 2, height: 2 }}>{`${passenger.total_price} $ USD`}</Text>
@@ -65,12 +89,14 @@ export default function PrintReceipt({ passenger }) {
 
    return (
       <main>
-         {/* <div>{receipt}</div> */}
          <div style={{ marginTop: 24 }}>
             <button
                className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
                disabled={isPrinting}
-               onClick={() => printReceipt()}>
+               onClick={() => {
+                  checkIn()
+                  printReceipt()
+                  }}>
                {isPrinting ? 'Printing...' : 'Print Pass'}
             </button>
          </div>

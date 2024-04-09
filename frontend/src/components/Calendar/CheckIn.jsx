@@ -28,25 +28,21 @@ export default function CheckIn(props) {
 
    // passengers states
    const p = props.passenger
-   const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
+   //const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
-   const checkIn = async () => {
-      const checkedIn = true
-      try {
-         const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${props.passenger.id}`, {
-            checkedIn
-         })
-         console.log(resp.data)
-         closeModal()
-      } catch (error) {
-         closeModal()
-         console.log("Error", error)
-      } finally {
-         for (let i = 0; i < numberOfPassengers; i++) {
-            <PrintReceipt />
-         }
-      }
-   }
+   // const checkIn = async () => {
+   //    const checkedIn = true
+   //    try {
+   //       const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${props.passenger.id}`, {
+   //          checkedIn
+   //       })
+   //       console.log(resp.data)
+   //       closeModal()
+   //    } catch (error) {
+   //       closeModal()
+   //       console.log("Error", error)
+   //    }
+   // }
 
    function closeModal() {
       dispatch(updateRefresh(!refresh))
