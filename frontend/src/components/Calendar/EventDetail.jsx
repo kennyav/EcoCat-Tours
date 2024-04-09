@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import moment from 'moment'
 import httpClient from '../../httpClient'
 import { updateRefresh } from '../../reducers/refreshSlice'
@@ -20,6 +20,56 @@ export default function EventDetail({ event, scheduledEvent }) {
    // Parse the original datetime string
    const parsedStartDatetime = moment(scheduledEvent.start_time);
    const parsedEndDatetime = moment(scheduledEvent.end_time)
+   // event history
+   const [history, setHistory] = useState([])
+
+
+   useEffect(() => {
+
+      const filterHistory = (d1, d2, d3) => {
+         let allParts = [];
+
+         // Process each event string
+         [d1, d2, d3].forEach(data => {
+            let parts = data.split("?").filter(part => part.trim() !== ""); // Remove empty parts
+
+            // Extract dates and times, convert them to Date objects, and sort the parts
+            let sortedParts = parts.map(part => {
+               let [dateTime, rest] = part.split(': ');
+               let dateObj = new Date(dateTime.slice(1)); // Remove leading '?' and convert to Date object
+               return { dateTime: dateObj, rest };
+            }).sort((a, b) => b.dateTime - a.dateTime);
+
+            // Format the dates and times and clean up the time
+            let formattedParts = sortedParts.map(part => {
+               let dateTimeStr = part.dateTime.toLocaleString(); // Format date and time
+               return `${dateTimeStr.split(',')[0]}: ${part.rest}`; // Combine date and event description
+            });
+
+            // Concatenate the formatted parts to the allParts array
+            allParts = allParts.concat(formattedParts);
+         });
+
+         // Sort all parts again based on the date and time
+         allParts.sort((a, b) => {
+            let dateA = new Date(a.split(':')[0]);
+            let dateB = new Date(b.split(':')[0]);
+            return dateB - dateA;
+         });
+
+         setHistory(allParts)
+      }
+
+
+      (async () => {
+         try {
+            const resp = await httpClient.get(`${url}:8000/events/event-history/${scheduledEvent.id}`)
+            filterHistory(resp.data.new_booking, resp.data.event_edit, resp.data.passenger_edit)
+         } catch (error) {
+            alert(error, "no event history found")
+         }
+      })();
+   }, [])
 
    const handleTimeChange = (e, setTime, parsedDatetime) => {
       // Extract hour and minute from the input value
@@ -171,10 +221,13 @@ export default function EventDetail({ event, scheduledEvent }) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900 '>
                                  Event History
                               </h3>
-                              <div className='flex flex-col h-[25%] bg-gray-100 rounded-[25px] p-2 overflow-y-scroll'>
-                                 History coming soon
+                              <div className='flex flex-col h-[25%] bg-gray-100 rounded-[25px] p-4 overflow-y-scroll gap-2'>
+                                 {history && history.map(action =>
+                                    <li className="">
+                                       {action}
+                                    </li>
+                                 )}
                               </div>
-
                            </div>
 
                            <div className="flex justify-between mt-4">

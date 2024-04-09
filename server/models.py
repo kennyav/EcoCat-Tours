@@ -173,3 +173,27 @@ class TransactionsModel(db.Model):
             "passenger_id": self.passenger_id,
             "created_at": self.created_at,
         }
+    
+
+class EventHistory(db.Model):
+    __tablename__ = "EventHistory"
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    event_id = db.Column(db.String(32))
+    scheduled_event_id = db.Column(db.String(32))
+    creation = db.Column(db.Text)
+    new_booking = db.Column(db.Text)
+    event_edit = db.Column(db.Text)
+    passenger_edit = db.Column(db.Text)
+    created_at = db.Column(DateTime, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "event_id": self.event_id,
+            "scheduled_event_id": self.scheduled_event_id,
+            "creation": self.creation,
+            "new_booking": self.new_booking,
+            "event_edit": self.event_edit,
+            "passenger_edit": self.passenger_edit,
+            "created_at": self.created_at
+        }

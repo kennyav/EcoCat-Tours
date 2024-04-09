@@ -61,20 +61,22 @@ export default function EventInfo(props) {
 
   // get passengers
   useEffect(() => {
-    (async () => {
-      // first clear passenger cache
-      setPassengers([])
+    if (props.ev.id) {
+      (async () => {
+        // first clear passenger cache
+        setPassengers([])
 
-      try {
-        setLoading(true)
-        const resp = await httpClient.get(getPassengerURL);
-        setPassengers(sortPassengers(resp.data, filter.name))
-      } catch (error) {
-        console.log(error, "Could not fetch passengers")
-      } finally {
-        setLoading(false)
-      }
-    })();
+        try {
+          setLoading(true)
+          const resp = await httpClient.get(getPassengerURL);
+          setPassengers(sortPassengers(resp.data, filter.name))
+        } catch (error) {
+          console.log(error, "Could not fetch passengers")
+        } finally {
+          setLoading(false)
+        }
+      })();
+    }
   }, [refresh, getPassengerURL])
 
 

@@ -1,9 +1,9 @@
 import re
 from flask import (
-   Blueprint, jsonify, request
+   Blueprint, jsonify, request, session
 )
 from datetime import date, datetime, timedelta
-from models import db, EventsModel, EventsScheduleModel
+from models import db, EventsModel, EventsScheduleModel, EventHistory, UserModel
 from sqlalchemy import extract 
 
 # this creates the auth blueprint
@@ -32,6 +32,44 @@ def check_for_overlapping_events(start_date, end_date):
     return False
 
 
+def update_event_history(scheduled_event):
+    user_id = session.get("user_id")
+    history = EventHistory.query.filter_by(scheduled_event_id=scheduled_event.id).first()
+
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    user = UserModel.query.filter_by(id=user_id).first()
+    update_text=f"?{datetime.now().date()}: {user.first_name} edited event to start time {scheduled_event.start_time}, end time {scheduled_event.end_time} and passengers adult {scheduled_event.adult_passengers}, children {scheduled_event.children_passengers}, and infant {scheduled_event.infant_passengers}"
+    
+    if update_text:
+        history.event_edit = history.event_edit + update_text
+        
+    db.session.commit()
+    print("[DEBUG] Updated History for Event Edit")
+   
+
+
+def create_event_history(event, scheduled_event):
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    user = UserModel.query.filter_by(id=user_id).first()
+
+    creation_text = f"?{datetime.now().date()}: {event.title} created by {user.first_name} on {event.created_at}"
+
+    new_history = EventHistory(
+        event_id=event.id,
+        scheduled_event_id=scheduled_event.id,
+        creation=creation_text,
+        new_booking="",
+        event_edit="",
+        passenger_edit="",
+    )
+
+    db.session.add(new_history)
+    db.session.commit()
 
 
 @bp.route('/schedule-event', methods=["POST"]) 
@@ -62,9 +100,9 @@ def schedule_event():
 
     # Check if there are any overlapping events
     overlapping_event = check_for_overlapping_events(start_date, end_time)
+    event = EventsModel.query.get(event_id)
 
     if overlapping_event:
-        event = EventsModel.query.get(event_id)
         db.session.delete(event)
         db.session.commit()
         return jsonify({"message": "Overlapping event exists"}), 400
@@ -72,12 +110,11 @@ def schedule_event():
     # run days format "MTWThFSaSu"
     if repeated:
         index = start_date.weekday()
-        current_date = datetime(start_date.year, start_date.month, start_date.day)
-        
-        print("[DEBUG]", current_date, start_date, end_date)
+        set_date = datetime(start_date.year, start_date.month, start_date.day)
+        current_date = datetime(start_date.year, start_date.month, start_date.day, start_date.hour, start_date.minute)
         
         if repeated_weekly:
-            while not current_date > end_date:
+            while not set_date > end_date:
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
@@ -94,15 +131,17 @@ def schedule_event():
                             )
                         db.session.add(new_schedule)
                         db.session.commit()
+                        create_event_history(event, new_schedule)
                     current_date = current_date + timedelta(days=1)
-                    if current_date > end_date:
+                    set_date = set_date + timedelta(days=1)
+                    if set_date > end_date:
                         break
                 # set index to 0 to reset week
                 index = 0
         else:
             # else we are going bi weekly so we increment the current_date by a week
             # when we are done with the current week 
-            while not current_date > end_date:
+            while not set_date > end_date:
                 # we loop through the days of the week and if they have a 1 then we send them to the db
                 # we start at start_date and increment until we hit the end date
                 for day in run_days[index:]:
@@ -119,8 +158,10 @@ def schedule_event():
                             )
                         db.session.add(new_schedule)
                         db.session.commit()
+                        create_event_history(event, new_schedule)
                     current_date = current_date + timedelta(days=1)
-                    if current_date > end_date:
+                    set_date = set_date + timedelta(days=1)
+                    if set_date > end_date:
                         break
                 # set index to 0 to reset week
                 # once we are out of the for loop we are on Mon because we incerment 
@@ -128,6 +169,7 @@ def schedule_event():
                 # so we add 6 to get to monday
                 index = 0
                 current_date = current_date + timedelta(days=7)
+                set_date = set_date + timedelta(days=7)
     else:
         new_schedule = EventsScheduleModel(
             event_id=event_id,
@@ -140,6 +182,7 @@ def schedule_event():
             capacity=capacity)
         db.session.add(new_schedule)
         db.session.commit()
+        create_event_history(event, new_schedule)
 
     return jsonify({"message": "Event scheduled successfully"})
 
@@ -248,13 +291,17 @@ def get_scheduled_events():
 def delete_event(event_id):
     event = EventsModel.query.get(event_id)
     eventSchedule = EventsScheduleModel.query.filter_by(event_id=event_id).all()
+    eventHistory = EventHistory.query.filter_by(event_id=event_id).all()
 
     if not event:
         return jsonify({"error": "Event not found"}), 404
     for schedule in eventSchedule:
         db.session.delete(schedule)
         db.session.commit()
-    
+    for history in eventHistory:
+        db.session.delete(history)
+        db.session.commit()
+
     db.session.delete(event)
     db.session.commit()
 
@@ -263,11 +310,13 @@ def delete_event(event_id):
 @bp.route("/delete-single-event/<event_id>", methods=["DELETE"])
 def delete_single_event(event_id):
     event = EventsScheduleModel.query.get(event_id)
+    history = EventHistory.query.filter_by(schedule_event=event_id).first()
 
     if not event:
         return jsonify({"error": "Event not found"}), 404
     
     db.session.delete(event)
+    db.session.delete(history)
     db.session.commit()
 
     return jsonify({"message": "Single Event deleted successfully"})
@@ -322,7 +371,17 @@ def edit_event(event_id):
     
 
     db.session.commit()
+    update_event_history(event)
 
     return jsonify({
         "message": "Event updated successfully",
     })
+
+
+
+@bp.route("/event-history/<id>", methods=["GET"])
+def get_event_history(id):
+    history = EventHistory.query.filter_by(scheduled_event_id=id).first()
+    if not history:
+        return ({"error", "history does not exist"}), 404
+    return (history.serialize()), 200

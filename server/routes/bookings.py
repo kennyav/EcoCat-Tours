@@ -1,11 +1,54 @@
 from flask import (
-   Blueprint, jsonify, request
+   Blueprint, jsonify, request, session
 )
 from datetime import datetime
-from models import db, PassengersModel
+from models import db, PassengersModel, SalesmenModel, EventHistory, UserModel
 
 # this creates the auth blueprint
 bp = Blueprint('bookings', __name__, url_prefix='/bookings')
+
+def update_history(data):
+    history = EventHistory.query.filter_by(scheduled_event_id=data.scheduled_event_id).first()
+    salesman = SalesmenModel.query.filter_by(id=data.salesman_id).first()
+
+    booking_text = f"?{datetime.now().date()}: {salesman.first_name} {salesman.last_name} booked {data.adult_passengers} adults/{data.adult_price}$, {data.children_passengers} children/{data.children_price}$, and {data.infant_passengers} Infants/{data.infant_price}$. Payment Status - {data.payment_status}, Commission Received - {data.commission_received}, Payment Type - {data.payment_type}. If Partial Payment, amount paid = {data.partial_payment}"
+    
+    if booking_text:
+        history.new_booking = history.new_booking + booking_text
+    
+    db.session.commit()
+
+def update_history_check_in(data):
+     user_id = session.get("user_id")
+     history = EventHistory.query.filter_by(scheduled_event_id=data.scheduled_event_id).first()
+
+     if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+     user = UserModel.query.filter_by(id=user_id).first()
+     checkin_text = f"?{datetime.now().date()}: {user.first_name} checked in {data.first_name} {data.last_name}'s party"
+
+     if checkin_text:
+        history.new_booking = history.new_booking + checkin_text
+    
+     db.session.commit()
+
+def update_history_edit_passenger(data):
+     user_id = session.get("user_id")
+     history = EventHistory.query.filter_by(scheduled_event_id=data.scheduled_event_id).first()
+
+     if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+     user = UserModel.query.filter_by(id=user_id).first()
+     passenger_text = f"?{datetime.now().date()}: {user.first_name} edited {data.first_name} {data.last_name}'s party"
+
+     if passenger_text:
+        history.passenger_edit = history.passenger_edit + passenger_text
+    
+     db.session.commit()
+   
+
 
 @bp.route('/create-booking', methods=["POST"])
 def create_booking():
@@ -61,6 +104,7 @@ def create_booking():
 
     db.session.add(new_passenger_booking)
     db.session.commit()
+    update_history(new_passenger_booking)
 
     return jsonify(new_passenger_booking.serialize()), 200
 
@@ -96,6 +140,7 @@ def update_checkedin(passenger_id):
         passenger.checked_in = request.json['checkedIn']
     
     db.session.commit()
+    update_history_check_in(passenger)
 
     return jsonify({"message": "Checkin updated successfully",
                     "checked_in": passenger.checked_in
@@ -140,5 +185,6 @@ def update_passenger(passenger_id):
         passenger.commission_received = request.json['commissionReceived']
     
     db.session.commit()
+    update_history_edit_passenger(passenger)
 
     return jsonify({"message": "Passenger updated successfully" }), 200
