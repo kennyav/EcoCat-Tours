@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, createContext } from 'react'
 import httpClient from '../../httpClient'
 
 // loader
@@ -17,6 +17,9 @@ import { updateSideMenu } from '../../reducers/sideMenuSlice'
 // constants
 const FILTERS = ["Checked-In", "Most Recent", "Least Recent"]
 
+// create context
+export const EventContext = createContext(null);
+
 export default function EventInfo(props) {
   // redux
   const dispatch = useDispatch()
@@ -34,7 +37,7 @@ export default function EventInfo(props) {
   quantum.register()
   const [loading, setLoading] = useState(false)
   const [hidden, setHidden] = useState(false)
-  const eventTimeInfo = date.month ? `${date.format("MMMM")} ${date.day()}, ${date.year()} @ ${date.format("hh:mm")}` : 'No Event Selected'
+  const eventTimeInfo = date.month() ? `${date.format("MMMM")} ${date.date()}, ${date.year()} @ ${date.format("hh:mm")}` : 'No Event Selected'
   const [filter, setFilter] = useState({
     name: FILTERS[2],
     index: -1
@@ -142,7 +145,9 @@ export default function EventInfo(props) {
           {passengers && passengers.map((passenger) => {
             return (
               <div key={passenger.id} className="bg-[#C4D2DC] rounded-[25px] w-full">
-                <GuestInfo key={passenger.id} passenger={passenger} />
+                <EventContext.Provider value={{event, eventTimeInfo}}>
+                  <GuestInfo passenger={passenger} />
+                </EventContext.Provider>
               </div>
             )
           })}

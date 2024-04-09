@@ -63,7 +63,7 @@ export default function Events() {
         </div>
       ) : (
         <div className='grid grid-cols-2 grid-flow-row gap-5 px-[41px] py-[46px] place-content-center'>
-          <RefreshContext.Provider value={{refresh,setRefresh }}>
+          <RefreshContext.Provider value={{refresh,setRefresh}}>
             {events && events.map((event) => (
               <EventLoader key={event.id} event={event} eventId={event.id} />
             ))}

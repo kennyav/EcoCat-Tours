@@ -1,19 +1,32 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
+
+// axios requests
 import httpClient from '../../httpClient'
+
+// time handling
 import moment from 'moment'
-import { printBoardingPass } from '../../helper/boardingPass'
+
+// redux
 import { updateRefresh } from '../../reducers/refreshSlice'
 import { useSelector, useDispatch } from 'react-redux'
 
+// receipt
+import PrintReceipt from '../TransactionComponents/Receipt'
+
 // components
 export default function CheckIn(props) {
+   //redux
    const calendarInformation = useSelector((state) => state.calendarInformation)
    const date = moment.utc(calendarInformation.date)
    const dispatch = useDispatch()
    const refresh = useSelector((state) => state.refresh.value)
    const url = useSelector((state) => state.development.value)
+
+   // open state
    let [isOpen, setIsOpen] = useState(false)
+
+   // passengers states
    const p = props.passenger
    const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
 
@@ -30,17 +43,7 @@ export default function CheckIn(props) {
          console.log("Error", error)
       } finally {
          for (let i = 0; i < numberOfPassengers; i++) {
-            printBoardingPass({
-               firstName: p.first_name,
-               lastName: p.last_name,
-               date: date.format("MMM DD, YYYY"),
-               time:  date.format("hh:mm"),
-               numberOfPassengers: numberOfPassengers,
-               pricePerPassenger: p.adult_price,
-               foodOption: p.food,
-               tShirtOption: p.t_shirt,
-               otherDetails: 'Please provide a window seat if possible',
-            })
+            <PrintReceipt />
          }
       }
    }
@@ -120,8 +123,8 @@ export default function CheckIn(props) {
                                  Contact Information
                               </h3>
                               <div className='inline-flex gap-1'>
-                                 <h1 className='border rounded-[10px] p-2'>{props.passenger.email}</h1>
-                                 <h1 className='border rounded-[10px] p-2'>{props.passenger.phone}</h1>
+                                 <h1 className='border rounded-[10px] p-2 w-[20%]'>{props.passenger.email || "No Email"}</h1>
+                                 <h1 className='border rounded-[10px] p-2 w-[20%]'>{props.passenger.phone.length > 2 ? props.passenger.phone.length : "No Number"}</h1>
                               </div>
                            </div>
 
@@ -139,16 +142,16 @@ export default function CheckIn(props) {
 
                               <div className='flex flex-col gap-2'>
                                  <div className='inline-flex gap-16 items-center'>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.adult_passengers}</h1>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.adult_price}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>{props.passenger.adult_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>${props.passenger.adult_price}</h1>
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 12+</h1>
                                     </div>
                                  </div>
                                  <div className='inline-flex gap-16 items-center'>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.children_passengers}</h1>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.children_price}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>{props.passenger.children_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>${props.passenger.children_price}</h1>
 
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
@@ -156,8 +159,8 @@ export default function CheckIn(props) {
                                     </div>
                                  </div>
                                  <div className='inline-flex gap-16 items-center'>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>{props.passenger.infant_passengers}</h1>
-                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2'>${props.passenger.infant_price}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>{props.passenger.infant_passengers}</h1>
+                                    <h1 className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2 w-[10%]'>${props.passenger.infant_price}</h1>
                                     <div>
                                        <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
                                        <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
@@ -167,21 +170,22 @@ export default function CheckIn(props) {
                            </div>
 
 
-                           <div className="inline-flex mt-4 w-full justify-between">
+                           <div className="inline-flex mt-4 w-full justify-between items-end">
                               <button
                                  type="button"
-                                 className="inline-flex justify-center rounded-md border-2 border-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
+                                 className="inline-flex h-[1%] justify-center rounded-md border-2 border-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
                                  onClick={closeModal}
                               >
                                  Cancel
                               </button>
-                              <button
+                              {/* <button
                                  type="button"
                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
                                  onClick={() => checkIn()}
                               >
                                  Print Pass
-                              </button>
+                              </button> */}
+                              <PrintReceipt passenger={p} />
                            </div>
                         </Dialog.Panel>
                      </Transition.Child>
