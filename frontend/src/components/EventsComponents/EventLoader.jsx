@@ -10,7 +10,7 @@ const EventLoader = ({ eventId, event }) => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const resp = await httpClient.get(`${url}:8000/events/${eventId}`);
+        const resp = await httpClient.get(`${url}/events/${eventId}`);
         setSchedule(resp.data);
       } catch (error) {
         console.error("Error fetching schedule:", error);

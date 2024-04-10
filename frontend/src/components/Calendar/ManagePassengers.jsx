@@ -41,7 +41,7 @@ export default function ManagePassengers(props) {
 
    const deletePassenger = async () => {
       try {
-         const resp = await httpClient.delete(`${url}:8000/bookings/delete/${p.id}`)
+         const resp = await httpClient.delete(`${url}/bookings/delete/${p.id}`)
          console.log(resp.data)
       } catch (error) {
          console.log("Error", error)
@@ -52,7 +52,7 @@ export default function ManagePassengers(props) {
 
    const editPassenger = async () => {
       try {
-         const resp = await httpClient.put(`${url}:8000/bookings/edit-passenger/${p.id}`, {
+         const resp = await httpClient.put(`${url}/bookings/edit-passenger/${p.id}`, {
             firstName,
             lastName,
             phoneNumber,

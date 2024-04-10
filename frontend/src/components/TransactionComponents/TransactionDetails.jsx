@@ -25,7 +25,7 @@ export default function TransactionDetails() {
 
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/transactions/get-transactions/${date}`)
+            const resp = await httpClient.get(`${url}/transactions/get-transactions/${date}`)
             setHistory(resp.data)
          } catch (error) {
             console.log("Error", error)

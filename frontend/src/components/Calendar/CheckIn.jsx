@@ -33,7 +33,7 @@ export default function CheckIn(props) {
    // const checkIn = async () => {
    //    const checkedIn = true
    //    try {
-   //       const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${props.passenger.id}`, {
+   //       const resp = await httpClient.put(`${url}/bookings/update-checkedin/${props.passenger.id}`, {
    //          checkedIn
    //       })
    //       console.log(resp.data)

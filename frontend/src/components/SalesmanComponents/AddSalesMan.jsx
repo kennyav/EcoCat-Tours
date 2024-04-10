@@ -32,7 +32,7 @@ export default function AddSalesMan({ toggle }) {
 
    const registerSalesman = async () => {
       try {
-         const resp = await httpClient.post(`${url}:8000/salesmen/register-salesmen`, {
+         const resp = await httpClient.post(`${url}/salesmen/register-salesmen`, {
             firstName,
             lastName,
             email,

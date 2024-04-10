@@ -23,7 +23,7 @@ export default function Register() {
 
    const registerUser = async () => {
       try {
-         const resp = await httpClient.post(`${url}:8000/auth/register`, {
+         const resp = await httpClient.post(`${url}/auth/register`, {
             email,
             password,
             firstName,

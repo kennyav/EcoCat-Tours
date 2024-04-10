@@ -73,7 +73,7 @@ export default function AddEvent() {
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/auth/@me`);
+            const resp = await httpClient.get(`${url}/auth/@me`);
             setCreatedBy(resp.data.id);
          } catch (error) {
             console.log("Not authenticated");
@@ -98,7 +98,7 @@ export default function AddEvent() {
       const days = runDays.join('')
 
       try {
-         const resp = await httpClient.post(`${url}:8000/events/register-event`, {
+         const resp = await httpClient.post(`${url}/events/register-event`, {
             title,
             description,
             capacity,
@@ -108,7 +108,7 @@ export default function AddEvent() {
 
 
          const eventId = resp.data.id
-         const schedule = await httpClient.post(`${url}:8000/events/schedule-event`, {
+         const schedule = await httpClient.post(`${url}/events/schedule-event`, {
             eventId,
             capacity,
             startDate,

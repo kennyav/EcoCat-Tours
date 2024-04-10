@@ -31,7 +31,7 @@ export default function Router() {
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/auth/@me`);
+            const resp = await httpClient.get(`${url}/auth/@me`);
             setUserAuthenticated(resp.data);
          } catch (error) {
             console.log("Not authenticated");

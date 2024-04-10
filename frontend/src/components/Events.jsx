@@ -29,7 +29,7 @@ export default function Events() {
     (async () => {
       setLoading(true)
       try {
-        const resp = await httpClient.get(`${url}:8000/events/@events`);
+        const resp = await httpClient.get(`${url}/events/@events`);
         setEvents(resp.data)
       } catch (error) {
         console.log("Error", error)

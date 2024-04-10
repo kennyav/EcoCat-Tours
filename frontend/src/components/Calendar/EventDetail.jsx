@@ -63,7 +63,7 @@ export default function EventDetail({ event, scheduledEvent }) {
 
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/events/event-history/${scheduledEvent.id}`)
+            const resp = await httpClient.get(`${url}/events/event-history/${scheduledEvent.id}`)
             filterHistory(resp.data.new_booking, resp.data.event_edit, resp.data.passenger_edit)
          } catch (error) {
             alert(error, "no event history found")
@@ -86,7 +86,7 @@ export default function EventDetail({ event, scheduledEvent }) {
       const start = moment(startTime).format('yyyy-DD-MM HH:mm:ss')
       const end = moment(endTime).format('yyyy-DD-MM HH:mm:ss')
       try {
-         const resp = await httpClient.put(`${url}:8000/events/edit-event/${scheduledEvent.id}`,
+         const resp = await httpClient.put(`${url}/events/edit-event/${scheduledEvent.id}`,
             {
                start,
                end,
@@ -103,7 +103,7 @@ export default function EventDetail({ event, scheduledEvent }) {
 
    const deleteEvent = async () => {
       try {
-         const resp = await httpClient.delete(`${url}:8000/events/delete-single-event/${scheduledEvent.id}`);
+         const resp = await httpClient.delete(`${url}/events/delete-single-event/${scheduledEvent.id}`);
          console.log(resp.data)
       } catch (error) {
          console.log("Error", error);
@@ -222,8 +222,8 @@ export default function EventDetail({ event, scheduledEvent }) {
                                  Event History
                               </h3>
                               <div className='flex flex-col h-[25%] bg-gray-100 rounded-[25px] p-4 overflow-y-scroll gap-2'>
-                                 {history && history.map(action =>
-                                    <li className="">
+                                 {history && history.map((action, idx) =>
+                                    <li key={idx} className="">
                                        {action}
                                     </li>
                                  )}

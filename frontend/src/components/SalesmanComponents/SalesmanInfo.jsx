@@ -17,8 +17,8 @@ export default function SalesmanInfo(props) {
    const [edit, setEdit] = useState(false)
 
    const salesmenId = props.person.id
-   let editSalesmenURL = `${url}:8000/salesmen/edit-salesmen/` + salesmenId
-   let deleteSalesmanURL = `${url}:8000/salesmen/delete/` + salesmenId
+   let editSalesmenURL = `${url}/salesmen/edit-salesmen/` + salesmenId
+   let deleteSalesmanURL = `${url}/salesmen/delete/` + salesmenId
 
    const closeModal = async () => {
       try {

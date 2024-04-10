@@ -10,7 +10,7 @@ export default function UserMenu() {
 
    const url = useSelector((state) => state.development.value)
    const logoutUser = async () => {
-      await httpClient.post(`${url}:8000/auth/logout`);
+      await httpClient.post(`${url}/auth/logout`);
       window.location.href = "/login";
     };
 

@@ -18,13 +18,13 @@ export default function SingleTransaction(props) {
       (async () => {
          setLoading(true)
          try {
-            const resp = await httpClient.get(`${url}:8000/events/get-event/${props.history.scheduled_event_id}`)
+            const resp = await httpClient.get(`${url}/events/get-event/${props.history.scheduled_event_id}`)
             setEvent(resp.data)
          } catch (error) {
             console.log("Error", error)
          } 
          try {
-            const resp = await httpClient.get(`${url}:8000/salesmen/${props.history.salesman_id}`)
+            const resp = await httpClient.get(`${url}/salesmen/${props.history.salesman_id}`)
             setSalesman(resp.data)
          } catch (error) {
             console.log("Error", error)

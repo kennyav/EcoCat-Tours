@@ -19,7 +19,7 @@ export default function Event({ event, days, schedule }) {
    const [isOpen, setIsOpen] = useState(false)
    const navigate = useNavigate();
    const eventId = event.id
-   let deleteEventURL = `${url}:8000/events/delete/` + eventId
+   let deleteEventURL = `${url}/events/delete/` + eventId
 
    // Function to format the time
    const formatTime = (timeStr) => {

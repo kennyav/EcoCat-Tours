@@ -68,7 +68,7 @@ export default function NewBooking(props) {
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/auth/@me`);
+            const resp = await httpClient.get(`${url}/auth/@me`);
             setBookerId(resp.data.id);
          } catch (error) {
             console.log("Not authenticated");

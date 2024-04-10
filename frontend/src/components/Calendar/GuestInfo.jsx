@@ -21,7 +21,7 @@ export default function GuestInfo(props) {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get(`${url}:8000/auth/${p.booker_id}`);
+        const resp = await httpClient.get(`${url}/auth/${p.booker_id}`);
         setBooker(resp.data)
       } catch (error) {
         console.log("Error", error)

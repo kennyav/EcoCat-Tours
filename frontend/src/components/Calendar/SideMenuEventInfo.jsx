@@ -26,7 +26,7 @@ export default function EventInfo(props) {
   const openedFull = useSelector((state) => state.sideMenu.value)
   const url = useSelector((state) => state.development.value)
   const refresh = useSelector((state) => state.refresh.value)
-  const getPassengerURL = `${url}:8000/bookings/${props.ev.id}`
+  const getPassengerURL = `${url}/bookings/${props.ev.id}`
 
   // props
   const event = props.ev.eventInfo

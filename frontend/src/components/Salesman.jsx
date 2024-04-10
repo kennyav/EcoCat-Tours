@@ -14,7 +14,7 @@ export default function Salesman() {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get(`${url}:8000/salesmen/@salesmen`);
+        const resp = await httpClient.get(`${url}/salesmen/@salesmen`);
         setSalesmen(resp.data)
       } catch (error) {
         console.log("Error", error)

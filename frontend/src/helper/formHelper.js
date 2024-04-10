@@ -20,7 +20,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
    let passengerId = ''
    const totalPrice = (formData.adultNumber * formData.adultPrice) + (formData.childrenNumber * formData.childrenPrice) + (formData.infantNumber * formData.infantPrice)
    try {
-      const resp = await httpClient.post(`${url}:8000/bookings/create-booking`, {
+      const resp = await httpClient.post(`${url}/bookings/create-booking`, {
          scheduledEventId,
          salesmanId,
          bookerId,
@@ -50,7 +50,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
 
       try {
          const capacity = formData.adultNumber + formData.childrenNumber + formData.infantNumber
-         const changeCapacity = await httpClient.put(`${url}:8000/events/edit-capacity/${scheduledEventId}`, {
+         const changeCapacity = await httpClient.put(`${url}/events/edit-capacity/${scheduledEventId}`, {
             capacity,
             adult: parseInt(formData.adultNumber),
             children: parseInt(formData.childrenNumber),
@@ -62,7 +62,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
       }
 
       try {
-         const transaction = await httpClient.post(`${url}:8000/transactions/create-transaction`, {
+         const transaction = await httpClient.post(`${url}/transactions/create-transaction`, {
             passengerId
          })
          console.log(transaction.data)

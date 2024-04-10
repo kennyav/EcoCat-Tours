@@ -21,7 +21,7 @@ export default function PrintReceipt({ passenger }) {
    const checkIn = async () => {
       const checkedIn = true
       try {
-         const resp = await httpClient.put(`${url}:8000/bookings/update-checkedin/${passenger.id}`, {
+         const resp = await httpClient.put(`${url}/bookings/update-checkedin/${passenger.id}`, {
             checkedIn
          })
          console.log(resp.data)
@@ -81,6 +81,7 @@ export default function PrintReceipt({ passenger }) {
                writer.releaseLock();
             }
          } catch (error) {
+            console.log(error)
             setIsPrinting(false)
          }
       }

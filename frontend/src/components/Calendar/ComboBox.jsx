@@ -28,7 +28,7 @@ export default function ComboBox() {
    useEffect(() => {
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}:8000/salesmen/@salesmen`);
+            const resp = await httpClient.get(`${url}/salesmen/@salesmen`);
             setPeople([{
                first_name: "In",
                last_name: "Person"

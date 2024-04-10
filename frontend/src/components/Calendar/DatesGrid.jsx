@@ -54,7 +54,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
             setLoading(true); // Set loading to true before fetching data
             try {
                const filteredDates = dates.filter(day => day !== null && day !== undefined && day !== '');
-               const resp = await httpClient.get(`${url}:8000/events/dates`, {
+               const resp = await httpClient.get(`${url}/events/dates`, {
                   params: {
                      eventIds: eventIds.join(','),
                      dates: filteredDates.join(',')
