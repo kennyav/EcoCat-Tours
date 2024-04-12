@@ -90,8 +90,6 @@ export default function Calendar({ events, title }) {
 
 
    return (
-
-      // <div className={`flex flex-col w-full h-full transition-all duration-500 ${openedFull ? '-translate-x-full' : calendarInformation.clicked ? 'mr-[0px]' : 'mr-[-250px]'} ${isHidden ? 'hidden' : ''} rounded-[25px] bg-white`}>
          <div className={`w-full h-auto`}>
             <Header />
             <DatesGrid
