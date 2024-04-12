@@ -1,23 +1,26 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// redux
 import { useDispatch } from 'react-redux';
 import { update } from '../reducers/loginSlice';
 
-// icon
-import { TransactionOptionsIcon } from './Icons';
+// date handler
+import moment from 'moment'
 
 function getDatesForPreviousWeek() {
   const dates = [];
-  const today = new Date();
-  const previousWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000); // Subtract 7 days from today's date
+  const today = moment();
+  const previousWeek = moment().subtract(7, 'days');
 
   // Iterate through each day from today to a week ago
-  for (let date = new Date(today); date >= previousWeek; date.setDate(date.getDate() - 1)) {
-    dates.push(new Date(date).toLocaleDateString()); // Convert Date object to string
+  for (let date = moment(today); date >= previousWeek; date.subtract(1, 'day')) {
+    dates.push(date.format('YYYY-MM-DD')); // Format date using ISO 8601 standard
   }
 
-  return dates; // Reverse the array to have dates in ascending order
+  return dates.reverse(); // Reverse the array to have dates in ascending order
 }
+
 
 export default function Transactions() {
   const navigate = useNavigate();
@@ -46,7 +49,6 @@ export default function Transactions() {
                   <button
                     className="w-[86px] bg-[#0E5BB5] hover:shadow-lg rounded-full text-white px-[15px] py-[10px] text-[10px] text-center"
                     onClick={() => handleClick(transaction)}>View</button>
-                  {/* <TransactionOptionsIcon /> */}
                 </span>
               </span>
             ))

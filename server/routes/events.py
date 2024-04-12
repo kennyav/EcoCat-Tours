@@ -213,7 +213,7 @@ def register_event():
        return jsonify({"message": "No passengers found for the specified event and time"}), 404
 
 
-@bp.route('/@events/', methods=["GET"])
+@bp.route('/@events', methods=["GET"])
 def get_all_events():
     all_events = EventsModel.query.all()
     
@@ -223,7 +223,7 @@ def get_all_events():
         return jsonify({"message": "No events found"}), 404
     
 
-@bp.route('/<event_id>/', methods=["GET"])
+@bp.route('/<event_id>', methods=["GET"])
 def get_event_schedule(event_id):
     event_schedule = EventsScheduleModel.query.filter_by(event_id=event_id).first()
     

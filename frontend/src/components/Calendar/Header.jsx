@@ -34,14 +34,14 @@ export default function Header() {
       const newDay = moment(`${date.year()}-${month.name}-${currDay()}`);
       const serializedDay = newDay.format('YYYY-MMMM-DD');
       dispatch(updateDate({
-          date: serializedDay
+         date: serializedDay
       }));
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [month]);
+   }, [month]);
 
    // whenever we change the year we go back to the first of the month for day
    useEffect(() => {
-      const newDay = moment(`${parseInt(year.name)}-${date.month()+1}-${currDay()}`)
+      const newDay = moment(`${parseInt(year.name)}-${date.month() + 1}-${currDay()}`)
       const serializedDay = newDay.format('YYYY-MM-DD');
       dispatch(updateDate({
          date: serializedDay
@@ -50,14 +50,14 @@ export default function Header() {
    }, [year])
 
    const yearsList = () => {
-      const today = new Date();
-      const yearIndex = +today.getFullYear()
-      let list = []
+      const today = moment();
+      const yearIndex = +today.format('YYYY');
+      let list = [];
       for (let i = -2; i < 4; i++) {
-         list.push(yearIndex - i)
+         list.push(yearIndex - i);
       }
-      return list
-   }
+      return list;
+   };
 
    const handlePrevious = () => {
       const newMonthIndex = date.month() - 1;

@@ -3,9 +3,10 @@ import httpClient from '../../httpClient'
 import moment from 'moment'
 // components
 import RadioGroup from './RadioGroup'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import CheckIn from './CheckIn'
+import { EventContext } from '../Calendar/SideMenuEventInfo';
 // redux
 import { useSelector, useDispatch } from 'react-redux'
 import { updateRefresh } from '../../reducers/refreshSlice'
@@ -16,6 +17,7 @@ const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
 
 
 export default function ManagePassengers(props) {
+   const { event, eventTimeInfo } = useContext(EventContext);
    const url = useSelector((state) => state.development.value)
    const refresh = useSelector((state) => state.refresh.value)
    const dispatch = useDispatch()
@@ -133,7 +135,7 @@ export default function ManagePassengers(props) {
                            </Dialog.Title>
                            <div>
                               <p className="text-xs text-gray-500 pb-[10px]">
-                                 {moment().format('dddd, MMMM Do YYYY')}
+                                 {eventTimeInfo}
                               </p>
                            </div>
 
