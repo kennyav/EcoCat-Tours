@@ -18,8 +18,8 @@ export default function EventDetail({ event, scheduledEvent }) {
    const [infants, setInfants] = useState(scheduledEvent.infant_passengers)
    const [edit, setEdit] = useState(false)
    // Parse the original datetime string
-   const parsedStartDatetime = moment(scheduledEvent.start_time);
-   const parsedEndDatetime = moment(scheduledEvent.end_time)
+   const parsedStartDatetime = moment(scheduledEvent.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]");
+   const parsedEndDatetime = moment(scheduledEvent.end_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]")
    // event history
    const [history, setHistory] = useState([])
 
@@ -83,8 +83,9 @@ export default function EventDetail({ event, scheduledEvent }) {
    };
 
    const editSingleEvent = async () => {
-      const start = moment(startTime).format('yyyy-DD-MM HH:mm:ss')
-      const end = moment(endTime).format('yyyy-DD-MM HH:mm:ss')
+      console.log(startTime, endTime)
+      const start = moment(startTime, "ddd, DD MMM yyyy HH:mm:ss [GMT]").format('yyyy-DD-MM HH:mm:ss')
+      const end = moment(endTime, "ddd, DD MMM yyyy HH:mm:ss [GMT]").format('yyyy-DD-MM HH:mm:ss')
       try {
          const resp = await httpClient.put(`${url}/events/edit-event/${scheduledEvent.id}`,
             {
@@ -169,7 +170,7 @@ export default function EventDetail({ event, scheduledEvent }) {
                               >
                                  {event.title}
                                  <div className="text-sm">
-                                    {moment.utc(scheduledEvent.start_time).format('dddd, MMMM Do YYYY')}
+                                    {moment.utc(scheduledEvent.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]").format('dddd, MMMM Do YYYY')}
                                  </div>
                               </Dialog.Title>
                            </div>
@@ -179,9 +180,9 @@ export default function EventDetail({ event, scheduledEvent }) {
                                  When
                               </h3>
                               <div className='inline-flex gap-4 items-center'>
-                                 <input disabled={!edit} type="time" value={moment.utc(startTime).format("HH:mm")} onChange={(e) => handleTimeChange(e, setStartTime, parsedStartDatetime)} />
+                                 <input disabled={!edit} type="time" value={moment.utc(startTime, "ddd, DD MMM YYYY HH:mm:ss [GMT]").format("HH:mm")} onChange={(e) => handleTimeChange(e, setStartTime, parsedStartDatetime)} />
                                  <h1>to</h1>
-                                 <input disabled={!edit} type="time" value={moment.utc(endTime).format("HH:mm")} onChange={(e) => handleTimeChange(e, setEndTime, parsedEndDatetime)} />
+                                 <input disabled={!edit} type="time" value={moment.utc(endTime, "ddd, DD MMM YYYY HH:mm:ss [GMT]").format("HH:mm")} onChange={(e) => handleTimeChange(e, setEndTime, parsedEndDatetime)} />
                               </div>
                            </div>
 

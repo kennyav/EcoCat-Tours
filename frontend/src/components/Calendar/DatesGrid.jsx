@@ -85,14 +85,14 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
          // if the day has events
          if (eventsOnDay.length > 0) {
             eventsOnDay[0].list_of_events.forEach(event => {
-               const month = moment.utc(event.start_time).format('M')
-               const year = moment.utc(event.start_time).format('yyyy')
+               const month = moment.utc(event.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]").format('M')
+               const year = moment.utc(event.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]").format('yyyy')
 
                if ((parseInt(year) === day.year()) && (parseInt(month) - 1 === day.month())) {
                   temp.push(event)
                }
             })
-            temp.sort((a, b) => moment(a.start_time).valueOf() - moment(b.start_time).valueOf());
+            temp.sort((a, b) => moment(a.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]").valueOf() - moment(b.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]").valueOf());
          }
          return temp
       }
@@ -119,7 +119,7 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
       <div className="grid grid-cols-7 grid-flow-row p-5 font-KumbhSans">
          {(isSmallScreen ? abrvDaysOfWeek : daysOfWeek).map((dayName, i) => (
             <div key={i} className={`font-bold text-center text-[14px] p-4  ${canSpan ? 'col-span-7' : ''}`}>
-               {dates.length > 1 ? dayName : moment(dateValue.date).format("dddd")}
+               {dates.length > 1 ? dayName : moment(dateValue.date, "YYYY-MM-DD").format("dddd")}
             </div>
          ))}
          <div className="col-span-7 border" />
@@ -135,9 +135,9 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
             dates.map((dayNumber, i) => (
                <div key={i} className={`${canSpan ? 'col-span-7' : ''} pb-2`}>
                   <div key={i} className="text-left text-[14px] p-2">
-                     {dayNumber ? moment(dayNumber).date() : ""}
+                     {dayNumber ? moment(dayNumber, 'YYYY-MM-DD').date() : ""}
                   </div>
-                  {displayEvent(moment(dayNumber))}
+                  {displayEvent(moment(dayNumber, 'YYYY-MM-DD'))}
                </div>
             ))
          )}

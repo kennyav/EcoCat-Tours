@@ -1,9 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
-// axios requests
-import httpClient from '../../httpClient'
-
 // time handling
 import moment from 'moment'
 
@@ -17,33 +14,13 @@ import PrintReceipt from '../TransactionComponents/Receipt'
 // components
 export default function CheckIn(props) {
    //redux
-   const calendarInformation = useSelector((state) => state.calendarInformation)
-   const date = moment.utc(calendarInformation.date)
    const dispatch = useDispatch()
    const refresh = useSelector((state) => state.refresh.value)
-   const url = useSelector((state) => state.development.value)
-
    // open state
    let [isOpen, setIsOpen] = useState(false)
-
    // passengers states
    const p = props.passenger
-   //const numberOfPassengers = p.adult_passengers + p.children_passengers + p.infant_passengers;
-
-   // const checkIn = async () => {
-   //    const checkedIn = true
-   //    try {
-   //       const resp = await httpClient.put(`${url}/bookings/update-checkedin/${props.passenger.id}`, {
-   //          checkedIn
-   //       })
-   //       console.log(resp.data)
-   //       closeModal()
-   //    } catch (error) {
-   //       closeModal()
-   //       console.log("Error", error)
-   //    }
-   // }
-
+   
    function closeModal() {
       dispatch(updateRefresh(!refresh))
       setIsOpen(false)

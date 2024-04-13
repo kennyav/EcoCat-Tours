@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Switch } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+
+// redux
+import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../../reducers/loginSlice';
-import { useSelector } from 'react-redux';
 
 import httpClient from '../../httpClient';
 

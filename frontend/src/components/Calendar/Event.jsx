@@ -17,8 +17,8 @@ export default function Event(props) {
    // open state
    const [open, setOpen] = useState(props.signal.id === props.id)
    const buttonCSS = "text-stone-900 md:text-[10px] text-[5px] font-['Kumbh Sans'] text-start"
-
-   const startDate = moment.utc(props.scheduledEvent.start_time)
+   
+   const startDate = moment.utc(props.scheduledEvent.start_time, "ddd, DD MMM YYYY HH:mm:ss [GMT]")
    // Parse the string into a Date object
    const dateObject = new Date(props.scheduledEvent.start_time);
    // Extract the time component

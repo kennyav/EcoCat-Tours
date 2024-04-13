@@ -30,7 +30,8 @@ export default function EventInfo(props) {
 
   // props
   const event = props.ev.eventInfo
-  const date = moment.utc(props.ev.date)
+  console.log(props.ev.date)
+  const date = moment.utc(props.ev.date, "ddd, DD MMM YYYY HH:mm:ss [GMT]")
   const [passengers, setPassengers] = useState([])
 
   // handling render

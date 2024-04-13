@@ -32,7 +32,6 @@ export default function Event({ event, days, schedule }) {
    const endTime = formatTime(schedule.end_time);
 
    const handleClick = (event) => {
-      console.log(event)
       navigate('/edit-events', { state: { event: event } });
    }
 

@@ -5,6 +5,8 @@ import httpClient from '../../httpClient'
 import { useSelector } from 'react-redux';
 // components
 import SingleTransaction from './SingleTransaction';
+// date handling 
+import moment from 'moment';
 
 
 export default function TransactionDetails() {
@@ -19,13 +21,14 @@ export default function TransactionDetails() {
 
    const location = useLocation();
    const { date } = location.state;
-   console.log("transaction in transaction detail", date)
+   const tDate = moment(date, 'MMMM DD, YYYY').format('MM/DD/YYYY')
+
 
    useEffect(() => {
 
       (async () => {
          try {
-            const resp = await httpClient.get(`${url}/transactions/get-transactions/${date}`)
+            const resp = await httpClient.get(`${url}/transactions/get-transactions/${tDate}`)
             setHistory(resp.data)
          } catch (error) {
             console.log("Error", error)
@@ -44,7 +47,9 @@ export default function TransactionDetails() {
                {history &&
                   history.map(data => {
                      return (
-                        <SingleTransaction history={data} />
+                        <div key={data.id}>
+                           <SingleTransaction history={data} />
+                        </div>
                      )
                   })
                }

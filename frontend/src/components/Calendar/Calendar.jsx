@@ -23,7 +23,7 @@ export default function Calendar({ events, title }) {
    const calendarInformation = useSelector((state) => state.calendarInformation)
    const openedFull = useSelector((state) => state.sideMenu.value)
    const dateState = useSelector((state) => state.dateValue)
-   const date = moment(dateState.date)
+   const date = moment(dateState.date, 'YYYY-MM-DD')
    const dateView = useSelector((state) => state.dateView.value)
    const refresh = useSelector((state) => state.refresh.value)
    const dispatch = useDispatch()
@@ -45,7 +45,7 @@ export default function Calendar({ events, title }) {
             if (i < startingDayOfWeek) {
                daysArray.push(null); // Placeholder for days before the 1st day of the month
             } else {
-               daysArray.push(moment(`${date.year()}-${date.month() + 1}-${i - startingDayOfWeek + 1}`))
+               daysArray.push(moment(`${date.year()}-${date.month() + 1}-${i - startingDayOfWeek + 1}`, 'YYYY-MM-DD'))
             }
          }
 
@@ -53,7 +53,6 @@ export default function Calendar({ events, title }) {
       } else if (dateView === "Week") {
          // Logic for getting days of the current week
          const week = date.startOf('week');
-         console.log(week)
          let daysArray = [];
 
          for (let i = 1; i < 8; i++) {
@@ -63,7 +62,7 @@ export default function Calendar({ events, title }) {
 
          setDays(daysArray);
       } else if (dateView === "Day") {
-         setDays([moment(date)]);
+         setDays([moment(date, 'YYYY-MM-DD')]);
          setAbrvDaysOfWeek([""])
          setDaysOfWeek([""])
       }
