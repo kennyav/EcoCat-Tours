@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+
+// redux
 import { useDispatch, useSelector } from 'react-redux';
 import { update } from '../reducers/loginSlice';
 
@@ -6,21 +8,36 @@ import { update } from '../reducers/loginSlice';
 import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
 import httpClient from '../httpClient';
 
+// loader 
+import { quantum } from 'ldrs'
+
 export default function Salesman() {
+
+  // redux
   const url = useSelector((state) => state.development.value)
-  const [salesmen, setSalesmen] = useState([])
+  const refresh = useSelector((state) => state.refresh.value)
   const dispatch = useDispatch()
+
+  // set salesmen
+  const [salesmen, setSalesmen] = useState([])
+
+  // set loading
+  const [loading, setLoading] = useState(false)
+  quantum.register()
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
         const resp = await httpClient.get(`${url}/salesmen/@salesmen`);
         setSalesmen(resp.data)
       } catch (error) {
         console.log("Error", error)
+      } finally {
+        setLoading(false);
       }
     })();
-  }, [url]);
+  }, [url, refresh]);
 
 
   useEffect(() => {
@@ -39,7 +56,15 @@ export default function Salesman() {
           </div>
         </div>
         <div className='py-2'>
-          {
+          {loading ?
+            <div className="flex justify-center items-center lg:h-[400px] md:h-[200px] h-[100px] col-span-7">
+              <l-quantum
+                size="100"
+                speed="1.75"
+                color="black"
+              />
+            </div>
+            :
             salesmen.map(person => {
               return (
                 <div key={person.id} className='flex flex-row border-b w-full h-auto items-center justify-between py-8 font-KumbhSans font-bold text-[14px]'>

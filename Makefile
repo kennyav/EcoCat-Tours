@@ -24,7 +24,6 @@ redis:
 # Run all services
 run:
 	@echo "Starting all services..."
-	# @screen -dmS flask make flask
 	@screen -dmS react make react
 	@screen -dmS redis make redis
 

@@ -31,8 +31,9 @@ export default function Header() {
    })
 
    useEffect(() => {
-      const newDay = moment(`${date.year()}-${month.name}-${currDay()}`, 'YYYY-MMMM-DD');
-      const serializedDay = newDay.format('YYYY-MMMM-DD');
+      console.log(month.index, month)
+      const newDay = moment.utc(`${date.year()}-${month.name}-${currDay()}`, 'YYYY-MMMM-DD');
+      const serializedDay = newDay.format('YYYY-MM-DD');
       dispatch(updateDate({
          date: serializedDay
       }));

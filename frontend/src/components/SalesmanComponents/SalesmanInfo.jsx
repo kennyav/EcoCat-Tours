@@ -1,13 +1,19 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import httpClient from '../../httpClient'
-import { useSelector } from 'react-redux'
+
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { updateRefresh } from '../../reducers/refreshSlice'
 
 // components
 import { TransactionOptionsIcon } from '../Icons'
 
 export default function SalesmanInfo(props) {
    const url = useSelector((state) => state.development.value)
+   const refresh = useSelector((state) => state.refresh.value)
+   const dispatch = useDispatch()
+
    const [isOpen, setIsOpen] = useState(false)
    const [firstName, setFirstName] = useState(props.person.first_name)
    const [lastName, setLastName] = useState(props.person.last_name)
@@ -34,6 +40,8 @@ export default function SalesmanInfo(props) {
       } catch (error) {
          setIsOpen(false)
          throw new Error('Failed to update salesmen');
+      } finally {
+         dispatch(updateRefresh(!refresh))
       }
    }
 
