@@ -13,8 +13,10 @@ def update_history(data):
         scheduled_event_id=data.scheduled_event_id).first()
     salesman = SalesmenModel.query.filter_by(id=data.salesman_id).first()
 
-    booking_text = f"?{datetime.now().date()}: {salesman.first_name} {salesman.last_name} booked {data.adult_passengers} adults/{data.adult_price}$, {data.children_passengers} children/{data.children_price}$, and {data.infant_passengers} Infants/{
-        data.infant_price}$. Payment Status - {data.payment_status}, Commission Received - {data.commission_received}, Payment Type - {data.payment_type}. If Partial Payment, amount paid = {data.partial_payment}"
+    # booking_text = f"?{datetime.now().date()}: {salesman.first_name} {salesman.last_name} booked {data.adult_passengers} adults/{data.adult_price}$, {data.children_passengers} children/{data.children_price}$, and {data.infant_passengers} Infants/{
+    #     data.infant_price}$. Payment Status - {data.payment_status}, Commission Received - {data.commission_received}, Payment Type - {data.payment_type}. If Partial Payment, amount paid = {data.partial_payment}"
+    booking_text = f"?{datetime.now().date()}: {salesman.first_name} {salesman.last_name} booked {data.adult_passengers} adults/{data.adult_price}$, {data.children_passengers} children/{data.children_price}$, and {data.infant_passengers} Infants/{data.infant_price}$."
+
 
     if booking_text:
         history.new_booking = history.new_booking + booking_text
