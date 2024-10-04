@@ -6,7 +6,9 @@ import { update } from '../reducers/loginSlice';
 
 // components
 import SalesmanInfo from './SalesmanComponents/SalesmanInfo';
+import SalesmenTransactions from './SalesmanComponents/SalesmenTransactions';
 import httpClient from '../httpClient';
+import { Link } from 'react-router-dom';
 
 // loader 
 import { quantum } from 'ldrs'
@@ -72,7 +74,18 @@ export default function Salesman() {
                   <p className="w-[20%]">{person.phone}</p>
                   <p className="flex w-[20%] justify-center">{person.email}</p>
                   <div className="flex justify-end w-[20%]">
-                    <SalesmanInfo person={person} />
+                    <div className="">
+                      <SalesmanInfo person={person} />
+                      <Link to={`/salesman/${person.id}/transactions`}
+                        state={{ salesmanName: person.first_name + ' ' + person.last_name }}>
+                        <button
+                          type="button"
+                          className="flex w-[86px] text-xs font-normal hover:bg-slate-300 hover:shadow-lg rounded-full py-[8px] justify-center items-center"
+                        >
+                          Transactions
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               )

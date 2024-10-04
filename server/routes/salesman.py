@@ -1,7 +1,7 @@
 from flask import (
    Blueprint, jsonify, request
 )
-from models import db, SalesmenModel
+from models import db, SalesmenModel, PassengersModel, TransactionsModel
 
 
 # this creates the auth blueprint
@@ -94,3 +94,19 @@ def edit_salesmen(salesmen_id):
         "notes": salesmen.notes,
         "date": salesmen.created_at
     })
+
+@bp.route('transactions/<salesman_id>', methods=["GET"])
+def get_transactions_by_salesman(salesman_id):
+    # Retrieve passengers associated with the salesman
+    passengers = PassengersModel.query.filter_by(salesman_id=salesman_id).all()
+
+    # Extract passenger IDs
+    passenger_ids = [passenger.id for passenger in passengers]
+
+    # Retrieve transactions associated with the passenger IDs
+    transactions = TransactionsModel.query.filter(TransactionsModel.passenger_id.in_(passenger_ids)).all()
+
+    # Serialize transactions
+    transactions_list = [transaction.serialize() for transaction in transactions]
+
+    return jsonify(transactions_list), 200

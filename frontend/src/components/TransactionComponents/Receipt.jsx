@@ -96,9 +96,10 @@ export default function PrintReceipt({ passenger }) {
                disabled={isPrinting}
                onClick={() => {
                   checkIn()
-                  printReceipt()
+                  //printReceipt()
                   }}>
-               {isPrinting ? 'Printing...' : 'Print Pass'}
+               {/* {isPrinting ? 'Printing...' : 'Print Pass'} */}
+               Confirm Check In
             </button>
          </div>
       </main>

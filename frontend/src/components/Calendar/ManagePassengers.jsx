@@ -44,6 +44,7 @@ export default function ManagePassengers(props) {
    const deletePassenger = async () => {
       try {
          const resp = await httpClient.delete(`${url}/bookings/delete/${p.id}`)
+      
          console.log(resp.data)
       } catch (error) {
          console.log("Error", error)
@@ -53,6 +54,7 @@ export default function ManagePassengers(props) {
    }
 
    const editPassenger = async () => {
+      const totalPrice = (adultNumber * adultPrice) + (infantNumber * infantPrice) + (childrenNumber * childrenPrice)
       try {
          const resp = await httpClient.put(`${url}/bookings/edit-passenger/${p.id}`, {
             firstName,
@@ -69,7 +71,8 @@ export default function ManagePassengers(props) {
             paymentStatus,
             partialPayment,
             commissionReceived,
-            notes
+            notes,
+            totalPrice
          })
          console.log(resp.data)
       } catch (error) {

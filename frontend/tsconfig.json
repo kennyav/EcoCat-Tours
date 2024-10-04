@@ -1,0 +1,26 @@
+{
+   "compilerOptions": {
+     "baseUrl": ".",
+     "paths": {
+       "@/*": ["./*"]
+     },
+     "allowJs": true,  // Allow JavaScript files to be compiled
+     "checkJs": false, // Skip type checking on JavaScript files
+     "jsx": "react",   // Handle JSX syntax correctly
+     "strict": true,   // Enable strict type checking
+     "esModuleInterop": true,  // Allow import/export compatibility between modules
+     "skipLibCheck": true,     // Skip type checking of declaration files
+     "noEmit": true,           // Prevent outputting compiled files
+     "resolveJsonModule": true // Allow importing JSON files
+   },
+   "include": [
+     "src/**/*.ts",
+     "src/**/*.tsx",
+     "src/**/*.js",
+     "src/**/*.jsx"
+   ],
+   "exclude": [
+     "node_modules"
+   ]
+ }
+ 

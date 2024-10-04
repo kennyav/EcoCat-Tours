@@ -1,78 +1,69 @@
 import React, { useEffect, useState } from 'react'
-import httpClient from '../../httpClient';
+import { useSelector } from 'react-redux'
+import httpClient from '../../httpClient'
 import { quantum } from 'ldrs'
-import { useSelector } from 'react-redux';
+import { Card, CardContent } from "../../components/ui/card"
 
-export default function SingleTransaction(props) {
-   const url = useSelector((state) => state.development.value)
-   const [event, setEvent] = useState({})
-   const [salesman, setSalesman] = useState({})
-   quantum.register()
-   const [loading, setLoading] = useState(false)
+export default function SingleTransaction({ history }) {
+  const url = useSelector((state) => state.development.value)
+  const [event, setEvent] = useState({ title: '' })
+  const [salesman, setSalesman] = useState({ first_name: '', last_name: '' })
+  const [passenger, setPassenger] = useState({ total_price: 0 })
+  const [loading, setLoading] = useState(false)
 
-   //
-   const inlineStyling = 'flex-col justify-center items-start gap-1.5 inline-flex w-[20%]'
+  quantum.register()
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const [eventResp, passengerResp, salesmanResp] = await Promise.all([
+          httpClient.get(`${url}/events/get-event/${history.scheduled_event_id}`),
+          httpClient.get(`${url}/bookings/get_passenger/${history.id}`),
+          httpClient.get(`${url}/salesmen/${history.salesman_id}`)
+        ])
+        setEvent(eventResp.data)
+        setPassenger(passengerResp.data)
+        setSalesman(salesmanResp.data)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-   useEffect(() => {
-      (async () => {
-         setLoading(true)
-         try {
-            const resp = await httpClient.get(`${url}/events/get-event/${props.history.scheduled_event_id}`)
-            setEvent(resp.data)
-         } catch (error) {
-            console.log("Error", error)
-         } 
-         try {
-            const resp = await httpClient.get(`${url}/salesmen/${props.history.salesman_id}`)
-            setSalesman(resp.data)
-         } catch (error) {
-            console.log("Error", error)
-         } finally {
-            setLoading(false); // Set loading to false after fetching data
-         }
-      })();
-   }, [props.history.scheduled_event_id,props.history.salesman_id, url])
+    fetchData()
+  }, [history.id, history.scheduled_event_id, history.salesman_id, url])
 
-   let price = props.history.total_price >= 0 ? 'text-green-600' : 'text-red-700';
+  const priceColor = passenger.total_price >= 0 ? 'text-green-600' : 'text-red-700'
 
-   return (
-      <div className="w-full h-auto px-5 py-[25px] bg-white border-t border-zinc-300 items-center gap-6 font-['Kumbh Sans'] text-black">
-         <div className="justify-start items-center gap-6 flex">
-            {loading ? (
-               <div className="flex justify-center items-center lg:h-[400px] md:h-[200px] h-[100px] col-span-7">
-                  <l-quantum
-                     size="100"
-                     speed="1.75"
-                     color="black"
-                  />
-               </div>
-            ) : (
-               <div className="flex h-auto w-full px-6 justify-between items-center">
-                  <div className={`${inlineStyling}`}>
-                     <div className="text-sm font-bold">Passenger</div>
-                     <div className="text-sm font-bold">{props.history.first_name} {props.history.last_name}</div>
-                  </div>
-                  <div className={`${inlineStyling}`}>
-                     <div className="text-sm font-bold">Salesman</div>
-                     <div className="text-sm font-bold">{salesman.first_name} {salesman.last_name}</div>
-                  </div>
-                  <div className={`${inlineStyling}`}>
-                     <div className="text-sm font-bold">Price</div>
-                     <div className={`w-44 ${price} text-sm font-bold `}>${props.history.total_price}</div>
-                  </div>
-                  <div className={`${inlineStyling}`}>
-                     <div className="text-sm font-bold">Event</div>
-                     <div className="text-[10px] font-normal">{event.title}</div>
-                  </div>
-                  <div className={`${inlineStyling}`}>
-                     <div className="text-sm font-bold">Recipient </div>
-                     <div className="text-[10px] font-normal">EcoCat</div>
-                  </div>
-               </div>
-
-            )}
-         </div>
-      </div>
-   )
+  return (
+    <Card className="w-full">
+      <CardContent className="p-4">
+        {loading ? (
+          <div className="flex justify-center items-center h-20">
+            <l-quantum size="40" speed="1.75" color="black" />
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-between items-center gap-4">
+            <TransactionItem title="Passenger" value={`${history.first_name} ${history.last_name}`} />
+            <TransactionItem title="Salesman" value={`${salesman.first_name} ${salesman.last_name}`} />
+            <TransactionItem title="Price" value={`$${passenger.total_price}`} valueClassName={priceColor} />
+            <TransactionItem title="Event" value={event.title} valueClassName="text-xs" />
+            <TransactionItem title="Recipient" value="EcoCat" valueClassName="text-xs" />
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 }
+
+function TransactionItem({ title, value, valueClassName = '' }) {
+  return (
+    <div className="flex flex-col space-y-1 min-w-[120px]">
+      <div className="text-sm font-medium text-muted-foreground">{title}</div>
+      <div className={`text-sm font-semibold ${valueClassName}`}>{value}</div>
+    </div>
+  )
+}
+

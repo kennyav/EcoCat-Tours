@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 export const developmentSlice = createSlice({
   name: 'development',
   initialState: {
-    //value: "http://127.0.0.1:8000",
-    value: "https://www.ecocatreservations.com"
+    value: "http://127.0.0.1:8000",
+    //value: "https://www.ecocatreservations.com"
   },
   reducers: {
     update: (state, action) => {

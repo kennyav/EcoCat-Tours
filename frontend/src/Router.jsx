@@ -22,6 +22,7 @@ import Register from './components/Login/Register'
 import Login from './components/Login/Login';
 import AddEvent from './components/EventsComponents/AddEvent';
 import NotFound from './components/NotFound';
+import SalesmenTransactions from './components/SalesmanComponents/SalesmenTransactions';
 
 
 export default function Router() {
@@ -49,6 +50,7 @@ export default function Router() {
             <>
                <Route path="/" element={<Menus><App /></Menus>}/>
                <Route path="/salesman" element={<Menus> <Salesman /> </Menus>} />
+               <Route path="/salesman/:salesmanId/transactions" element={<Menus> <SalesmenTransactions /> </Menus>} />
                <Route path="/add-newsalesman" element={<Menus><AddSalesMan /> </Menus>} />
                <Route path="/events" element={<Menus> <Events /> </Menus>} />
                <Route path="/transactions" element={<Menus> <Transactions /> </Menus>} />

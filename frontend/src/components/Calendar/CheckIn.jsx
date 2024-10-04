@@ -11,8 +11,11 @@ import { useSelector, useDispatch } from 'react-redux'
 // receipt
 import PrintReceipt from '../TransactionComponents/Receipt'
 
-// components
+// axios request
+import httpClient from '../../httpClient';
+
 export default function CheckIn(props) {
+   const url = useSelector((state) => state.development.value)
    //redux
    const dispatch = useDispatch()
    const refresh = useSelector((state) => state.refresh.value)
@@ -20,13 +23,28 @@ export default function CheckIn(props) {
    let [isOpen, setIsOpen] = useState(false)
    // passengers states
    const p = props.passenger
-   
+
    function closeModal() {
       dispatch(updateRefresh(!refresh))
       setIsOpen(false)
    }
    function openModal() {
       setIsOpen(true)
+   }
+
+
+   const checkIn = async () => {
+      const checkedIn = true
+      try {
+         const resp = await httpClient.put(`${url}/bookings/update-checkedin/${p.id}`, {
+            checkedIn
+         })
+         console.log(resp.data)
+      } catch (error) {
+         console.log("Error", error)
+      } finally {
+         setIsOpen(false)
+      }
    }
 
    return (
@@ -158,7 +176,14 @@ export default function CheckIn(props) {
                               >
                                  Print Pass
                               </button> */}
-                              <PrintReceipt passenger={p} />
+                              {/* <PrintReceipt passenger={p} /> */}
+                              <button
+                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E5BB5] focus-visible:ring-offset-2"
+                                 onClick={() => {
+                                    checkIn()
+                                 }}>
+                                 Confirm Check In
+                              </button>
                            </div>
                         </Dialog.Panel>
                      </Transition.Child>
