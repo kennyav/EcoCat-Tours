@@ -33,8 +33,7 @@ def update_history_check_in(data):
         return jsonify({"error": "Unauthorized"}), 401
 
     user = UserModel.query.filter_by(id=user_id).first()
-    checkin_text = f"?{datetime.now().date()}: {user.first_name} checked in {
-        data.first_name} {data.last_name}'s party"
+    checkin_text = f"?{datetime.now().date()}: {user.first_name} checked in {data.first_name} {data.last_name}'s party"
 
     if checkin_text:
         history.new_booking = history.new_booking + checkin_text
@@ -51,8 +50,7 @@ def update_history_edit_passenger(data):
         return jsonify({"error": "Unauthorized"}), 401
 
     user = UserModel.query.filter_by(id=user_id).first()
-    passenger_text = f"?{datetime.now().date()}: {user.first_name} edited {
-        data.first_name} {data.last_name}'s party"
+    passenger_text = f"?{datetime.now().date()}: {user.first_name} edited {data.first_name} {data.last_name}'s party"
 
     if passenger_text:
         history.passenger_edit = history.passenger_edit + passenger_text
@@ -149,8 +147,7 @@ def delete_passenger(passenger_id):
         return jsonify({"error": "Event not found"}), 404
 
     # Fetch the scheduled event linked to the passenger
-    scheduled_event = EventsScheduleModel.query.filter_by(
-        id=passenger.scheduled_event_id).first()
+    scheduled_event = EventsScheduleModel.query.filter_by(id=passenger.scheduled_event_id).first()
 
     if not scheduled_event:
         return jsonify({'error': 'Scheduled event not found'}), 404
