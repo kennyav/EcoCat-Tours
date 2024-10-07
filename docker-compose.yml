@@ -31,8 +31,6 @@ services:
     build: 
       context: ./frontend
     tty: true
-    environment:
-      - PORT=8080   # Ensure your frontend listens on this port for Cloud Run
     ports:
       - '3000:3000' # Map local port for development; remove this for Cloud Run
 
@@ -45,11 +43,10 @@ services:
     build:
       context: ./server  # Adjust the context to point to your backend directory
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     tty: true
     depends_on:
       - redis  # If using Redis in Cloud Run; change this if using Memorystore
     volumes:
       - ./server/instance:/backend/instance  # Mount SQLite database volume
-    environment:
-      - PORT=8080  # Ensure your backend listens on this port for Cloud Run
-      - REDIS_URL=redis://localhost:6379  # Update to your Redis URL for production
