@@ -15,7 +15,8 @@ import moment from 'moment';
 import httpClient from '../httpClient';
 
 interface StatisticsData {
-  totalRevenue: number;
+  totalRevenueUSD: number;
+  totalRevenueMX: number;
   totalCustomers: number;
   eventAttendees: {
     [key: string]: number;
@@ -30,7 +31,8 @@ export default function Transactions() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [transactions, setTransactions] = useState<string[]>([])
   const [statistics, setStatistics] = useState<StatisticsData>({
-    totalRevenue: 0,
+    totalRevenueUSD: 0,
+    totalRevenueMX: 0,
     totalCustomers: 0,
     eventAttendees: {},
   });
@@ -80,7 +82,8 @@ export default function Transactions() {
     <div className='px-[41px]'>
       <div className='flex flex-col w-full h-full rounded-lg bg-white gap-2'>
         <Statistics
-          totalRevenue={statistics.totalRevenue}
+          totalRevenueUSD={statistics.totalRevenueUSD}
+          totalRevenueMX={statistics.totalRevenueMX}
           totalCustomers={statistics.totalCustomers}
           eventAttendees={statistics.eventAttendees}
         />

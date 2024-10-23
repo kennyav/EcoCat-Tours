@@ -12,9 +12,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateRefresh } from '../../reducers/refreshSlice'
 import Tabs from './Tab'
 
-const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
-const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
-const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
+import { SOURCE, STATUS, RECEIVED, FIAT } from '../../helper/passengerHelper'
 
 export default function NewBooking(props) {
    // redux vars
@@ -29,6 +27,7 @@ export default function NewBooking(props) {
    const [atCapacity, setAtCapacity] = useState(false)
    const [bookerId, setBookerId] = useState('')
    const [isOpen, setOpen] = useState(false)
+   const [previousExtra, setPreviousExtra] = useState(0)
 
    // route vars
    const [formData, setFormData] = useState({
@@ -45,18 +44,26 @@ export default function NewBooking(props) {
       infantPrice: 0,
       shirts: 0,
       partialPayment: 0,
+      t_shirt: 0,
    });
 
    // states for the drop down
    const [foodOptions, setFoodOption] = useState(0)
    const [paymentSource, setPaymentSource] = useState('')
    const [paymentStatus, setPaymentStatus] = useState('')
+   const [fiat, setFiat] = useState('')
    const [commissionReceived, setCommissionReceived] = useState(false)
    const isCreateButtonDisabled = !formData.firstName || !formData.lastName || !formData.adultNumber;
-
+   const inputClass = 'border-2 border-[#0E5BB5] rounded-lg px-5 py-2'
+   const [selectTotals, setSelectTotals] = useState({
+      adult: 0,
+      children: 0,
+      infant: 0,
+      total: 0
+   })
 
    useEffect(() => {
-      const capacity = formData.adultNumber + formData.childrenNumber + formData.infantNumber
+      const capacity = parseInt(formData.adultNumber,10) + parseInt(formData.childrenNumber) + parseInt(formData.infantNumber)
       if (capacity > props.scheduledEvent.capacity) {
          setAtCapacity(true)
       } else {
@@ -90,6 +97,140 @@ export default function NewBooking(props) {
    const handleInputChange = (key, value) => {
       setFormData(prevState => ({ ...prevState, [key]: value }));
    };
+
+   function handlePaxPriceChange(e) {
+      const { id, name, value } = e.target;
+
+      // Update the price for the selected passenger category
+      setFormData((prevState) => ({
+         ...prevState,
+         [name]: value,  // Update price for 'adultPrice', 'childrenPrice', or 'infantPrice'
+      }));
+
+      // Calculate the total for the category using the latest formData in the callback
+      setSelectTotals((prevTotals) => {
+         const passengerCount = formData[id + 'Number'] || 0;  // Get the number of people for the category
+         const updatedTotal = value * passengerCount;  // Calculate updated total for the category
+
+         // Calculate the overall sum using the previous state for the totals
+         const newSum = {
+            ...prevTotals,
+            [id]: updatedTotal,  // Set the updated total for this category
+         };
+
+         // Sum all the individual totals (adult, children, infant)
+         const totalSum = newSum.adult + newSum.children + newSum.infant;
+
+         return {
+            ...newSum,
+            total: totalSum,  // Update the total sum
+         };
+      });
+   }
+
+
+   function handlePaxNumberChange(e, price) {
+      // if price exists then we can successfully update the total
+      const { id, value } = e.target
+      if (price) {
+         const update = (value * price)
+         setSelectTotals((prevState) => {
+            const updatedTotals = {
+               ...prevState,
+               [id]: update,
+            };
+            // Calculate the new total by summing adult, children, and infant totals
+            const newTotal = updatedTotals.adult + updatedTotals.children + updatedTotals.infant;
+
+            return {
+               ...updatedTotals,
+               total: newTotal,
+            };
+         });
+      }
+   }
+
+   function handleTotalChange(e) {
+      // we only want to set the price per person
+      // for categories that have people
+      let peopleTracker = [{ name: 'adult', exists: false }, { name: 'children', exists: false }, { name: 'infant', exists: false }]
+      let totalPeople = 0
+      let pricePerPerson = 0
+      const { value } = e.target
+
+
+      setSelectTotals((prevState) => ({
+         ...prevState,
+         ['total']: value,
+      }))
+
+      // Loop through people tracker and update the boolean if people exist
+      peopleTracker.forEach((people) => {
+         const numberOfPeople = parseInt(formData[people.name + 'Number'], 10) || 0; // Ensure it's a number
+         if (numberOfPeople > 0) {
+            people.exists = true;
+            totalPeople += numberOfPeople; // Add the number of people to totalPeople
+         }
+      });
+
+      pricePerPerson = totalPeople > 0 ? value / totalPeople : 0;
+      totalPeople = 0
+
+      // loop through each person and set the price
+      peopleTracker.forEach((people) => {
+         if (people.exists) {
+            setFormData((prevState) => ({
+               ...prevState,
+               [people.name + 'Price']: pricePerPerson,
+            }))
+            setSelectTotals((prevState) => ({
+               ...prevState,
+               [people.name]: pricePerPerson * formData[people.name + 'Number']
+            }))
+         } else {
+            setFormData((prevState) => ({
+               ...prevState,
+               [people.name + 'Price']: 0,
+            }))
+            setSelectTotals((prevState) => ({
+               ...prevState,
+               [people.name]: 0
+            }))
+         }
+      })
+   }
+
+   function handlePaxTotalChange(e) {
+      const { name, value } = e.target;
+   
+      // Parse the new passenger count, default to 0 if invalid
+      const newPaxTotal = parseInt(value, 10) || 0;
+   
+      // Update both total passengers and prices in one go
+      setSelectTotals((prevState) => {
+         const updatedTotals = {
+            ...prevState,
+            [name]: newPaxTotal, // Update the specific passenger category
+         };
+   
+         // Calculate the total passengers
+         const totalPax = updatedTotals.adult + updatedTotals.children + updatedTotals.infant;
+         const updatedPrice = newPaxTotal / parseInt(formData[name+'Number'],10) || 0
+         // Update both the passenger totals and prices
+         setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name+'Price']: updatedPrice
+         }));
+   
+         return {
+            ...updatedTotals,
+            total: totalPax, // Update the total passenger count
+         };
+      });
+   }
+   
+    
+    
 
 
    return (
@@ -168,103 +309,117 @@ export default function NewBooking(props) {
                            </h3>
                            <Tabs />
 
-
                            {/* Number of Passenger section*/}
-                           <div className='py-[10px] flex flex-col'>
-                              <div className="flex w-full justify-between">
+                           <div className='py-[10px] grid grid-cols-4 grid-row-col gap-1'>
+
+                              <div className="flex flex-col w-full gap-1 z-[999]">
                                  <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                    Passengers *
+                                    Passengers
                                  </h3>
-                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                    Price Per Passenger*
-                                 </h3>
+                                 <input
+                                    name='adultNumber'
+                                    id='adult'
+                                    value={formData.adultNumber}
+                                    onChange={(e) => {
+                                       handleInputChange(e.target.name, e.target.value)
+                                       handlePaxNumberChange(e, formData.adultPrice)
+                                    }} className={`${inputClass}`} />
+                                 <input
+                                    name='childrenNumber'
+                                    id='children'
+                                    value={formData.childrenNumber}
+                                    onChange={(e) => {
+                                       handleInputChange(e.target.name, e.target.value)
+                                       handlePaxNumberChange(e, formData.childrenPrice)
+                                    }} className={`${inputClass}`} />
+                                 <input
+                                    name='infantNumber'
+                                    id='infant'
+                                    value={formData.infantNumber}
+                                    onChange={(e) => {
+                                       handleInputChange(e.target.name, e.target.value)
+                                       handlePaxNumberChange(e, formData.infantPrice)
+                                    }} className={`${inputClass}`} />
+
                               </div>
-                              <div className='flex flex-col gap-2'>
-                                 <div className='inline-flex gap-5 justify-between items-center'>
 
-                                    <input
-                                       value={formData.adultNumber || 0}
-                                       onChange={(e) => handleInputChange("adultNumber", parseInt(e.target.value))}
-                                       className='w-20 h-12 rounded-full border-2 py-2 text-center border-[#0E5BB5] cursor-pointer'
-                                    />
+                              <div className="flex flex-col w-full gap-1 z-[999]">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900 z-[999]'>
+                                    Prices Per Person
+                                 </h3>
+                                 <input name='adultPrice' id='adult' value={formData.adultPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
+                                 <input name='childrenPrice' id='children' value={formData.childrenPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
+                                 <input name='infantPrice' id='infant' value={formData.infantPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
+                              </div>
+                              <div className="flex flex-col w-full gap-1">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Total Per Group
+                                 </h3>
+                                 <input name='adult' price={formData.adultPrice} value={selectTotals.adult} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
+                                 <input name='children' price={formData.childrenPrice} value={selectTotals.children} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
+                                 <input name='infant' price={formData.infantPrice} value={selectTotals.infant} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
+                              </div>
 
-                                    <div>
-                                       <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Adults</h1>
-                                       <h1 className='text-xs text-left font-light text-gray-900'>{props.event.above_drinking_age ? "Ages 21+" : "Ages 12+"}</h1>
-                                    </div>
-
-                                    <input
-                                       value={formData.adultPrice}
-                                       onChange={(e) => handleInputChange("adultPrice", parseInt(e.target.value) || 0)}
-                                       className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
-                                       placeholder='Price'
-                                    />
-
+                              <div className="flex flex-col w-full pl-4 gap-2">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Category
+                                 </h3>
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Adult</h1>
+                                    <p className='text-xs text-gray-900'>Ages 12+</p>
                                  </div>
-
-                                 {!props.event.above_drinking_age &&
-                                    <div className="flex flex-col gap-2">
-                                       <div className='inline-flex justify-between gap-5 items-center'>
-
-                                          <input
-                                             value={formData.childrenNumber || 0}
-                                             onChange={(e) => handleInputChange("childrenNumber", parseInt(e.target.value))}
-                                             className='w-20 h-12 rounded-full border-2 border-[#0E5BB5] py-2 text-center cursor-pointer'
-                                          />
-
-                                          <div>
-                                             <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Children</h1>
-                                             <h1 className='text-xs text-left font-light text-gray-900'>Ages 5-11</h1>
-                                          </div>
-
-                                          <input
-                                             value={formData.childrenPrice}
-                                             onChange={(e) => handleInputChange("childrenPrice", parseInt(e.target.value) || 0)}
-                                             className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
-                                             placeholder='Price'
-                                          />
-
-                                       </div>
-
-                                       <div className='inline-flex gap-5 justify-between items-center'>
-
-                                          <input
-                                             value={formData.infantNumber || 0}
-                                             onChange={(e) => handleInputChange("infantNumber", parseInt(e.target.value))}
-                                             className='w-20 h-12 rounded-full py-2 text-center border-2 border-[#0E5BB5] cursor-pointer'
-                                          />
-                                          <div>
-                                             <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Infant</h1>
-                                             <h1 className='text-xs text-left font-light text-gray-900'>Ages 0-4</h1>
-                                          </div>
-
-                                          <input
-                                             value={formData.infantPrice}
-                                             onChange={(e) => handleInputChange("infantPrice", parseInt(e.target.value) || 0)}
-                                             className='border-2 border-[#0E5BB5] rounded-[10px] p-2'
-                                             placeholder='Price'
-                                          />
-
-                                       </div>
-                                    </div>}
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Children</h1>
+                                    <p className='text-xs text-gray-900'>Ages 5-11</p>
+                                 </div>
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Infants</h1>
+                                    <p className='text-xs text-gray-900'>Ages 0-4</p>
+                                 </div>
                               </div>
                            </div>
 
-                           {/* Booking Addition section*/}
-                           <div className='py-[10px] flex flex-col'>
+                           <div className="flex gap-1">
+                              <div className="-ml-4 -mt-16 w-1/2">
+                                 <RadioGroup
+                                    label={"Fiat Currency*"}
+                                    plans={FIAT}
+                                    setCurrent={setFiat}
+                                    name={fiat} />
+                              </div>
+                              <div className="flex flex-col w-1/2 justify-center pl-3 pr-[10.5rem]">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Total Price
+                                 </h3>
+                                 <input value={selectTotals.total} onChange={(e) => handleTotalChange(e)} className={`${inputClass}`} />
+                              </div>
+                           </div>
+
+
+                           <div className="flex flex-col w-1/2 justify-center pl-3 pr-[10.5rem]">
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Booking Additions
+                                 Extras?
                               </h3>
-                              <div className='inline-flex justify-between gap-2'>
-                                 <DropDownMenu list={passengerNumbers} setCurrent={setFoodOption} current={foodOptions} />
-                                 <div>
-                                    <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>
-                                       (FOOD OPTION) Select how many people want to upgrade to include our BBQ Hamburgers [NOTE: Base ticket does not include food. Please select this option if you wish to eat onboard!]
-                                    </h1>
-                                    <h1 className='text-xs text-left font-light text-gray-900'>$9.99</h1>
-                                 </div>
-                              </div>
+                              <input 
+                              name='t_shirt' 
+                              value={formData.t_shirt}  
+                              onChange={(e) => {
+                                 const newValue = Number(e.target.value) || 0; // Ensure new value is a number
+                         
+                                 // Adjust total by subtracting the previous extra value and adding the new one
+                                 setSelectTotals((prevState) => ({
+                                   ...prevState,
+                                   total: prevState.total - previousExtra + newValue,
+                                 }));
+                         
+                                 // Update the previous extra value to the current one
+                                 setPreviousExtra(newValue);
+                         
+                                 handleInputChange(e.target.name, e.target.value) // Continue handling the change
+                               }}
+                              className={`${inputClass}`} />
                            </div>
+
 
                            <div className='inline-flex w-full justify-between'>
                               <RadioGroup label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource} />
@@ -304,7 +459,7 @@ export default function NewBooking(props) {
                                  type="button"
                                  className={`inline-flex justify-center rounded-md border border-transparent ${atCapacity || isCreateButtonDisabled ? "bg-red-100 text-red-900 focus-visible:ring-red-500" : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"} px-4 py-2 text-sm font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
                                  onClick={() => {
-                                    creatingNewBooking({ formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url }).then(
+                                    creatingNewBooking({ formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url, totalPrice: selectTotals.total, fiatValue: fiat}).then(
                                        closeModal()
                                     )
                                  }}

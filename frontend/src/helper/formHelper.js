@@ -16,9 +16,10 @@ export function handlePhoneNumberChange(event, setPhoneNumber) {
 }
 
 
-export const creatingNewBooking = async ({formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url}) => {
+export const creatingNewBooking = async ({formData, bookerId, salesmanId, scheduledEventId, paymentSource, paymentStatus, commissionReceived, foodOptions, url, totalPrice, fiatValue}) => {
    let passengerId = ''
-   const totalPrice = (formData.adultNumber * formData.adultPrice) + (formData.childrenNumber * formData.childrenPrice) + (formData.infantNumber * formData.infantPrice)
+   console.log(formData)
+   const fiat = fiatValue === 'USD' ? true : false
    try {
       const resp = await httpClient.post(`${url}/bookings/create-booking`, {
          scheduledEventId,
@@ -32,6 +33,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
          paymentSource,
          paymentStatus,
          commissionReceived,
+         shirts: formData.t_shirt,
          adultNumber: formData.adultNumber,
          childrenNumber: formData.childrenNumber,
          infantNumber: formData.infantNumber,
@@ -40,7 +42,8 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
          infantPrice: formData.infantPrice,
          partialPayment: formData.partialPayment,
          foodOptions,
-         totalPrice
+         totalPrice,
+         fiat
       });
       passengerId = resp.data.id
 
@@ -49,7 +52,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
    } finally {
 
       try {
-         const capacity = formData.adultNumber + formData.childrenNumber + formData.infantNumber
+         const capacity = parseInt(formData.adultNumber) + parseInt(formData.childrenNumber) + parseInt(formData.infantNumber)
          const changeCapacity = await httpClient.put(`${url}/events/edit-capacity/${scheduledEventId}`, {
             capacity,
             adult: parseInt(formData.adultNumber),
@@ -58,7 +61,7 @@ export const creatingNewBooking = async ({formData, bookerId, salesmanId, schedu
          });
          console.log(changeCapacity.data)
       } catch (error) {
-
+         console.log("Error", error)
       }
 
       try {

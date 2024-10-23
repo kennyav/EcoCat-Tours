@@ -3,19 +3,25 @@ import { Card, CardContent } from "../../components/ui/card"
 import { DollarSign, Users, Calendar } from "lucide-react"
 
 interface StatisticsProps {
-  totalRevenue: number;
+  totalRevenueUSD: number;
+  totalRevenueMX: number;
   totalCustomers: number;
   eventAttendees: {
     [key: string]: number;
   };
 }
 
-export default function Statistics({ totalRevenue, totalCustomers, eventAttendees }: StatisticsProps) {
+export default function Statistics({ totalRevenueUSD, totalRevenueMX, totalCustomers, eventAttendees }: StatisticsProps) {
   console.log(eventAttendees)
   const stats = [
     {
-      title: "Total Revenue",
-      value: `$${totalRevenue.toFixed(2)}`,
+      title: "Total Revenue USD",
+      value: `$${totalRevenueUSD.toFixed(2)}`,
+      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+    },
+    {
+      title: "Total Revenue MX",
+      value: `$${totalRevenueMX.toFixed(2)}`,
       icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
     },
     {

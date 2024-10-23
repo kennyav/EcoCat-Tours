@@ -73,6 +73,60 @@ def delete_transaction(id):
     return jsonify({"message": "Transaction deleted"}), 200
 
 
+# @bp.route('/statistics', methods=["GET"])
+# def get_statistics():
+#     start_date = request.args.get('startDate')
+#     end_date = request.args.get('endDate')
+
+#     if not start_date or not end_date:
+#         return jsonify({"error": "Both startDate and endDate are required"}), 400
+
+#     try:
+#         start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+#         end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+#     except ValueError:
+#         return jsonify({"error": "Invalid date format. Please use YYYY-MM-DD"}), 400
+
+#     # Query for total revenue
+#     total_revenue = db.session.query(func.sum(PassengersModel.total_price)).join(
+#         TransactionsModel, PassengersModel.id == TransactionsModel.passenger_id
+#     ).filter(
+#         func.date(TransactionsModel.created_at).between(start_date, end_date)
+#     ).scalar() or 0
+
+#     # Query for total customers (unique passengers)
+#     total_customers = db.session.query(func.count(func.distinct(TransactionsModel.passenger_id))).filter(
+#         func.date(TransactionsModel.created_at).between(start_date, end_date)
+#     ).scalar() or 0
+
+#     # Query for event attendees with event names
+#     event_attendees = db.session.query(
+#         EventsModel.title,
+#         func.count(TransactionsModel.id).label('attendees')
+#     ).join(
+#         PassengersModel, PassengersModel.id == TransactionsModel.passenger_id
+#     ).join(
+#         EventsScheduleModel, PassengersModel.scheduled_event_id == EventsScheduleModel.id
+#     ).join(
+#         EventsModel, EventsScheduleModel.event_id == EventsModel.id
+#     ).filter(
+#         func.date(TransactionsModel.created_at).between(start_date, end_date)
+#     ).group_by(
+#         EventsModel.title
+#     ).all()
+
+
+# # Convert event_attendees to a dictionary
+#     event_attendees_dict = {
+#         event_title: attendees for event_title, attendees in event_attendees}
+#     statistics = {
+#         "totalRevenue": float(total_revenue),
+#         "totalCustomers": total_customers,
+#         "eventAttendees": event_attendees_dict
+#     }
+
+#     return jsonify(statistics), 200
+
 @bp.route('/statistics', methods=["GET"])
 def get_statistics():
     start_date = request.args.get('startDate')
@@ -87,11 +141,20 @@ def get_statistics():
     except ValueError:
         return jsonify({"error": "Invalid date format. Please use YYYY-MM-DD"}), 400
 
-    # Query for total revenue
-    total_revenue = db.session.query(func.sum(PassengersModel.total_price)).join(
+    # Query for total revenue in USD
+    total_revenue_usd = db.session.query(func.sum(PassengersModel.total_price)).join(
         TransactionsModel, PassengersModel.id == TransactionsModel.passenger_id
     ).filter(
-        func.date(TransactionsModel.created_at).between(start_date, end_date)
+        func.date(TransactionsModel.created_at).between(start_date, end_date),
+        PassengersModel.fiat == "1"  # Assuming "1" represents USD
+    ).scalar() or 0
+
+    # Query for total revenue in MX
+    total_revenue_mx = db.session.query(func.sum(PassengersModel.total_price)).join(
+        TransactionsModel, PassengersModel.id == TransactionsModel.passenger_id
+    ).filter(
+        func.date(TransactionsModel.created_at).between(start_date, end_date),
+        PassengersModel.fiat == "0"  # Assuming "0" represents MX
     ).scalar() or 0
 
     # Query for total customers (unique passengers)
@@ -115,12 +178,14 @@ def get_statistics():
         EventsModel.title
     ).all()
 
-
-# Convert event_attendees to a dictionary
+    # Convert event_attendees to a dictionary
     event_attendees_dict = {
-        event_title: attendees for event_title, attendees in event_attendees}
+        event_title: attendees for event_title, attendees in event_attendees
+    }
+
     statistics = {
-        "totalRevenue": float(total_revenue),
+        "totalRevenueUSD": float(total_revenue_usd),
+        "totalRevenueMX": float(total_revenue_mx),
         "totalCustomers": total_customers,
         "eventAttendees": event_attendees_dict
     }

@@ -3,7 +3,7 @@ import httpClient from '../../httpClient'
 import moment from 'moment'
 // components
 import RadioGroup from './RadioGroup'
-import { Fragment, useState, useContext } from 'react'
+import { Fragment, useState, useContext, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import CheckIn from './CheckIn'
 import { EventContext } from '../Calendar/SideMenuEventInfo';
@@ -11,74 +11,221 @@ import { EventContext } from '../Calendar/SideMenuEventInfo';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateRefresh } from '../../reducers/refreshSlice'
 
-const SOURCE = [{ name: 'Cash', value: 'Cash' }, { name: 'Credit Card', value: 'Credit Card' }, { name: 'Voucher', value: 'Voucher' }]
-const STATUS = [{ name: 'In Full', value: 'In Full' }, { name: 'Partial Payment', value: 'Partial Payment' }, { name: 'No Payment', value: 'No Payment' }]
-const RECEIVED = [{ name: 'No', value: false }, { name: 'Yes', value: true }]
+// helper function
 
+//constants
+import { SOURCE, STATUS, RECEIVED, FIAT } from '../../helper/passengerHelper'
+import { prettyDOM } from '@testing-library/react'
 
 export default function ManagePassengers(props) {
-   const { event, eventTimeInfo } = useContext(EventContext);
+   const { event, eventTimeInfo } = useContext(EventContext)
    const url = useSelector((state) => state.development.value)
    const refresh = useSelector((state) => state.refresh.value)
    const dispatch = useDispatch()
    const p = props.passenger
-   let [isOpen, setIsOpen] = useState(false)
+
+   const [isOpen, setIsOpen] = useState(false)
+   const [previousExtra, setPreviousExtra] = useState(0)
    const [openDelete, setOpenDelete] = useState(false)
    const [edit, setEdit] = useState(false)
-   const [firstName, setFirstName] = useState(p.first_name);
-   const [lastName, setLastName] = useState(p.last_name);
-   const [phoneNumber, setPhoneNumber] = useState(p.phone);
-   const [email, setEmail] = useState(p.email);
-   const [adultNumber, setAdultNumber] = useState(p.adult_passengers)
-   const [childrenNumber, setChildrenNumber] = useState(p.children_passengers)
-   const [infantNumber, setInfantNumber] = useState(p.infant_passengers)
-   const [adultPrice, setAdultPrice] = useState(p.adult_price)
-   const [childrenPrice, setChildrenPrice] = useState(p.children_price)
-   const [infantPrice, setInfantPrice] = useState(p.infant_price)
-   const [paymentSource, setPaymentSource] = useState(p.payment_source)
-   const [paymentStatus, setPaymentStatus] = useState(p.payment_status)
-   const [partialPayment, setPartialPayment] = useState(p.partial_payment)
-   const [commissionReceived, setCommissionReceived] = useState(p.commission_received)
-   const [notes, setNotes] = useState(p.notes)
+   const [selectTotals, setSelectTotals] = useState({
+      adult: p.adult_passengers * p.adult_price,
+      children: p.children_passengers * p.children_price,
+      infant: p.infant_passengers * p.infant_price,
+      total: p.total_price
+   })
+
+   // t-shirt is going to be the extra price
+
+   // Grouped state for passenger details
+   const [passengerState, setPassengerState] = useState({
+      firstName: p.first_name,
+      lastName: p.last_name,
+      phoneNumber: p.phone,
+      email: p.email,
+      adultNumber: p.adult_passengers,
+      childrenNumber: p.children_passengers,
+      infantNumber: p.infant_passengers,
+      adultPrice: p.adult_price,
+      childrenPrice: p.children_price,
+      infantPrice: p.infant_price,
+      paymentSource: p.payment_type,
+      paymentStatus: p.payment_status,
+      partialPayment: p.partial_payment,
+      extra: p.t_shirt,
+      fiat: p.fiat !== "0",
+      commissionReceived: p.commission_received,
+      notes: p.notes,
+   })
+
+   const inputClass = 'border-2 border-[#0E5BB5] rounded-lg px-5 py-2'
+
+
+   const handleChange = (e) => {
+      const { name, value } = e.target
+      setPassengerState((prevState) => ({
+         ...prevState,
+         [name]: value,
+      }))
+   }
+
+
+   function handlePaxPriceChange(e) {
+      const { id, name, value } = e.target;
+
+      // Update the price for the selected passenger category
+      setPassengerState((prevState) => ({
+         ...prevState,
+         [name]: value,  // Update price for 'adultPrice', 'childrenPrice', or 'infantPrice'
+      }));
+
+      // Calculate the total for the category using the latest passengerState in the callback
+      setSelectTotals((prevTotals) => {
+         const passengerCount = passengerState[id + 'Number'] || 0;  // Get the number of people for the category
+         const updatedTotal = value * passengerCount;  // Calculate updated total for the category
+
+         // Calculate the overall sum using the previous state for the totals
+         const newSum = {
+            ...prevTotals,
+            [id]: updatedTotal,  // Set the updated total for this category
+         };
+
+         // Sum all the individual totals (adult, children, infant)
+         const totalSum = newSum.adult + newSum.children + newSum.infant;
+
+         return {
+            ...newSum,
+            total: totalSum,  // Update the total sum
+         };
+      });
+   }
+
+
+   function handlePaxNumberChange(e, price) {
+      // if price exists then we can successfully update the total
+      const { id, value } = e.target
+      if (price) {
+         const update = (value * price)
+         setSelectTotals((prevState) => {
+            const updatedTotals = {
+               ...prevState,
+               [id]: update,
+            };
+            // Calculate the new total by summing adult, children, and infant totals
+            const newTotal = updatedTotals.adult + updatedTotals.children + updatedTotals.infant;
+
+            return {
+               ...updatedTotals,
+               total: newTotal,
+            };
+         });
+      }
+   }
+
+   function handleTotalChange(e) {
+      // we only want to set the price per person
+      // for categories that have people
+      let peopleTracker = [{ name: 'adult', exists: false }, { name: 'children', exists: false }, { name: 'infant', exists: false }]
+      let totalPeople = 0
+      let pricePerPerson = 0
+      const { value } = e.target
+
+
+      setSelectTotals((prevState) => ({
+         ...prevState,
+         ['total']: value,
+      }))
+
+      // Loop through people tracker and update the boolean if people exist
+      peopleTracker.forEach((people) => {
+         const numberOfPeople = parseInt(passengerState[people.name + 'Number'], 10) || 0; // Ensure it's a number
+         if (numberOfPeople > 0) {
+            people.exists = true;
+            totalPeople += numberOfPeople; // Add the number of people to totalPeople
+         }
+      });
+
+      pricePerPerson = totalPeople > 0 ? value / totalPeople : 0;
+      totalPeople = 0
+
+      // loop through each person and set the price
+      peopleTracker.forEach((people) => {
+         if (people.exists) {
+            setPassengerState((prevState) => ({
+               ...prevState,
+               [people.name + 'Price']: pricePerPerson,
+            }))
+            setSelectTotals((prevState) => ({
+               ...prevState,
+               [people.name]: pricePerPerson * passengerState[people.name + 'Number']
+            }))
+         } else {
+            setPassengerState((prevState) => ({
+               ...prevState,
+               [people.name + 'Price']: 0,
+            }))
+            setSelectTotals((prevState) => ({
+               ...prevState,
+               [people.name]: 0
+            }))
+         }
+      })
+   }
+
+
+   function handlePaxTotalChange(e) {
+      const { name, value } = e.target;
+
+      // Parse the new passenger count, default to 0 if invalid
+      const newPaxTotal = parseInt(value, 10) || 0;
+
+      // Update both total passengers and prices in one go
+      setSelectTotals((prevState) => {
+         const updatedTotals = {
+            ...prevState,
+            [name]: newPaxTotal, // Update the specific passenger category
+         };
+
+         // Calculate the total passengers
+         const totalPax = updatedTotals.adult + updatedTotals.children + updatedTotals.infant;
+         const updatedPrice = newPaxTotal / parseInt(passengerState[name + 'Number'], 10) || 0
+         // Update both the passenger totals and prices
+         setPassengerState((prevFormData) => ({
+            ...prevFormData,
+            [name + 'Price']: updatedPrice
+         }));
+
+         return {
+            ...updatedTotals,
+            total: totalPax, // Update the total passenger count
+         };
+      });
+   }
+
+
 
    const deletePassenger = async () => {
       try {
          const resp = await httpClient.delete(`${url}/bookings/delete/${p.id}`)
-      
          console.log(resp.data)
       } catch (error) {
-         console.log("Error", error)
+         console.log('Error', error)
       }
-
       closeModal()
    }
 
    const editPassenger = async () => {
-      const totalPrice = (adultNumber * adultPrice) + (infantNumber * infantPrice) + (childrenNumber * childrenPrice)
+      const totalPrice = selectTotals.total
+
       try {
          const resp = await httpClient.put(`${url}/bookings/edit-passenger/${p.id}`, {
-            firstName,
-            lastName,
-            phoneNumber,
-            email,
-            adultNumber,
-            adultPrice,
-            childrenNumber,
-            childrenPrice,
-            infantNumber,
-            infantPrice,
-            paymentSource,
-            paymentStatus,
-            partialPayment,
-            commissionReceived,
-            notes,
-            totalPrice
+            ...passengerState,
+            totalPrice,
          })
          console.log(resp.data)
       } catch (error) {
-         console.log("Error", error)
+         console.log('Error', error)
       }
-
       closeModal()
    }
 
@@ -88,6 +235,7 @@ export default function ManagePassengers(props) {
       setEdit(false)
       setIsOpen(false)
    }
+
    function openModal() {
       setIsOpen(true)
    }
@@ -149,8 +297,8 @@ export default function ManagePassengers(props) {
                                  Customer Name
                               </h3>
                               <div className='inline-flex gap-12'>
-                                 <input disabled={!edit} value={firstName} onChange={(e) => setFirstName(e.target.value)} className='border rounded-[10px] p-2' />
-                                 <input disabled={!edit} value={lastName} onChange={(e) => setLastName(e.target.value)} className='border rounded-[10px] p-2' />
+                                 <input disabled={!edit} name='firstName' value={passengerState.firstName} onChange={(e) => handleChange(e)} className='border rounded-[10px] p-2' />
+                                 <input disabled={!edit} name='lastName' value={passengerState.lastName} onChange={(e) => handleChange(e)} className='border rounded-[10px] p-2' />
                               </div>
                            </div>
 
@@ -161,56 +309,172 @@ export default function ManagePassengers(props) {
                                  Contact Information
                               </h3>
                               <div className='flex gap-1'>
-                                 <input disabled={!edit} value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-[10px] p-2 w-1/3' />
-                                 <input disabled={!edit} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className='border rounded-[10px] p-2' />
+                                 <input disabled={!edit} name='email' value={passengerState.email} onChange={(e) => handleChange(e)} className='border rounded-[10px] p-2 w-1/3' />
+                                 <input disabled={!edit} name='phoneNumber' value={passengerState.phoneNumber} onChange={(e) => handleChange(e)} className='border rounded-[10px] p-2' />
                               </div>
                            </div>
 
 
                            {/* Number of Passenger section*/}
-                           <div className='py-[10px] grid grid-rows-4 grid-flow-col gap-4'>
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Passengers
-                              </h3>
-                              <input disabled={!edit} value={adultNumber} onChange={(e) => setAdultNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <input disabled={!edit} value={childrenNumber} onChange={(e) => setChildrenNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <input disabled={!edit} value={infantNumber} onChange={(e) => setInfantNumber(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Prices
-                              </h3>
-                              <input disabled={!edit} value={adultPrice} onChange={(e) => setAdultPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <input disabled={!edit} value={childrenPrice} onChange={(e) => setChildrenPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <input disabled={!edit} value={infantPrice} onChange={(e) => setInfantPrice(e.target.value)} className='border-2 border-[#0E5BB5] rounded-lg px-5 py-2' />
-                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
-                                 Category
-                              </h3>
-                              <div className="flex flex-col">
-                                 <h1 className='text-sm text-gray-900'>Adult</h1>
-                                 <p className='text-xs text-gray-900'>Ages 12+</p>
+                           <div className='py-[10px] grid grid-cols-4 grid-row-col gap-1'>
+
+                              <div className="flex flex-col w-full gap-1 z-[999]">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Passengers
+                                 </h3>
+                                 <input
+                                    name='adultNumber'
+                                    id='adult'
+                                    disabled={!edit}
+                                    value={passengerState.adultNumber}
+                                    onChange={(e) => {
+                                       handleChange(e)
+                                       handlePaxNumberChange(e, passengerState.adultPrice)
+                                    }} className={`${inputClass}`} />
+                                 <input
+                                    name='childrenNumber'
+                                    id='children'
+                                    disabled={!edit}
+                                    value={passengerState.childrenNumber}
+                                    onChange={(e) => {
+                                       handleChange(e)
+                                       handlePaxNumberChange(e, passengerState.childrenPrice)
+                                    }} className={`${inputClass}`} />
+                                 <input
+                                    name='infantNumber'
+                                    id='infant'
+                                    disabled={!edit}
+                                    value={passengerState.infantNumber}
+                                    onChange={(e) => {
+                                       handleChange(e)
+                                       handlePaxNumberChange(e, passengerState.infantPrice)
+                                    }} className={`${inputClass}`} />
+
                               </div>
-                              <div className="flex flex-col">
-                                 <h1 className='text-sm text-gray-900'>Children</h1>
-                                 <p className='text-xs text-gray-900'>Ages 5-11</p>
+
+                              <div className="flex flex-col w-full gap-1 z-[999]">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900 z-[999]'>
+                                    Prices Per Person
+                                 </h3>
+                                 <input name='adultPrice' id='adult' disabled={!edit} value={passengerState.adultPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
+                                 <input name='childrenPrice' id='children' disabled={!edit} value={passengerState.childrenPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
+                                 <input name='infantPrice' id='infant' disabled={!edit} value={passengerState.infantPrice} onChange={(e) => handlePaxPriceChange(e)} className={`${inputClass}`} />
                               </div>
-                              <div className="flex flex-col">
-                                 <h1 className='text-sm text-gray-900'>Infants</h1>
-                                 <p className='text-xs text-gray-900'>Ages 0-4</p>
+                              <div className="flex flex-col w-full gap-1">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Total Per Group
+                                 </h3>
+                                 <input disabled={!edit} name='adult' price={passengerState.adultPrice} value={selectTotals.adult} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
+                                 <input disabled={!edit} name='children' price={passengerState.childrenPrice} value={selectTotals.children} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
+                                 <input disabled={!edit} name='infant' price={passengerState.infantPrice} value={selectTotals.infant} onChange={(e) => handlePaxTotalChange(e)} className={`${inputClass}`} />
                               </div>
+
+                              <div className="flex flex-col w-full pl-4 gap-2">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Category
+                                 </h3>
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Adult</h1>
+                                    <p className='text-xs text-gray-900'>Ages 12+</p>
+                                 </div>
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Children</h1>
+                                    <p className='text-xs text-gray-900'>Ages 5-11</p>
+                                 </div>
+                                 <div className="flex flex-col">
+                                    <h1 className='text-sm text-gray-900'>Infants</h1>
+                                    <p className='text-xs text-gray-900'>Ages 0-4</p>
+                                 </div>
+                              </div>
+                           </div>
+
+                           <div className="flex gap-1">
+                              <div className="-ml-4 -mt-16 w-1/2">
+                                 <RadioGroup
+                                    disabled={!edit}
+                                    label={"Fiat Currency*"}
+                                    plans={FIAT}
+                                    setCurrent={(value) =>
+                                       setPassengerState((prevState) => ({
+                                          ...prevState,
+                                          fiat: value,
+                                       }))}
+                                    name={passengerState.fiat} />
+                              </div>
+                              <div className="flex flex-col w-1/2 justify-center pl-3 pr-[10.5rem]">
+                                 <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                    Total Price
+                                 </h3>
+                                 <input disabled={!edit} value={selectTotals.total} onChange={(e) => handleTotalChange(e)} className={`${inputClass}`} />
+                              </div>
+                           </div>
+
+
+                           <div className="flex flex-col w-1/2 justify-center pl-3 pr-[10.5rem]">
+                              <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
+                                 Extras?
+                              </h3>
+                              <input
+                                 name='extra'
+                                 disabled={!edit}
+                                 value={passengerState.extra | 0}
+                                 onChange={(e) => {
+                                    const newValue = Number(e.target.value) || 0; // Ensure new value is a number
+                            
+                                    // Adjust total by subtracting the previous extra value and adding the new one
+                                    setSelectTotals((prevState) => ({
+                                      ...prevState,
+                                      total: prevState.total - previousExtra + newValue,
+                                    }));
+                            
+                                    // Update the previous extra value to the current one
+                                    setPreviousExtra(newValue);
+                            
+                                    handleChange(e); // Continue handling the change
+                                  }}
+                                 className={`${inputClass}`} />
                            </div>
 
                            <div className='inline-flex w-full justify-between'>
-                              <RadioGroup disabled={!edit} label={"Payment Source*"} plans={SOURCE} setCurrent={setPaymentSource} name={paymentSource} />
-                              <RadioGroup disabled={!edit} label={"Payment Status*"} plans={STATUS} setCurrent={setPaymentStatus} name={paymentStatus} />
-                              <RadioGroup disabled={!edit} label={"Commission Recieved*"} plans={RECEIVED} setCurrent={setCommissionReceived} name={commissionReceived} />
+                              <RadioGroup
+                                 disabled={!edit}
+                                 label={"Payment Source*"}
+                                 plans={SOURCE}
+                                 setCurrent={(value) =>
+                                    setPassengerState((prevState) => ({
+                                       ...prevState,
+                                       paymentSource: value,
+                                    }))}
+                                 name={passengerState.paymentSource} />
+                              <RadioGroup
+                                 disabled={!edit}
+                                 label={"Payment Status*"}
+                                 plans={STATUS}
+                                 setCurrent={(value) =>
+                                    setPassengerState((prevState) => ({
+                                       ...prevState,
+                                       paymentStatus: value,
+                                    }))}
+                                 name={passengerState.paymentStatus} />
+                              <RadioGroup
+                                 disabled={!edit}
+                                 label={"Commission Recieved*"}
+                                 plans={RECEIVED}
+                                 setCurrent={(value) =>
+                                    setPassengerState((prevState) => ({
+                                       ...prevState,
+                                       commissionReceived: value,
+                                    }))}
+                                 name={passengerState.commissionReceived} />
                            </div>
 
-                           {paymentStatus === "Partial Payment" &&
+                           {passengerState.paymentStatus === "Partial Payment" &&
                               <div className="" >
                                  <h1 className='text-sm text-left font-medium leading-6 text-gray-900'>Partial Payment</h1>
                                  <input
                                     disabled={!edit}
-                                    value={partialPayment}
-                                    onChange={(e) => setPartialPayment(e.target.value)}
+                                    value={passengerState.partialPayment}
+                                    onChange={(e) => handleChange(e)}
                                     className='border rounded-[10px] p-2'
                                     placeholder='Payment Amount' />
                               </div>}
@@ -219,7 +483,7 @@ export default function ManagePassengers(props) {
                               <h3 className='py-[10px] text-lg font-medium leading-6 text-gray-900'>
                                  Reservation Notes
                               </h3>
-                              <textarea disabled={!edit} rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} className='border rounded-[10px] p-2' />
+                              <textarea disabled={!edit} rows={5} value={passengerState.notes} onChange={(e) => handleChange(e)} className='border rounded-[10px] p-2' />
                            </div>
 
 

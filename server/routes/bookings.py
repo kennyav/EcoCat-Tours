@@ -83,6 +83,7 @@ def create_booking():
     partial_payment = data.get("partialPayment")
     total_price = data.get('totalPrice')
     checked_in = False
+    fiat = data.get('fiat')
 
     # Create a new passenger booking in the database
     new_passenger_booking = PassengersModel(
@@ -97,6 +98,7 @@ def create_booking():
         payment_status=payment_status,
         partial_payment=partial_payment,
         commission_received=commission_received,
+        fiat=fiat,
         checked_in=checked_in,
         booker_id=booker_id,
         adult_passengers=adult_passengers,
@@ -213,7 +215,7 @@ def update_passenger(passenger_id):
     if 'infantPrice' in request.json:
         passenger.infant_price = request.json['infantPrice']
     if 'paymentSource' in request.json:
-        passenger.payment_source = request.json['paymentSource']
+        passenger.payment_type = request.json['paymentSource']
     if 'paymentStatus' in request.json:
         passenger.payment_status = request.json['paymentStatus']
     if 'partialPayment' in request.json:
@@ -222,6 +224,10 @@ def update_passenger(passenger_id):
         passenger.commission_received = request.json['commissionReceived']
     if 'totalPrice' in request.json:
         passenger.total_price = request.json['totalPrice']
+    if 'fiat' in request.json:
+        passenger.fiat = request.json['fiat']
+    if 'extra' in request.json:
+        passenger.t_shirt = request.json['extra']
 
     db.session.commit()
     update_history_edit_passenger(passenger)

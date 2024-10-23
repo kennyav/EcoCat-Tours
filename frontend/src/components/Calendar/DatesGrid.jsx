@@ -44,7 +44,8 @@ export default function DatesGrid({ dates, events, daysOfWeek, abrvDaysOfWeek })
          eventInfo: signal.event,
          id: signal.se_id,
          clicked: signal.open,
-         date: signal.date
+         //date: signal.date
+         date: moment(signal.date).toISOString(),
       }))
    }, [signal, dispatch]);
 

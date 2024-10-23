@@ -3,7 +3,7 @@ import { RadioGroup } from '@headlessui/react'
 
 export default function RadioGroupComponent(props) {
    const index = () => {
-      const i = props.plans.findIndex(item => item.name === props.name);
+      const i = props.plans.findIndex(item => item.value === props.name);
       return i !== -1 ? i : 0
    }
    
@@ -11,8 +11,8 @@ export default function RadioGroupComponent(props) {
    const setFunctionTest = props.setCurrent
    
    useEffect(() => {
-      setFunctionTest(selected.value)
-   }, [setFunctionTest, selected])
+      setFunctionTest(selected.value);
+   }, [selected.value]);
 
    return (
       <div className="w-full px-4 py-16">

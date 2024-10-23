@@ -36,6 +36,7 @@ export default function SingleTransaction({ history }) {
   }, [history.id, history.scheduled_event_id, history.salesman_id, url])
 
   const priceColor = passenger.total_price >= 0 ? 'text-green-600' : 'text-red-700'
+  const symbol = passenger.fiat !== "0" ? 'USD' : 'MX'
 
   return (
     <Card className="w-full">
@@ -48,7 +49,7 @@ export default function SingleTransaction({ history }) {
           <div className="flex flex-wrap justify-between items-center gap-4">
             <TransactionItem title="Passenger" value={`${history.first_name} ${history.last_name}`} />
             <TransactionItem title="Salesman" value={`${salesman.first_name} ${salesman.last_name}`} />
-            <TransactionItem title="Price" value={`$${passenger.total_price}`} valueClassName={priceColor} />
+            <TransactionItem title="Price" value={`${symbol}$${passenger.total_price}`} valueClassName={priceColor} />
             <TransactionItem title="Event" value={event.title} valueClassName="text-xs" />
             <TransactionItem title="Recipient" value="EcoCat" valueClassName="text-xs" />
           </div>

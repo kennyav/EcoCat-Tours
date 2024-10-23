@@ -129,6 +129,7 @@ class PassengersModel(db.Model):
     payment_type = db.Column(db.String(80), nullable=False)
     payment_status = db.Column(db.String(80), nullable=False)
     commission_received = db.Column(db.Boolean)
+    fiat = db.Column(db.String(80), nullable=False)
     checked_in = db.Column(db.Boolean)
     notes = db.Column(db.Text, nullable=False)
     created_at = db.Column(DateTime, default=datetime.now)
@@ -155,6 +156,7 @@ class PassengersModel(db.Model):
             'payment_status': self.payment_status,
             'partial_payment': self.partial_payment,
             'commission_received': self.commission_received,
+            'fiat': self.fiat,
             'checked_in': self.checked_in,
             'booker_id': self.booker_id,
             'notes': self.notes,
